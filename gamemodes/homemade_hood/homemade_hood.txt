@@ -1,0 +1,12 @@
+"homemade_hood"
+{
+	"base"			"base"
+	"title"			"Homemade Hood"
+	"category"		"pvp"
+	"menusystem"	"1"
+	"workshopid" 	""
+	"settings"
+	{
+	
+	}
+}

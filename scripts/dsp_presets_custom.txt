@@ -1,0 +1,8 @@
+{	60	LINEAR	0.2 0.7	0.0  0.0  80 0.5		
+							// DFR size #dly	feedbk
+							{  DFR	1.0	3		0.1483	}
+
+							// RVA size	 min   	#dly	feedbk	gain	cutoff	fpar fmod rate w  d  h  fw  fw  fh ftap
+							{  RVA 100.0 30.0  	4		0.95	1.8		4000	1		0 0    0  0  0  0   0   0   0} 
+														
+}
