@@ -1,8 +1,19 @@
 -- currently added attachment effects
 --[[
-Automatic = true/false - changes firemode
-RecoilVertical = number - adds/removes vertical recoil
-RecoilHorizontal = number - adds/removes horizontal recoil
+WEAPON PROPERTIES
+
+Automatic - bool
+RecoilVertical - number
+RecoilHorizontal - number
+
+SIGHTS
+
+HoloSight - bool
+AimPosAttachment - string
+AimOffset - vector
+ReticleMaterial - material
+ReticleSize - number
+SightSize - table {x = 0, y = 0}
 ]]
 
 SWEP.Attachments = {
@@ -13,6 +24,13 @@ SWEP.Attachments = {
             ["effects"] = {}
 		}
 	},
+    ["stock"] = {
+        ["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {}
+		}
+    },
 	["grip"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,
@@ -20,6 +38,13 @@ SWEP.Attachments = {
             ["effects"] = {}
 		}
 	},
+    ["magazine"] = {
+        ["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {}
+		}
+    },
 	["extra"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,
@@ -29,7 +54,71 @@ SWEP.Attachments = {
 	}
 }
 
-SWEP.EquippedAttachments = {}
+if SERVER then
+    util.AddNetworkString("SendAttachments")
+
+    function SWEP:SetRandomAttachments(tbl)
+        local attachments = self:GetRandomAttachments()
+    
+        for slot, tbl in pairs(attachments) do
+            local rnd = math.random(1, #tbl)
+            self:SetAttachmentSlot(slot, tbl[rnd])
+        end
+
+        net.Start("SendAttachments")
+        net.WriteEntity(self)
+        net.WriteTable(self.EquippedAttachments)
+        net.Broadcast()
+    end
+
+    concommand.Add("hoodlum_rand_atts", function(ply)
+        if not ply:IsAdmin() then return end
+
+        local wep = ply:GetActiveWeapon()
+        if IsValid(wep) and wep.Base == "immersive_sweps" then
+            wep:SetRandomAttachments(wep:GetRandomAttachments())
+        end
+    end, false, "Randomize current weapon attachments")
+end
+
+if CLIENT then
+    net.Receive("SendAttachments", function()
+        local ent = net.ReadEntity()
+        local attachments = net.ReadTable()
+        
+        for i,v in pairs(attachments) do
+            ent:SetAttachmentSlot(i, v)
+        end
+    end)
+end
+
+function SWEP:GetRandomAttachments()
+    local all_slots = {}
+    for key, _ in pairs(self.EquippedAttachments) do
+        if key ~= "BaseClass" then
+            table.insert(all_slots, key)
+        end
+    end
+
+    local available_atts = {}
+    for i,v in ipairs(all_slots) do
+        if self.Attachments[v] then
+            --print("getting attachments for slot: " .. v)
+            local available = {}
+
+            for att, tbl in pairs(self.Attachments[v]) do
+                if att ~= "BaseClass" then -- FUCK OFF!!!!!
+                    table.insert(available, att)
+                    --print("found attachment " .. tostring(att) .. " for slot " .. tostring(v))
+                end
+            end    
+            
+            available_atts[v] = available
+        end
+    end
+
+    return available_atts
+end
 
 function SWEP:GetAttachmentSlot(slot)
     if self.Attachments[slot][self.EquippedAttachments[slot]] then
@@ -50,15 +139,18 @@ function SWEP:UpdateAttachment(slot)
 	local att_effects = self:GetAttachmentEffects()
     local id, value = att_slot["bodygroup_id"], att_slot["bodygroup_value"]
 
-	if att_effects["Automatic"] then
-		self.Primary.Automatic = true
-	end
-
     self:SetBodygroup(id, value)
-end
 
-function SWEP:GetAttachment(slot, att)
+    PrintTable(att_effects)
 
+    if att_effects["ClipSize"] then
+        self.Primary.ClipSize = att_effects["ClipSize"]
+        self:SetClip1(self.Primary.ClipSize)
+    end
+    
+    if att_effects["Automatic"] then
+        self.Primary.Automatic = att_effects["Automatic"]
+    end
 end
 
 function SWEP:GetAttachmentEffects()
@@ -70,9 +162,59 @@ function SWEP:GetAttachmentEffects()
             if type(value) == "boolean" then
                 effect_list[effect] = value
             elseif type(value) == "number" then
+                if effect_list[effect] then
+                    effect_list[effect] = effect_list[effect] + value
+                else
+                    effect_list[effect] = value
+                end
+            else
                 effect_list[effect] = value
             end
         end
     end
     return effect_list
 end
+
+hook.Add("PostDrawTranslucentRenderables", "hoodlum_attachments_sights", function()
+    local ply = LocalPlayer()
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) then return end
+    local effect = wep.Attachments["sight"][wep.EquippedAttachments["sight"]]["effects"]
+
+    if effect and effect["HoloSight"] then
+        local sight_att, reticle_mat, reticle_size, sight_size = effect["AimPosAttachment"], effect["ReticleMaterial"], effect["ReticleSize"], effect["SightSize"]
+        local att = wep:GetAttachment(wep:LookupAttachment(sight_att))
+        local att_pos, att_ang = att.Pos, att.Ang
+        att_ang:RotateAroundAxis(att_ang:Right(), 90)
+
+        cam.Start3D2D(att.Pos - att_ang:Up() * 64, att_ang, 0.01)
+            cam.Start3D2D(att.Pos, att_ang, 0.01)
+                -- no fucking clue
+                render.ClearStencil()
+                render.SetStencilEnable(true)
+                render.SetStencilTestMask(255)
+                render.SetStencilWriteMask(255)
+                render.SetStencilReferenceValue(64)
+                render.SetStencilCompareFunction(STENCIL_ALWAYS)
+                render.SetStencilPassOperation(STENCIL_REPLACE)
+                render.SetStencilFailOperation(STENCIL_KEEP)
+                render.SetStencilZFailOperation(STENCIL_REPLACE)
+
+                surface.SetDrawColor(0, 0, 0, 1)
+                surface.DrawRect(-sight_size.x/2, -sight_size.y/2, sight_size.x, sight_size.y)
+                draw.NoTexture()
+
+                -- no fucking clue
+                render.SetStencilCompareFunction(STENCIL_EQUAL)
+                render.SetStencilFailOperation(STENCIL_KEEP)
+                render.SetStencilZFailOperation(STENCIL_KEEP)
+            cam.End3D2D()
+
+            surface.SetDrawColor(255, 255, 255, 255)
+            surface.SetMaterial(reticle_mat)
+            surface.DrawTexturedRect(-reticle_size/2, -reticle_size/2, reticle_size, reticle_size)
+
+            render.SetStencilEnable(false)
+        cam.End3D2D()
+    end
+end)

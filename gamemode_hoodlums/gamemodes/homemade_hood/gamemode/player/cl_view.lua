@@ -95,9 +95,9 @@ local aimlerp = 0
 local recoil_cam_ang = Angle(0, 0, 0)
 local recoil_pos, recoil_ang = Vector(0, 0, 0), Angle(0, 0, 0)
 local suppression_ang_lerp = Angle(0, 0, 0)
-hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
+hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)    
     local cam_offset = Vector(2, 1, 0)
-    local cam_ang_offset = Angle(0, 5, 0)
+    local cam_ang_offset = Angle(10, 5, 0)
 
     local ply = LocalPlayer()
     local wep = ply:GetActiveWeapon()
@@ -150,6 +150,8 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local eyetarget_ang = camang
 
     if IsValid(wep) and wep.Base == "immersive_sweps" then
+        local att_effects = wep:GetAttachmentEffects()
+
         if ply:IsAiming() and not ply:IsSprinting() and ply:IsOnGround() and not wep:Reloading() then
             aimlerp = LerpFT(wep:GetAimSpeed(), aimlerp, 1)
         else
@@ -157,9 +159,10 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         end
     
         local aimpos, aimang = wep:GetAimOffset()
-        eyetarget_pos = hand_pos + hand_up * aimpos.x + hand_forward * aimpos.y + hand_right * aimpos.z
+        local offset = att_effects["AimOffset"] or Vector(0, 0, 0)
+        eyetarget_pos = aimpos + hand_ang:Forward() * offset.x + hand_ang:Up() * offset.y + hand_ang:Right() * offset.z
         eyetarget_ang = camang + aimang
-    
+        
         local muzzle_pos, muzzle_ang = wep:GetMuzzle()
         muzzle_forward = muzzle_ang:Forward()
     

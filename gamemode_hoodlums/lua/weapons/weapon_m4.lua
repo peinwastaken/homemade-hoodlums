@@ -1,6 +1,6 @@
 SWEP.Base = "immersive_sweps"
 
-SWEP.PrintName 				= "M4A1"
+SWEP.PrintName 				= "M4A1 (OLD)"
 SWEP.Author 				= "pein"
 SWEP.Instructions			= "Every weapon addon needs one of these."
 SWEP.Category 				= "Immersive SWEPs"
@@ -22,17 +22,18 @@ SWEP.ReloadTime             = 2
 SWEP.Primary.Sound          = "weapons/m4a1/m4a1_unsil-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(1.25, 0.05, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(2, 0, 3)
+SWEP.VisualRecoil = Vector(1, 0.02, 0) -- CAMERA RECOIL
+SWEP.VisualRecoilAngle = Angle(1, 0, 3)
 SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.65 -- CROUCH RECOIL MULTIPLIER
 
-SWEP.AimOffsetPos           = Vector(5.4, -5, 0.725)
-SWEP.AimOffsetAng           = Angle(0, 0, 0)
+SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
+SWEP.AimOffsetAng           = Angle(-6, 0, 0)
 SWEP.AimSpeed               = 5
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
+SWEP.AimWeaponTilt = 7
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
@@ -47,3 +48,16 @@ SWEP.DrawCrosshair			= false
 
 SWEP.ViewModel				= "models/pwb2/weapons/w_m4a1.mdl"
 SWEP.WorldModel				= "models/pwb2/weapons/w_m4a1.mdl"
+
+SWEP.Attachments = {
+    ["sight"] = {
+        ["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {
+				["AimPosAttachment"] = "ironsights",
+				["AimOffset"] = Vector(-5, -0.8, 0)
+			}
+		},
+    }
+}

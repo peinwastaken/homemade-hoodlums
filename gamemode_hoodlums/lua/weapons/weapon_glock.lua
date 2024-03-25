@@ -23,13 +23,14 @@ SWEP.Primary.Sound          = "weapons/glock/glock18-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.25, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(3, 0, 3)
+SWEP.VisualRecoilAngle = Angle(2, 0, 1)
 SWEP.RecoilVertical = 60 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
+SWEP.AimWeaponTilt = 30
 
-SWEP.AimOffsetPos           = Vector(1.9, -12, 0)
-SWEP.AimOffsetAng           = Angle(-2, 0, 0)
+SWEP.AimOffsetPos           = Vector(3.9, -12, 0.41)
+SWEP.AimOffsetAng           = Angle(-3, 0, 0)
 SWEP.AimSpeed               = 5
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
@@ -45,15 +46,18 @@ SWEP.SlotPos				= 1
 SWEP.DrawAmmo				= true
 SWEP.DrawCrosshair			= false
 
-SWEP.ViewModel				= "models/pwb/glock/w_glock17.mdl"
-SWEP.WorldModel				= "models/pwb/glock/w_glock17.mdl"
+SWEP.ViewModel				= "models/pein/glock/glock17.mdl"
+SWEP.WorldModel				= "models/pein/glock/glock17.mdl"
 
 SWEP.Attachments = {
 	["sight"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,
 			["bodygroup_value"] = 0,
-            ["effects"] = {}
+            ["effects"] = {
+				["AimPosAttachment"] = "ironsights",
+				["AimOffset"] = Vector(-11, 0, 0)
+			}
 		},
 	},
 	["grip"] = {
@@ -63,6 +67,20 @@ SWEP.Attachments = {
             ["effects"] = {}
 		},
 	},
+	["magazine"] = {
+		["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {}
+		},
+		["extended"] = {
+			["bodygroup_id"] = 1,
+			["bodygroup_value"] = 1,
+            ["effects"] = {
+				["ClipSize"] = 35,
+			}
+		}
+	},
 	["extra"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,
@@ -70,7 +88,7 @@ SWEP.Attachments = {
             ["effects"] = {}
 		},
 		["switch"] = {
-			["bodygroup_id"] = 1,
+			["bodygroup_id"] = 2,
 			["bodygroup_value"] = 1,
 			["effects"] = {
 				["Automatic"] = true,

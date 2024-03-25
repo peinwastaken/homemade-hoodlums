@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/slow/jknies/cripz/slow_cap"
+	"$bumpmap"	"models/player/slow/jknies/cripz/slow_cap_bump"
+
+ 	"$phong" "1"
+	"$phongexponent" "9"
+	"$phongboost"	".015"
+	"$phongfresnelranges"	"[1 1 1]"
+}

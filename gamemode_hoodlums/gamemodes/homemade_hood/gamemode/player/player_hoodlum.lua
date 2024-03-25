@@ -6,12 +6,20 @@ PLAYER.WalkSpeed = 100
 PLAYER.RunSpeed = 200
 PLAYER.SlowWalkSpeed = 75
 
-PLAYER.Models = {"models/player/Group03/female_01.mdl"}
+PLAYER.Models = {
+    "models/player/bloodz/slow_1.mdl", 
+    "models/player/bloodz/slow_2.mdl", 
+    "models/player/bloodz/slow_3.mdl", 
+    "models/player/cripz/slow_1.mdl", 
+    "models/player/cripz/slow_2.mdl", 
+    "models/player/cripz/slow_3.mdl", 
+}
 
 PLAYER.Items = {
     ["primary"] = {
         "weapon_m4",
-        "weapon_aks74u"
+        "weapon_m4_new",
+        "weapon_draco"
     },
     ["secondary"] = {
         "weapon_m1911",
@@ -36,9 +44,8 @@ end
 
 function PLAYER:SetModel()
     local ply = self.Player
-    local selected = self.Models[math.random(1, #self.Models)]
 
-    ply:SetModel(selected)
+    ply:SetModel(self.Models[math.random(1, #self.Models)])
 end
 
 player_manager.RegisterClass("player_hoodlum", PLAYER, "player_default")

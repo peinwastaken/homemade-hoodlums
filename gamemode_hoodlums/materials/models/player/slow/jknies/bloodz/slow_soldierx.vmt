@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/player/slow/jknies/bloodz/slow_soldierx"
+	"$bumpmap"	"models/player/slow/jknies/bloodz/slow_soldierx_bump"
+
+
+	"$translucent" 1
+
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" 1
+	"$envmaptint" "[1.7 1.12 .26]" 
+	"$envmapcontrast" .35
+	"$envmapsaturation" 1.05
+}

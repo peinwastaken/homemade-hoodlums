@@ -23,16 +23,17 @@ SWEP.Primary.Sound          = "weapons/usp/usp_unsil-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(3, 0.5, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(4, 0, 3)
-SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 60 -- HORIZONTAL RECOIL
+SWEP.VisualRecoilAngle = Angle(2, 0, 2)
+SWEP.RecoilVertical = 60 -- VERTICAL RECOIL
+SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 
 SWEP.AimOffsetPos           = Vector(4.25, -12, 0.05)
-SWEP.AimOffsetAng           = Angle(2, 0, 0)
+SWEP.AimOffsetAng           = Angle(0, 0, 0)
 SWEP.AimSpeed               = 5
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
+SWEP.AimWeaponTilt = 30
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
@@ -47,3 +48,16 @@ SWEP.DrawCrosshair			= false
 
 SWEP.ViewModel				= "models/pein/m1911/m1911.mdl"
 SWEP.WorldModel				= "models/pein/m1911/m1911.mdl"
+
+SWEP.Attachments = {
+	["sight"] = {
+		["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {
+				["AimPosAttachment"] = "ironsights",
+				["AimOffset"] = Vector(-11, 0, 0)
+			}
+		}
+	}
+}

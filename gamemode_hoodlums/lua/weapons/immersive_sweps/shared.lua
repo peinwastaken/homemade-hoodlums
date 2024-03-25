@@ -48,6 +48,7 @@ SWEP.AimOffsetAng = Angle(0, 15, -25) -- ADS ANGLE OFFSET
 SWEP.AimSpeed = 0.1 -- ADS SPEED MULTIPLIER (0 - 1)
 SWEP.AimSpreadReduction = true -- DOES AIMING REMOVE SPREAD?
 SWEP.AimSpreadReductionMult = 1 -- ^ Multiplier
+SWEP.AimWeaponTilt = 0
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
@@ -77,6 +78,18 @@ function RandomFloat(min, max)
 end
 
 function SWEP:GetAimOffset()
+	local ply = self:GetOwner()
+
+	local attachment = self.Attachments["sight"][self.EquippedAttachments["sight"]]
+
+	if attachment then
+		local att_effects = self:GetAttachmentEffects()
+		local att_name = att_effects["AimPosAttachment"]
+		local att = self:GetAttachment(self:LookupAttachment(att_name))
+
+		return att.Pos, self.AimOffsetAng
+	end
+
 	return self.AimOffsetPos, self.AimOffsetAng
 end
 
@@ -114,14 +127,6 @@ function SWEP:CanFire()
 		return false 
 	end
 
-	if self.Automatic and ply:KeyDown(IN_ATTACK) then
-		return true
-	end
-
-	if not self.Automatic and ply:KeyPressed(IN_ATTACK) then
-		return true
-	end
-
 	return true
 end
 
@@ -130,7 +135,7 @@ function SWEP:Reloading()
 end
 
 function SWEP:Reload()
-	if not self:Reloading() and self:Ammo1() > 0 and self:Clip1() < self:GetMaxClip1() then
+	if not self:Reloading() and self:Ammo1() > 0 and self:Clip1() < self.Primary.ClipSize then
 		local ply = self:GetOwner()
 		ply:SetAnimation(PLAYER_RELOAD)
 		self:EmitSound(self.ReloadSound, 60, 100, 1, CHAN_AUTO)
@@ -139,7 +144,7 @@ function SWEP:Reload()
 
 			local ammo = self:Ammo1()
 			local clip = self:Clip1()
-			local maxclip = self:GetMaxClip1()
+			local maxclip = self.Primary.ClipSize
 			local missing = maxclip - clip
 			local retarded_ammo_shit_fucking_gg = math.Clamp(ammo, 0, maxclip)
 			
@@ -152,6 +157,20 @@ end
 function SWEP:Initialize()
 	self:SetNextPrimaryFire(CurTime())
 	self:SetHoldType(self.HoldType)
+
+	self.EquippedAttachments = {
+		["sight"] = "none",
+		["stock"] = "none",
+		["grip"] = "none",
+		["magazine"] = "none",
+		["extra"] = "none"
+	}
+
+	if SERVER then
+		timer.Simple(1, function()
+			self:SetRandomAttachments()
+		end)
+	end
 end
 
 function SWEP:SetupDataTables()
@@ -229,6 +248,11 @@ function SWEP:PrimaryAttack()
 
 	self:EmitSound(self.Primary.Sound, 80, 100, 1)
 
+	local att_effects = self:GetAttachmentEffects()
+	if att_effects["Automatic"] == true then
+		self.Primary.Automatic = true
+	end
+
 	if SERVER then
 		net.Start("DoEcho")
 		net.WriteString(self.Primary.SoundFar)
@@ -244,8 +268,6 @@ function SWEP:PrimaryAttack()
 		if ply:KeyDown(IN_ATTACK2) and self.AimSpreadReduction then
 			spread = spread - spread * self.AimSpreadReductionMult
 		end
-
-		self:SetAttachmentSlot("extra", "switch")
 		
 		local bullet = {}
 		bullet.Damage = self.Primary.Damage
@@ -258,10 +280,6 @@ function SWEP:PrimaryAttack()
 		bullet.IgnoreEntity = ply:GetVehicle() or nil
 		bullet.TracerName = self.Primary.TracerName or "Tracer"
 		bullet.Tracer = 1
-
-		if SERVER then
-			ply:SetAnimation(PLAYER_ATTACK1)
-		end
 		
 		ply:FireBullets(bullet, true)
 
@@ -330,9 +348,15 @@ function SWEP:Animate()
 
 	-- sprinting
 	if ply:IsSprinting() and not self:Reloading() then
-		self.angleupperR = LerpAngleFT(4, self.angleupperR, Angle(20, 30, 0))
-		self.angleforeR = LerpAngleFT(4, self.angleforeR, Angle(-20, -20, 30))
-		self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, -30, -30))
+		if self:GetHoldType() == "revolver" then
+			self.angleupperR = LerpAngleFT(4, self.angleupperR, Angle(-15, 20, 0))
+			self.angleforeR = LerpAngleFT(4, self.angleforeR, Angle(-20, -30, -30))
+			self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, -30, 0))
+		else
+			self.angleupperR = LerpAngleFT(4, self.angleupperR, Angle(20, 30, 0))
+			self.angleforeR = LerpAngleFT(4, self.angleforeR, Angle(-20, -20, 30))
+			self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, -30, -30))
+		end
 	else
 		self.angleupperR = LerpAngleFT(4, self.angleupperR, Angle(0, 0, 0))
 		self.angleforeR = LerpAngleFT(4, self.angleforeR, Angle(0, 0, 0))
@@ -340,11 +364,7 @@ function SWEP:Animate()
 
 	-- aiming
 	if self:GetAiming() then
-		if self:GetHoldType() == "revolver" then -- pistol?
-			self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, 0, 30))
-		else -- maybe not..
-			self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, 0, -30))
-		end
+		self.anglehandR = LerpAngleFT(4, self.anglehandR, Angle(0, 0, self.AimWeaponTilt))
 		self.anglehead = LerpAngleFT(4, self.anglehead, Angle(-15, -10, 15))
 	else
 		self.anglehead = LerpAngleFT(4, self.anglehead, Angle(0, 0, 0))
