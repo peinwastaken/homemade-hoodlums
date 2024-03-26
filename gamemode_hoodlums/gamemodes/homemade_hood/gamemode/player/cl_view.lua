@@ -22,7 +22,7 @@ local function GetStrafeSpeed(v1, v2)
     return v1:Dot(Vector(v2.y, -v2.x, 0))
 end
 
-local function CalcViewBob(frequency, amplitude)
+function CalcViewBob(frequency, amplitude)
     local frequency = frequency or 12
     local amplitude = amplitude or 2
 
@@ -190,7 +190,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
 
     local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
-    
+
     local view = {
 		origin = finalpos,
 		angles = finalang,

@@ -74,13 +74,6 @@ SWEP.Attachments = {
             }
 		}
 	},
-	["grip"] = {
-		["none"] = {
-			["bodygroup_id"] = 0,
-			["bodygroup_value"] = 0,
-            ["effects"] = {}
-		},
-	},
 	["extra"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,

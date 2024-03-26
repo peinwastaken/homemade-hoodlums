@@ -161,7 +161,7 @@ function SWEP:Initialize()
 	self.EquippedAttachments = {
 		["sight"] = "none",
 		["stock"] = "none",
-		["grip"] = "none",
+		["barrel"] = "none",
 		["magazine"] = "none",
 		["extra"] = "none"
 	}
@@ -246,14 +246,15 @@ function SWEP:PrimaryAttack()
     if not muzzle then return end
     local pos, ang = muzzle.Pos, muzzle.Ang
 
-	self:EmitSound(self.Primary.Sound, 80, 100, 1)
-
 	local att_effects = self:GetAttachmentEffects()
-	if att_effects["Automatic"] == true then
-		self.Primary.Automatic = true
+
+	if att_effects["Suppressed"] then
+		self:EmitSound(att_effects["WeaponSound"], 80, 100, 1)
+	else
+		self:EmitSound(self.Primary.Sound, 80, 100, 1)
 	end
 
-	if SERVER then
+	if SERVER and not att_effects["Suppressed"] then
 		net.Start("DoEcho")
 		net.WriteString(self.Primary.SoundFar)
 		net.WriteVector(pos)

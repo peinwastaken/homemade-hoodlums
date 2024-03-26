@@ -53,8 +53,8 @@ function SWEP:ApplyRecoil()
         mult = self.CrouchRecoilMult
     end
 
-    local recoil_vert = self.RecoilVertical + recoil_vert_add
-    local recoil_hor = self.RecoilHorizontal + recoil_hor_add
+    local recoil_vert = math.Clamp(self.RecoilVertical + recoil_vert_add, 0, 999)
+    local recoil_hor = math.Clamp(self.RecoilHorizontal + recoil_hor_add, 0, 999)
 
     self.rec_vertical = -recoil_vert * mult
     self.rec_horizontal = recoil_hor * RandomFloat(-1, 1) * mult

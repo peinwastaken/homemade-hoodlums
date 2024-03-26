@@ -60,18 +60,13 @@ SWEP.Attachments = {
 			}
 		},
 	},
-	["grip"] = {
-		["none"] = {
-			["bodygroup_id"] = 0,
-			["bodygroup_value"] = 0,
-            ["effects"] = {}
-		},
-	},
 	["magazine"] = {
 		["none"] = {
-			["bodygroup_id"] = 0,
+			["bodygroup_id"] = 1,
 			["bodygroup_value"] = 0,
-            ["effects"] = {}
+            ["effects"] = {
+				["ClipSize"] = 12,
+			}
 		},
 		["extended"] = {
 			["bodygroup_id"] = 1,
@@ -83,17 +78,19 @@ SWEP.Attachments = {
 	},
 	["extra"] = {
 		["none"] = {
-			["bodygroup_id"] = 0,
+			["bodygroup_id"] = 2,
 			["bodygroup_value"] = 0,
-            ["effects"] = {}
+            ["effects"] = {
+				["Automatic"] = false,
+			}
 		},
 		["switch"] = {
 			["bodygroup_id"] = 2,
 			["bodygroup_value"] = 1,
 			["effects"] = {
 				["Automatic"] = true,
-				["RecoilVertical"] = 60,
-				["RecoilHorizontal"] = 30
+				["RecoilVertical"] = 120,
+				["RecoilHorizontal"] = 60
 			}
 		}
 	}

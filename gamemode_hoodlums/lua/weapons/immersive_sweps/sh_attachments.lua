@@ -1,3 +1,10 @@
+if SERVER then
+    AddCSLuaFile("cl_pip.lua")
+end
+if CLIENT then
+    include("cl_pip.lua")
+end
+
 -- currently added attachment effects
 --[[
 WEAPON PROPERTIES
@@ -5,11 +12,13 @@ WEAPON PROPERTIES
 Automatic - bool
 RecoilVertical - number
 RecoilHorizontal - number
+Suppressed - bool
+WeaponSound - sound
 
 SIGHTS
 
 HoloSight - bool
-AimPosAttachment - string
+AimPosAttachment - string attachment
 AimOffset - vector
 ReticleMaterial - material
 ReticleSize - number
@@ -31,13 +40,13 @@ SWEP.Attachments = {
             ["effects"] = {}
 		}
     },
-	["grip"] = {
-		["none"] = {
+    ["barrel"] = {
+        ["none"] = {
 			["bodygroup_id"] = 0,
 			["bodygroup_value"] = 0,
             ["effects"] = {}
 		}
-	},
+    },
     ["magazine"] = {
         ["none"] = {
 			["bodygroup_id"] = 0,
@@ -72,8 +81,6 @@ if SERVER then
     end
 
     concommand.Add("hoodlum_rand_atts", function(ply)
-        if not ply:IsAdmin() then return end
-
         local wep = ply:GetActiveWeapon()
         if IsValid(wep) and wep.Base == "immersive_sweps" then
             wep:SetRandomAttachments(wep:GetRandomAttachments())
@@ -111,7 +118,7 @@ function SWEP:GetRandomAttachments()
                     table.insert(available, att)
                     --print("found attachment " .. tostring(att) .. " for slot " .. tostring(v))
                 end
-            end    
+            end
             
             available_atts[v] = available
         end
@@ -148,8 +155,14 @@ function SWEP:UpdateAttachment(slot)
         self:SetClip1(self.Primary.ClipSize)
     end
     
-    if att_effects["Automatic"] then
-        self.Primary.Automatic = att_effects["Automatic"]
+    if att_effects["Automatic"] == true then
+		self.Primary.Automatic = true
+	elseif att_effects["Automatic"] == false then
+		self.Primary.Automatic = false
+	end
+
+    if att_effects["WeaponName"] then
+        self.PrintName = att_effects["WeaponName"]
     end
 end
 
@@ -178,7 +191,7 @@ end
 hook.Add("PostDrawTranslucentRenderables", "hoodlum_attachments_sights", function()
     local ply = LocalPlayer()
     local wep = ply:GetActiveWeapon()
-    if not IsValid(wep) then return end
+    if not IsValid(wep) or wep.Base ~= "immersive_sweps" then return end
     local effect = wep.Attachments["sight"][wep.EquippedAttachments["sight"]]["effects"]
 
     if effect and effect["HoloSight"] then
@@ -216,5 +229,12 @@ hook.Add("PostDrawTranslucentRenderables", "hoodlum_attachments_sights", functio
 
             render.SetStencilEnable(false)
         cam.End3D2D()
+    elseif effect and effect["PIPSight"] then
+        local sight_att, reticle_mat, reticle_size, sight_size = effect["AimPosAttachment"], effect["ReticleMaterial"], effect["ReticleSize"], effect["SightSize"]
+        local att = wep:GetAttachment(wep:LookupAttachment(sight_att))
+        local att_pos, att_ang = att.Pos, att.Ang
+        att_ang:RotateAroundAxis(att_ang:Right(), 90)
+
+        DoPip(wep, att_pos, att_ang)
     end
 end)
