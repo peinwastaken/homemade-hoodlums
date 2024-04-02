@@ -25,7 +25,9 @@ PLAYER.Items = {
     },
     ["secondary"] = {
         "weapon_m1911",
-        "weapon_glock"
+        "weapon_glock",
+        "weapon_sawedoff",
+        "weapon_p320"
     }
 }
 
@@ -42,6 +44,7 @@ function PLAYER:Loadout()
     ply:RemoveAllAmmo()
     ply:Give(GetRandomItem(self.Items["primary"]))
     ply:Give(GetRandomItem(self.Items["secondary"]))
+    ply:Give("weapon_hands")
 end
 
 function PLAYER:SetModel()

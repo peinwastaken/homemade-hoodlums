@@ -37,6 +37,8 @@ end
 net.Receive("DeathEvent", function()
     local headshot = net.ReadBool()
 
+    print(headshot)
+
     if headshot then
         RunConsoleCommand("stopsound")
     end

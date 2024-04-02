@@ -1,6 +1,6 @@
 SWEP.Base = "immersive_sweps"
 
-SWEP.PrintName 				= "M4A1 (NEW)"
+SWEP.PrintName 				= "M4A1"
 SWEP.Author 				= "pein"
 SWEP.Instructions			= "Every weapon addon needs one of these."
 SWEP.Category 				= "Immersive SWEPs"
@@ -131,7 +131,19 @@ SWEP.Attachments = {
 		["none"] = {
 			["bodygroup_id"] = 0,
 			["bodygroup_value"] = 0,
-            ["effects"] = {}
+            ["effects"] = {
+				["Automatic"] = true
+			}
+		},
+		["pistol"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {
+				["Automatic"] = false,
+				["RecoilVertical"] = -20,
+				["RecoilHorizontal"] = -10,
+				["WeaponName"] = "AR Pistol"
+			}
 		}
 	}
 }

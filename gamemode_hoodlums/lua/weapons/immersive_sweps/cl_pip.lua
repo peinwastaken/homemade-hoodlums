@@ -1,8 +1,12 @@
-pip_size = 512
-local pipRenderTarget = GetRenderTarget("PIPScope" .. pip_size, pip_size, pip_size)
+pip_size = 1024
+local pipRenderTarget = GetRenderTarget("PIPScope" .. pip_size, math.Clamp(pip_size, 0, ScrW()), math.Clamp(pip_size, 0, ScrH()))
 local pipMaterial = CreateMaterial("PIPScope" .. pip_size, "UnlitGeneric",{
     ["$ignorez"] = 1
 })
+
+-- i like it :) toggleable because some might not :(
+CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
+CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
 
 function draw.Circle( x, y, radius, seg )
 	local cir = {}
@@ -19,11 +23,19 @@ function draw.Circle( x, y, radius, seg )
 	surface.DrawPoly( cir )
 end
 
+local fisheye = Material("reticles/fisheye/scope_fisheye")
+function DrawRefract(amount)
+    render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
+    fisheye:SetFloat("$refractamount", amount)
+    render.SetMaterial(fisheye)
+    render.DrawScreenQuad()
+end
+
 local rendering = false
 function DoScope()
     local lply = LocalPlayer()
     local wep = lply:GetActiveWeapon()
-    if not IsValid(wep) then return end
+    if not IsValid(wep) or not wep.GetAttachmentEffects then return end
     local effect = wep:GetAttachmentEffects()
     local att_scope = wep:GetAttachment(wep:LookupAttachment(effect["AimPosAttachment"]))
     local scope_pos, scope_ang = att_scope.Pos, att_scope.Ang
@@ -36,14 +48,19 @@ function DoScope()
     if not rendering then
         rendering = true
 
-        local tr = util.QuickTrace(scope_pos, scope_ang:Forward() * 16, {lply})
+        local tr = util.QuickTrace(scope_pos, scope_ang:Forward() * 24, {lply})
 
         render.PushRenderTarget(pipRenderTarget)
 
         if tr.Hit then
             render.Clear(0, 0, 0, 255)
         else
-            render.RenderView({origin = scope_pos + scope_ang:Forward() * 10, angles = scope_ang, fov = effect["PIPFov"], znear = 5, drawviewer = false})
+            render.RenderView({origin = scope_pos + scope_ang:Forward() * 12, angles = scope_ang, fov = effect["PIPFov"], znear = 5, drawviewer = false})
+        end
+
+        if GetConVar("hoodlum_pip_fisheye"):GetBool() then
+            local amount = GetConVar("hoodlum_pip_fisheye_amount"):GetFloat()
+            DrawRefract(amount)
         end
 
         render.PopRenderTarget()

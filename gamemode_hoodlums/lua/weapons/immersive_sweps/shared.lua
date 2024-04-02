@@ -162,12 +162,13 @@ function SWEP:Initialize()
 		["sight"] = "none",
 		["stock"] = "none",
 		["barrel"] = "none",
+		["underbarrel"] = "none",
 		["magazine"] = "none",
 		["extra"] = "none"
 	}
 
 	if SERVER then
-		timer.Simple(1, function()
+		timer.Simple(0.5, function()
 			self:SetRandomAttachments()
 		end)
 	end
@@ -383,4 +384,33 @@ function SWEP:Animate()
 	ply:ManipulateBoneAngles(upperL, self.angleupperL, false)
 	ply:ManipulateBoneAngles(lowerL, self.angleforeL, false)
 	ply:ManipulateBoneAngles(handL, self.anglehandL, false)
+end
+
+function SWEP:Holster()
+	local ply = self:GetOwner()
+
+	-- head
+	local head = ply:LookupBone("ValveBiped.Bip01_Head1")
+
+	-- right
+	local upperR = ply:LookupBone("ValveBiped.Bip01_R_UpperArm")
+	local lowerR = ply:LookupBone("ValveBiped.Bip01_R_Forearm")
+	local handR = ply:LookupBone("ValveBiped.Bip01_R_Hand")
+
+	-- left
+	local upperL = ply:LookupBone("ValveBiped.Bip01_L_UpperArm")
+	local lowerL = ply:LookupBone("ValveBiped.Bip01_L_Forearm")
+	local handL = ply:LookupBone("ValveBiped.Bip01_L_Hand")
+
+	ply:ManipulateBoneAngles(head, Angle(0, 0, 0), true)
+
+	ply:ManipulateBoneAngles(upperR, Angle(0, 0, 0), true)
+	ply:ManipulateBoneAngles(lowerR, Angle(0, 0, 0), true)
+	ply:ManipulateBoneAngles(handR, Angle(0, 0, 0), true)
+
+	ply:ManipulateBoneAngles(upperL, Angle(0, 0, 0), true)
+	ply:ManipulateBoneAngles(lowerL, Angle(0, 0, 0), true)
+	ply:ManipulateBoneAngles(handL,	Angle(0, 0, 0), true)
+
+	return true
 end

@@ -23,8 +23,8 @@ SWEP.Primary.Sound          = "weapons/usp/usp_unsil-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(3, 0.5, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(2, 0, 2)
-SWEP.RecoilVertical = 60 -- VERTICAL RECOIL
+SWEP.VisualRecoilAngle = Angle(4, 0, 2)
+SWEP.RecoilVertical = 80 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 
@@ -42,7 +42,7 @@ SWEP.AutoSwitchFrom			= false
 SWEP.HoldType               = "revolver"
 
 SWEP.Slot					= 1
-SWEP.SlotPos				= 1
+SWEP.SlotPos				= 0
 SWEP.DrawAmmo				= true
 SWEP.DrawCrosshair			= false
 

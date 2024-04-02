@@ -1,0 +1,7 @@
+"Refract"
+{
+	"$normalmap" "reticles/fisheye/refract_normal"
+	"$refracttint" "[1 1 1]"
+	"$refractamount" 0.1
+	"$scale" "[1 1]"
+}

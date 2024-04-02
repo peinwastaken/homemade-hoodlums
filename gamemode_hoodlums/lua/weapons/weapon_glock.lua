@@ -42,7 +42,7 @@ SWEP.AutoSwitchFrom			= false
 SWEP.HoldType               = "revolver"
 
 SWEP.Slot					= 1
-SWEP.SlotPos				= 1
+SWEP.SlotPos				= 0
 SWEP.DrawAmmo				= true
 SWEP.DrawCrosshair			= false
 
@@ -89,8 +89,8 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
 			["effects"] = {
 				["Automatic"] = true,
-				["RecoilVertical"] = 120,
-				["RecoilHorizontal"] = 60
+				["RecoilVertical"] = 40,
+				["RecoilHorizontal"] = 30
 			}
 		}
 	}

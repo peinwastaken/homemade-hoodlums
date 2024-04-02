@@ -135,7 +135,7 @@ function PLAYER:ToggleRagdoll(hitgroup)
                 obj:SetPos(pos)
                 obj:SetAngles(ang)
                 obj:SetMass(obj:GetMass() * 15)
-                obj:SetVelocity(Vector(0, 0, 0))
+                obj:SetVelocity(self:GetVelocity())
                 obj:SetBuoyancyRatio(15)
             end
         end
@@ -212,7 +212,6 @@ local function getthingstodestroy(bone)
     return {}
 end
 
---[[
 hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
     if ent:GetClass() == "prop_ragdoll" then
         local attacker = dmginfo:GetAttacker()
@@ -226,6 +225,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                 local trace = util.QuickTrace(start, ang:Forward() * 1024, player.GetAll())
 
                 if trace.Hit then
+                    --[[
                     local bone = ent:TranslatePhysBoneToBone(trace.PhysicsBone)
                     local destroylist = getthingstodestroy(ent:GetBoneName(bone))
 
@@ -245,12 +245,42 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                     for i,v in ipairs(bonelist) do
                         local b = ent:LookupBone(v)
                         ent:ManipulateBoneScale(b, Vector(0, 0, 0))
+                    end]]
+
+                    local bone = ent:TranslatePhysBoneToBone(trace.PhysicsBone)
+                    local bonename = ent:GetBoneName(bone)
+                    if RagdollHitGroups[bonename] == HITGROUP_HEAD then
+                        local head = ent:LookupBone("ValveBiped.Bip01_Head1")
+                        ent:ManipulateBoneScale(head, Vector(0, 0, 0))
+
+                        -- temp
+                        if not ent.headshot then
+                            ent.headshot = true
+                            timer.Create("bleed"..ent:EntIndex(), 0.1, 50, function()
+                                local bonepos = ent:GetBonePosition(head)
+                                local boneang = ent:GetBoneMatrix(head):GetAngles()
+                            
+                                local rand = math.random(0, 100)
+                                if rand > 80 then
+                                    util.Decal("Blood", bonepos + Vector(math.random(-10, 10), math.random(-10, 10), 0), bonepos - Vector(0, 0, 64), new)
+                                end
+                            
+                                local effectData = EffectData()
+                                effectData:SetFlags(3)
+                                effectData:SetColor(0)
+                                effectData:SetScale(6)
+                                effectData:SetOrigin(bonepos)
+                                effectData:SetNormal(boneang:Forward())
+                            
+                                util.Effect("bloodspray", effectData, true, true)
+                            end)
+                        end 
                     end
                 end
             end
         end
     end
-end)]]
+end)
 
 hook.Add("Think", "sv_hoodlum_ragdoll_cleanup", function()
     local time = CurTime()

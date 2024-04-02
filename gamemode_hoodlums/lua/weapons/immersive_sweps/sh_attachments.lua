@@ -1,8 +1,11 @@
 if SERVER then
     AddCSLuaFile("cl_pip.lua")
+    AddCSLuaFile("sh_flashlight.lua")
+    include("sh_flashlight.lua")
 end
 if CLIENT then
     include("cl_pip.lua")
+    include("sh_flashlight.lua")
 end
 
 -- currently added attachment effects
@@ -135,6 +138,7 @@ function SWEP:GetAttachmentSlot(slot)
 end
 
 function SWEP:SetAttachmentSlot(slot, new)
+    if not self.Attachments[slot] then return end
     if self.Attachments[slot][new] then
         self.EquippedAttachments[slot] = new
         self:UpdateAttachment(slot)
@@ -169,7 +173,8 @@ end
 function SWEP:GetAttachmentEffects()
     local effect_list = {}
     for slot, attachment in pairs(self.EquippedAttachments) do
-       	local tbl = self.Attachments[slot][attachment]["effects"]
+        if not self.Attachments[slot] then continue end
+        local tbl = self.Attachments[slot][attachment]["effects"]
 
         for effect, value in pairs(tbl) do
             if type(value) == "boolean" then

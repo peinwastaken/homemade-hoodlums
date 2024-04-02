@@ -105,7 +105,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     
     ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
 
-    if IsValid(ragdoll) then
+    if IsValid(ragdoll) and not ply:Alive() then
         local att = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
 
         local view = {
@@ -200,4 +200,26 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     }
 
     return view
+end)
+
+-- this is here only to hide some retarded rendertarget shit when the game is paused
+local ang = 0
+local logo = Material("gui/logo.png")
+local size = {x = 288, y = 128}
+hook.Add("PostDrawHUD", "pausehud", function()
+    ang = ang + FrameTime() * 20
+    if ang > 360 then
+        ang = 0
+    end
+    if gui.IsGameUIVisible() then
+        surface.SetDrawColor(Color(0, 0, 0, 255))
+        surface.DrawRect(0, 0, ScrW(), ScrH())
+
+        surface.SetDrawColor(255, 255, 255, 255)
+        draw.DrawText("unpause the game cuh.. your homies need you", "BudgetLabel", ScrW()/2, ScrH()/2 - 256, color_white, TEXT_ALIGN_CENTER)
+
+        surface.SetDrawColor(255, 255, 255)
+        surface.SetMaterial(logo)
+        surface.DrawTexturedRectRotated(ScrW()/2, ScrH()/2, size.x, size.y, -ang)
+    end 
 end)

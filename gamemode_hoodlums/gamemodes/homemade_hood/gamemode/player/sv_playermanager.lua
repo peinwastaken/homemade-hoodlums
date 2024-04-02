@@ -1,5 +1,6 @@
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply) 
     player_manager.SetPlayerClass(ply, "player_hoodlum")
+    ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
 end)
 
 hook.Add("PlayerInitialSpawn", "hoodlum_intialspawn", function(ply)
