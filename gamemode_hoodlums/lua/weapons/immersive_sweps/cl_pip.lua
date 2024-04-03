@@ -37,7 +37,6 @@ function DoScope()
     local wep = lply:GetActiveWeapon()
     if not IsValid(wep) or not wep.GetAttachmentEffects then return end
     local effect = wep:GetAttachmentEffects()
-    if not effect["PIPScope"] then return end
     local att_scope = wep:GetAttachment(wep:LookupAttachment(effect["AimPosAttachment"]))
     local scope_pos, scope_ang = att_scope.Pos, att_scope.Ang
     scope_ang:RotateAroundAxis(scope_ang:Forward(), -90)
@@ -121,5 +120,10 @@ function DoPip(wep, pos, ang)
 end
 
 hook.Add("PreDrawEffects", "predraweffects", function()
-    DoScope()
+	local lply = LocalPlayer()
+	local wep = lply:GetActiveWeapon()
+	local effect = wep:GetAttachmentEffects()
+	if effect["PIPScope"] then
+		DoScope()
+	end
 end)
