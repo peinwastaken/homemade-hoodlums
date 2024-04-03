@@ -13,7 +13,7 @@ SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
 SWEP.Primary.Delay          = 0.1
-SWEP.Primary.Damage         = 40
+SWEP.Primary.Damage         = 10
 SWEP.Primary.Spread         = 0.2
 SWEP.Primary.BulletCount    = 15
 
