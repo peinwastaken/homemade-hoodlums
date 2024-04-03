@@ -120,10 +120,12 @@ function DoPip(wep, pos, ang)
 end
 
 hook.Add("PreDrawEffects", "predraweffects", function()
-	local lply = LocalPlayer()
-	local wep = lply:GetActiveWeapon()
-	local effect = wep:GetAttachmentEffects()
-	if effect["PIPSight"] then
-		DoScope()
-	end
+    local lply = LocalPlayer()
+    local wep = lply:GetActiveWeapon()
+    if wep.Base == "immersive_sweps" then
+        local effect = wep:GetAttachmentEffects()
+        if effect["PIPSight"] then
+            DoScope()
+        end
+    end
 end)
