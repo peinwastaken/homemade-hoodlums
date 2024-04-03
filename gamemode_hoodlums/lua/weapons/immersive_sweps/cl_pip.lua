@@ -123,7 +123,7 @@ hook.Add("PreDrawEffects", "predraweffects", function()
 	local lply = LocalPlayer()
 	local wep = lply:GetActiveWeapon()
 	local effect = wep:GetAttachmentEffects()
-	if effect["PIPScope"] then
+	if effect["PIPSight"] then
 		DoScope()
 	end
 end)
