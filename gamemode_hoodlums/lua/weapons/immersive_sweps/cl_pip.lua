@@ -1,4 +1,4 @@
-pip_size = 1024
+pip_size = 512
 local pipRenderTarget = GetRenderTarget("PIPScope" .. pip_size, math.Clamp(pip_size, 0, ScrW()), math.Clamp(pip_size, 0, ScrH()))
 local pipMaterial = CreateMaterial("PIPScope" .. pip_size, "UnlitGeneric",{
     ["$ignorez"] = 1
@@ -37,6 +37,7 @@ function DoScope()
     local wep = lply:GetActiveWeapon()
     if not IsValid(wep) or not wep.GetAttachmentEffects then return end
     local effect = wep:GetAttachmentEffects()
+    if not effect["PIPScope"] then return end
     local att_scope = wep:GetAttachment(wep:LookupAttachment(effect["AimPosAttachment"]))
     local scope_pos, scope_ang = att_scope.Pos, att_scope.Ang
     scope_ang:RotateAroundAxis(scope_ang:Forward(), -90)

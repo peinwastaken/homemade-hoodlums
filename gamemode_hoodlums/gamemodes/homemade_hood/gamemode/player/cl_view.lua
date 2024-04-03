@@ -89,7 +89,7 @@ hook.Add("Think", "fallthing", function()
 end)
 
 -- RETARDED!!!!!!!!!!!!!!!!!!
-local camang = Angle(0, 0, 0)
+local camang, eyeangLerp = Angle(0, 0, 0), Angle(0, 0, 0)
 local movelerp = 0
 local aimlerp = 0
 local recoil_cam_ang = Angle(0, 0, 0)
@@ -104,20 +104,6 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local ragdoll = ply:GetNWEntity("ragdoll")
     
     ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
-
-    if IsValid(ragdoll) and not ply:Alive() then
-        local att = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
-
-        local view = {
-            origin = att.Pos,
-            angles = att.Ang,
-            fov = GetConVar("hoodlum_fov"):GetFloat(),
-            drawviewer = false,
-            znear = 5
-        }
-
-        return view
-    end
 
     -- active slop alert
     local eyeang = ply:EyeAngles()
@@ -143,7 +129,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local muzzle_forward, muzzle_right, muzzle_up = Vector(0, 0, 0), Vector(0, 0, 0), Vector(0, 0, 0)
 
     -- original camera pos
-    local campos = eye_pos + ang:Forward() * 1
+    local campos = eye_pos
 
     -- targets
     local eyetarget_pos = campos
@@ -187,9 +173,26 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local viewbob_offset = eye_up * viewbob.y + eye_right * viewbob.z + eye_right * viewbob.x -- axis are all wrong!!!!!!!! im restarted
 
     camang = LerpAngle(GetConVar("hoodlum_cam_smooth"):GetFloat() * FrameTime(), camang, eyeang + velocityang * aimlerp)
+    eyeangLerp = LerpAngle(8 * FrameTime(), eyeangLerp, eye_ang)
 
     local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
+    
+    if IsValid(ragdoll) and not ply:Alive() then
+        local att = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
+
+        eyeangLerp = LerpAngle(12 * FrameTime(), eyeangLerp, att.Ang)
+
+        local view = {
+            origin = att.Pos,
+            angles = eyeangLerp,
+            fov = GetConVar("hoodlum_fov"):GetFloat(),
+            drawviewer = false,
+            znear = 5
+        }
+
+        return view
+    end
 
     local view = {
 		origin = finalpos,

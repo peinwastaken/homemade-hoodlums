@@ -19,7 +19,8 @@ SWEP.Primary.BulletCount    = 1
 
 SWEP.ReloadTime             = 2
 
-SWEP.Primary.Sound          = "weapons/m4a1/m4a1_unsil-1.wav"
+SWEP.Primary.Sound          = "pein/m4a1/m4a1_close.wav"
+SWEP.Primary.SoundFar		= "pein/m4a1/m4a1_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(1, 0.03, 0) -- CAMERA RECOIL

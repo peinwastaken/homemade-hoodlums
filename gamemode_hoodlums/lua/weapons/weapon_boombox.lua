@@ -59,8 +59,6 @@ if CLIENT then
 				local mult = 1 - (dist/wep.MaxAudioDistance)
 				local multClamped = math.Clamp(mult, 0, 1)
 
-				print(multClamped)
-
 				if snd then
 					snd:ChangeVolume(1)
 				end

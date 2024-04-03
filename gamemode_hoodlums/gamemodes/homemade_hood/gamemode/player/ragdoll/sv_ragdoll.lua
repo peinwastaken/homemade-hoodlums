@@ -3,8 +3,6 @@ local PLAYER = FindMetaTable("Player")
 local RagdollCleanup = {}
 
 local RagdollHierarchy = {
-    -- DONT DESTROY TORSO, STOMACH
-
     -- HEAD
     [HITGROUP_HEAD] = {
         ["ValveBiped.Bip01_Neck1"] = 1,
@@ -161,7 +159,6 @@ function PLAYER:ToggleRagdoll(hitgroup)
                 effectData:SetNormal(boneang:Forward())
 
                 util.Effect("bloodspray", effectData, true, true)
-                
             end)
         end
 

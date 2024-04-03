@@ -12,7 +12,7 @@ SWEP.Primary.ClipSize       = 30
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "pistol"
-SWEP.Primary.Delay          = 0.09
+SWEP.Primary.Delay          = 0.1
 SWEP.Primary.Damage         = 80
 SWEP.Primary.Spread         = 0.05
 SWEP.Primary.BulletCount    = 1
@@ -25,7 +25,7 @@ SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 SWEP.VisualRecoil = Vector(2, 0.1, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1, 0, 2)
 SWEP.RecoilVertical = 120 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
+SWEP.RecoilHorizontal = 60 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.AimWeaponTilt = 0
 

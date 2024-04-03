@@ -53,12 +53,8 @@ local tab = {
 }
 
 hook.Add("RenderScreenspaceEffects", "cl_suppression_screenspace", function()
-    if LocalPlayer():Alive() then
-        suppressionAmount = LerpFT(1, suppressionAmount, 0)
-        suppressionShake = LerpAngleFT(1, suppressionShake, Angle(0, 0, 0))
-        suppressionSharpen = LerpFT(0.1, suppressionAmount, 0)
-        suppressionVignette = LerpFT(0.1, suppressionVignette, 0)
-    
+    local lply = LocalPlayer()
+    if lply:Alive() then
         tab["$pp_colour_colour"] = math.Clamp(1 - suppressionAmount * 0.15, 0, 1),
         DrawColorModify(tab)
 
@@ -70,6 +66,11 @@ hook.Add("RenderScreenspaceEffects", "cl_suppression_screenspace", function()
         render.SetMaterial(vignetteMat)
         render.DrawScreenQuad()
     end
+
+    suppressionAmount = LerpFT(1, suppressionAmount, 0)
+    suppressionShake = LerpAngleFT(1, suppressionShake, Angle(0, 0, 0))
+    suppressionSharpen = LerpFT(0.1, suppressionAmount, 0)
+    suppressionVignette = LerpFT(0.1, suppressionVignette, 0)
 end)
 
 hook.Add("ClientDeath", "cl_suppression_clientdeath", function()

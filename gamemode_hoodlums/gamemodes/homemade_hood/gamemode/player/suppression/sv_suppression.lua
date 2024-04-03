@@ -22,9 +22,9 @@ hook.Add("EntityFireBullets", "hoodlum_suppression_entityfirebullets", function(
             local amount = 1 - mult
 
             if supp then
-                ply:Suppress(amount * 0.5)
+                ply:Suppress(amount * 0.5 * wep.SuppressionMult)
             else
-                ply:Suppress(amount)
+                ply:Suppress(amount * wep.SuppressionMult)
             end
         end
     end

@@ -1,4 +1,5 @@
--- getnwbool "flashlight"
+-- todo: add all this shit
+--[[
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:GetFlashlight()
@@ -17,4 +18,4 @@ if SERVER then
 
         return false
     end)
-end
+end]]

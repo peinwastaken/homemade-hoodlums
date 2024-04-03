@@ -19,14 +19,15 @@ SWEP.Primary.BulletCount    = 1
 
 SWEP.ReloadTime             = 2
 
-SWEP.Primary.Sound          = "weapons/scout/scout_fire-1.wav"
+SWEP.Primary.Sound          = "pein/remington700/remington700_near.wav"
+SWEP.Primary.SoundFar		= "pein/remington700/remington700_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(1.45, 0.2, -0.1) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(1.45, 0.2, -0.1)
 SWEP.VisualRecoilAngle = Angle(5, 0, 5)
-SWEP.RecoilVertical = 60 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
-SWEP.CrouchRecoilMult = 0.65 -- CROUCH RECOIL MULTIPLIER
+SWEP.RecoilVertical = 60
+SWEP.RecoilHorizontal = 30
+SWEP.CrouchRecoilMult = 0.65
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
 SWEP.AimOffsetAng           = Angle(-3, -6, 0)
@@ -34,6 +35,8 @@ SWEP.AimSpeed               = 4
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
 SWEP.AimWeaponTilt = -3
+
+SWEP.SuppressionMult = 5
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false

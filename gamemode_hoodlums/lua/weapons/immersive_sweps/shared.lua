@@ -28,27 +28,29 @@ SWEP.Primary.Spread = 0
 SWEP.Primary.Sound = "weapons/fiveseven/fiveseven-1.wav"
 SWEP.Primary.SoundFar       = Sound("pein/m1911/m1911_far.wav")
 SWEP.Primary.Delay = 0.12
-SWEP.Primary.BulletCount = 1 -- BULLET AMOUNT
+SWEP.Primary.BulletCount = 1
 
 SWEP.Automatic = true
 
-SWEP.ReloadTime = 2 -- RELOAD TIME
-SWEP.ReloadSound = "" -- RELOAD SOUND
+SWEP.ReloadTime = 2
+SWEP.ReloadSound = ""
 
 -- WEAPON HANDLING
-SWEP.VisualRecoil = Vector(4, 2, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(4, 2, 0) 
 SWEP.VisualRecoilAngle = Angle(-1, 0, 0)
-SWEP.RecoilVertical = 0 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 0 -- HORIZONTAL RECOIL
-SWEP.CrouchRecoilMult = 0.5 -- CROUCH RECOIL MULTIPLIER
+SWEP.RecoilVertical = 0
+SWEP.RecoilHorizontal = 0
+SWEP.CrouchRecoilMult = 0.5
 
 -- AIMING
-SWEP.AimOffsetPos = Vector(5.1, -7, 0.725) -- ADS POSITION OFFSET
-SWEP.AimOffsetAng = Angle(0, 15, -25) -- ADS ANGLE OFFSET
-SWEP.AimSpeed = 0.1 -- ADS SPEED MULTIPLIER (0 - 1)
-SWEP.AimSpreadReduction = true -- DOES AIMING REMOVE SPREAD?
-SWEP.AimSpreadReductionMult = 1 -- ^ Multiplier
+SWEP.AimOffsetPos = Vector(5.1, -7, 0.725)
+SWEP.AimOffsetAng = Angle(0, 15, -25)
+SWEP.AimSpeed = 0.1
+SWEP.AimSpreadReduction = true
+SWEP.AimSpreadReductionMult = 1
 SWEP.AimWeaponTilt = 0
+
+SWEP.SuppressionMult = 1
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
@@ -146,10 +148,9 @@ function SWEP:Reload()
 			local clip = self:Clip1()
 			local maxclip = self.Primary.ClipSize
 			local missing = maxclip - clip
-			local retarded_ammo_shit_fucking_gg = math.Clamp(ammo, 0, maxclip)
 			
 			ply:SetAmmo(ammo - missing, self.Primary.Ammo)
-			self:SetClip1(retarded_ammo_shit_fucking_gg)
+			self:SetClip1(maxclip)
 		end)
 	end
 end
@@ -168,7 +169,7 @@ function SWEP:Initialize()
 	}
 
 	if SERVER then
-		timer.Simple(0.5, function()
+		timer.Simple(1, function()
 			self:SetRandomAttachments()
 		end)
 	end
@@ -250,7 +251,7 @@ function SWEP:PrimaryAttack()
 	local att_effects = self:GetAttachmentEffects()
 
 	if att_effects["Suppressed"] then
-		self:EmitSound(att_effects["WeaponSound"], 80, 100, 1)
+		self:EmitSound(att_effects["WeaponSound"], 70, 100, 1)
 	else
 		self:EmitSound(self.Primary.Sound, 80, 100, 1)
 	end

@@ -93,9 +93,10 @@ end
 
 if CLIENT then
     net.Receive("SendAttachments", function()
+        local lply = LocalPlayer()
         local ent = net.ReadEntity()
         local attachments = net.ReadTable()
-        
+
         for i,v in pairs(attachments) do
             ent:SetAttachmentSlot(i, v)
         end
@@ -152,7 +153,7 @@ function SWEP:UpdateAttachment(slot)
 
     self:SetBodygroup(id, value)
 
-    PrintTable(att_effects)
+    --PrintTable(att_effects)
 
     if att_effects["ClipSize"] then
         self.Primary.ClipSize = att_effects["ClipSize"]

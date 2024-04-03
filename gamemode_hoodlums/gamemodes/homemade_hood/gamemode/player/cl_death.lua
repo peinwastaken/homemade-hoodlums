@@ -7,7 +7,7 @@ local function CreateDeathScreen(headshot)
             surface.SetDrawColor(Color(0, 0, 0, 255))
             surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
 
-            draw.SimpleText("You were shot in the head.", "Trebuchet18", ScrW()/2, ScrH()/2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("You were shot in the head.", "FancyOldTimey", ScrW()/2, ScrH()/2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end)
 
         hook.Add("RenderScreenspaceEffects", "deathscreen", function()
@@ -36,8 +36,6 @@ end
 
 net.Receive("DeathEvent", function()
     local headshot = net.ReadBool()
-
-    print(headshot)
 
     if headshot then
         RunConsoleCommand("stopsound")

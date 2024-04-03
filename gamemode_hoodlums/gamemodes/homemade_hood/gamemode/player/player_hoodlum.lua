@@ -21,7 +21,8 @@ PLAYER.Items = {
         "weapon_m4_new",
         "weapon_draco",
         "weapon_mpx",
-        "weapon_remington700"
+        "weapon_remington700",
+        "weapon_aks74u"
     },
     ["secondary"] = {
         "weapon_m1911",
