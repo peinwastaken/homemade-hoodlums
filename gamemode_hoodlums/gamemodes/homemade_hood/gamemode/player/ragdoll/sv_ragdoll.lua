@@ -118,7 +118,7 @@ function PLAYER:ToggleRagdoll(hitgroup)
         new:PhysWake()
         new:Spawn()
         new:Activate()
-        new:SetCollisionGroup(COLLISION_GROUP_WORLD)
+        new:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE)
 
         local physobjs = new:GetPhysicsObjectCount()
         for i = 0, physobjs - 1 do
@@ -216,7 +216,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
         if attacker:IsPlayer() then
             local inflictor = dmginfo:GetInflictor()
             local wep = attacker:GetActiveWeapon()
-            if IsValid(wep) then
+            if IsValid(wep) and wep.GetMuzzle then
                 local start, ang = wep:GetMuzzle()
                 local hitpos = dmginfo:GetDamagePosition()
                 local trace = util.QuickTrace(start, ang:Forward() * 1024, player.GetAll())

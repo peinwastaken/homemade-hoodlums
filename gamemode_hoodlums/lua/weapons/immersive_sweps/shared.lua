@@ -3,10 +3,14 @@ if SERVER then
 
 	AddCSLuaFile("sh_attachments.lua")
 	include("sh_attachments.lua")
+
+	AddCSLuaFile("sh_laser.lua")
+	include("sh_laser.lua")
 end
 if CLIENT then
 	include("cl_recoil.lua")
 	include("sh_attachments.lua")
+	include("sh_laser.lua")
 end
 
 
@@ -169,9 +173,7 @@ function SWEP:Initialize()
 	}
 
 	if SERVER then
-		timer.Simple(1, function()
-			self:SetRandomAttachments()
-		end)
+		self:SetRandomAttachments()
 	end
 end
 
@@ -297,17 +299,19 @@ function SWEP:PrimaryAttack()
 		self:TakePrimaryAmmo(1)
 	end
 
-	local effectdata = EffectData()
-	effectdata:SetEntity(self)
-	effectdata:SetAttachment(self:LookupAttachment("muzzle"))
-	effectdata:SetFlags(3)
-	util.Effect("MuzzleFlash", effectdata)
+	if not att_effects["Suppressed"] then
+		local effectdata = EffectData()
+		effectdata:SetEntity(self)
+		effectdata:SetAttachment(self:LookupAttachment("muzzle"))
+		effectdata:SetFlags(3)
+		util.Effect("MuzzleFlash", effectdata)
+	end
 
 	local effectdatasmoke = EffectData()
 	effectdatasmoke:SetOrigin(pos)
 	effectdatasmoke:SetMagnitude(0)
 	effectdatasmoke:SetScale(0)
-	util.Effect("ElectricSpark", effectdata)
+	util.Effect("ElectricSpark", effectdatasmoke)
 end
 
 -- hello to whoever is reading this

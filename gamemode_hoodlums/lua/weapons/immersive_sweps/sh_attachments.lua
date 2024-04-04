@@ -78,11 +78,11 @@ if SERVER then
         end
 
         net.Start("SendAttachments")
-        net.WriteEntity(self)
+        net.WriteInt(self:EntIndex(), 32)
         net.WriteTable(self.EquippedAttachments)
         net.Broadcast()
     end
-
+    
     concommand.Add("hoodlum_rand_atts", function(ply)
         local wep = ply:GetActiveWeapon()
         if IsValid(wep) and wep.Base == "immersive_sweps" then
@@ -94,12 +94,27 @@ end
 if CLIENT then
     net.Receive("SendAttachments", function()
         local lply = LocalPlayer()
-        local ent = net.ReadEntity()
+        local entindex = net.ReadInt(32)
         local attachments = net.ReadTable()
+        
+        local valid = false
+        local tries = 0
 
-        for i,v in pairs(attachments) do
-            ent:SetAttachmentSlot(i, v)
+        local function check()
+            local ent = Entity(entindex)
+            if not IsValid(ent) then
+                if tries < 30 then
+                    timer.Simple(0.1, check)
+                    tries = tries + 1
+                end
+            else
+                for i,v in pairs(attachments) do
+                    ent:SetAttachmentSlot(i, v)
+                end
+            end
         end
+
+        check()
     end)
 end
 

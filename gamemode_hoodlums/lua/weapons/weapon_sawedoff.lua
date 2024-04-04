@@ -2,7 +2,7 @@ SWEP.Base = "immersive_sweps"
 
 SWEP.PrintName 				= "Sawed-Off Shotgun"
 SWEP.Author 				= "pein"
-SWEP.Instructions			= "Why did you decide to shorten the barrel?"
+SWEP.Instructions			= "A shotgun of unknown origin. Why did you shorten the barrel?"
 SWEP.Category 				= "Immersive SWEPs"
 
 SWEP.Spawnable 				= true

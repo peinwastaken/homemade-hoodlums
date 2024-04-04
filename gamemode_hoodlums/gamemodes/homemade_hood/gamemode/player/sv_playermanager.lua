@@ -30,3 +30,7 @@ end)
 hook.Add("PlayerDeathSound", "hoodlum_deathsound", function(ply)
     return true
 end)
+
+hook.Add("GetFallDamage", "hoodlum_falldamage", function(ply, velocity)
+    return velocity/6
+end)

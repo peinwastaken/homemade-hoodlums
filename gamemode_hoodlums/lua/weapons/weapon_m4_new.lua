@@ -2,7 +2,7 @@ SWEP.Base = "immersive_sweps"
 
 SWEP.PrintName 				= "M4A1"
 SWEP.Author 				= "pein"
-SWEP.Instructions			= "Every weapon addon needs one of these."
+SWEP.Instructions			= "Every weapon addon needs one of these. Featuring ATTACHMENTS!"
 SWEP.Category 				= "Immersive SWEPs"
 
 SWEP.Spawnable 				= true

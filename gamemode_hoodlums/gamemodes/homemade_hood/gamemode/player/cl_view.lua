@@ -162,7 +162,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     else
         movelerp = math.Clamp(movelerp - 1 * FrameTime(), 0, max)
     end
-
+    
     local strafespeed = GetStrafeSpeed(velocity, ply:EyeAngles():Forward())
     local strafemult = math.Clamp(strafespeed / ply:GetRunSpeed(), -1, 1)
     local velocityang = Angle(0, 0, 7) * strafemult

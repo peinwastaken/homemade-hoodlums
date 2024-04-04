@@ -126,7 +126,16 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["Flashlight"] = true,
-				["FlashlightAttachment"] = "pos_flashlight"
+				["FlashlightAttachment"] = "pos_flashlight",
+				["FlashlightSize"] = 0.35,
+			}
+		},
+		["laser"] = {
+			["bodygroup_id"] = 4,
+			["bodygroup_value"] = 1,
+            ["effects"] = {
+				["Laser"] = true,
+				["LaserAttachment"] = "pos_flashlight",
 			}
 		}
 	},

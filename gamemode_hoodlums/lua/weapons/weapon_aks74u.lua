@@ -24,8 +24,8 @@ SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.1, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1, 0, 2)
-SWEP.RecoilVertical = 120 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 60 -- HORIZONTAL RECOIL
+SWEP.RecoilVertical = 100 -- VERTICAL RECOIL
+SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.AimWeaponTilt = 0
 
