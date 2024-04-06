@@ -17,7 +17,7 @@ SWEP.Primary.Damage         = 80
 SWEP.Primary.Spread         = 0.02
 SWEP.Primary.BulletCount    = 1
 
-SWEP.ReloadTime             = 2
+SWEP.ReloadTime             = 1.5
 
 SWEP.Primary.Sound          = "pein/m4a1/m4a1_close.wav"
 SWEP.Primary.SoundFar		= "pein/m4a1/m4a1_far.wav"

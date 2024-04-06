@@ -178,7 +178,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
     
-    if IsValid(ragdoll) and not ply:Alive() then
+    if IsValid(ragdoll) then
         local att = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
 
         eyeangLerp = LerpAngle(12 * FrameTime(), eyeangLerp, att.Ang)
@@ -216,7 +216,7 @@ hook.Add("PostDrawHUD", "pausehud", function()
     end
     if gui.IsGameUIVisible() then
         surface.SetDrawColor(Color(0, 0, 0, 255))
-        surface.DrawRect(0, 0, ScrW(), ScrH())
+        surface.DrawRect(-1, -1, ScrW() + 1, ScrH() + 1)
 
         surface.SetDrawColor(255, 255, 255, 255)
         draw.DrawText("unpause the game cuh.. your homies need you", "BudgetLabel", ScrW()/2, ScrH()/2 - 256, color_white, TEXT_ALIGN_CENTER)

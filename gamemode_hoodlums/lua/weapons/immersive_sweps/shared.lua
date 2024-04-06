@@ -45,6 +45,8 @@ SWEP.VisualRecoilAngle = Angle(-1, 0, 0)
 SWEP.RecoilVertical = 0
 SWEP.RecoilHorizontal = 0
 SWEP.CrouchRecoilMult = 0.5
+SWEP.ManualCycle = false
+SWEP.CycleTime = 0.5
 
 -- AIMING
 SWEP.AimOffsetPos = Vector(5.1, -7, 0.725)
@@ -66,6 +68,8 @@ SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false
 
 SWEP.HoldType = ""
+
+SWEP.CanDrop = true
 
 function LerpFT(lerp, from, to)
 	return Lerp(math.min(1, lerp * FrameTime()), from, to)
@@ -159,6 +163,18 @@ function SWEP:Reload()
 	end
 end
 
+function SWEP:Cycle()
+	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay + self.CycleTime)
+	timer.Create("cycle"..self:EntIndex(), self.CycleTime, 1, function()
+		self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
+		self.cyclerequired = false
+	end)
+end
+
+function SWEP:Cycling()
+	return timer.Exists("cycle"..self:EntIndex())
+end
+
 function SWEP:Initialize()
 	self:SetNextPrimaryFire(CurTime())
 	self:SetHoldType(self.HoldType)
@@ -171,10 +187,6 @@ function SWEP:Initialize()
 		["magazine"] = "none",
 		["extra"] = "none"
 	}
-
-	if SERVER then
-		self:SetRandomAttachments()
-	end
 end
 
 function SWEP:SetupDataTables()
@@ -186,7 +198,7 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:SecondaryAttack()
-
+	-- :(
 end
 
 hook.Add("Think", "client_immersive_sweps", function()
@@ -239,6 +251,57 @@ if CLIENT then
 	end)
 end
 
+local SurfaceHardness = {
+	[MAT_CONCRETE] = 0.75,
+	[MAT_DIRT] = 0.5,
+	[MAT_PLASTIC] = 0.25,
+	[MAT_WOOD] = 0.5,
+	[MAT_FLESH] = 0.35,
+}
+
+function SWEP:CalculateBulletPenetration(trace)
+	local ply = self:GetOwner()
+	local hitpos, normal, hitnormal, hardness = trace.HitPos, trace.Normal, trace.HitNormal, SurfaceHardness[trace.MatType]
+	if not hardness or hardness == 0 then
+		hardness = 1
+	end
+	local ang = math.abs(math.deg(math.asin(normal:Dot(hitnormal))))
+
+	if ang > 30 then
+		local penetrated = false
+		local maxdist = self.Primary.Damage * 0.1 / hardness
+		local dist = 5
+		local pos = trace.HitPos
+		while not penetrated and dist < maxdist do
+			pos = hitpos + normal * dist
+			local tr = util.QuickTrace(pos, -normal * dist)
+			if not tr.StartSolid and tr.Hit then
+				penetrated = true
+
+				local bullet = {}
+				bullet.Damage = self.Primary.Damage * 0.5
+				bullet.Num = 1
+				bullet.Src = pos + normal
+				bullet.Dir = normal
+				bullet.Spread = Vector(spread, spread)
+				bullet.AmmoType = self.Primary.Ammo
+				bullet.Attacker = ply
+				bullet.IgnoreEntity = ply:GetVehicle() or nil
+				bullet.TracerName = "nil"
+				bullet.Tracer = 0
+
+				ply:FireBullets(bullet)
+			else
+				dist = dist + 5
+			end
+		end
+	end
+end
+
+function SWEP:BulletCallback(ply, trace, dmginfo)
+	self:CalculateBulletPenetration(trace)
+end
+
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
 
@@ -252,21 +315,13 @@ function SWEP:PrimaryAttack()
 
 	local att_effects = self:GetAttachmentEffects()
 
+	ply:LagCompensation(true)
+
 	if att_effects["Suppressed"] then
 		self:EmitSound(att_effects["WeaponSound"], 70, 100, 1)
 	else
 		self:EmitSound(self.Primary.Sound, 80, 100, 1)
 	end
-
-	if SERVER and not att_effects["Suppressed"] then
-		net.Start("DoEcho")
-		net.WriteString(self.Primary.SoundFar)
-		net.WriteVector(pos)
-		net.WritePlayer(ply)
-		net.Broadcast()
-	end
-
-	ply:LagCompensation(true)
 
 	if IsFirstTimePredicted() then
 		local spread = self.Primary.Spread
@@ -285,12 +340,27 @@ function SWEP:PrimaryAttack()
 		bullet.IgnoreEntity = ply:GetVehicle() or nil
 		bullet.TracerName = self.Primary.TracerName or "Tracer"
 		bullet.Tracer = 1
+		bullet.Callback = function(ply, trace, dmginfo)
+			self:BulletCallback(ply, trace, dmginfo)
+		end
 		
 		ply:FireBullets(bullet, true)
 
 		if CLIENT then
 			self:ApplyRecoil(self.VisualRecoil, self.Recoil)
 		end
+
+		if self.ManualCycle then
+			self:Cycle()
+		end
+	end
+
+	if SERVER and not att_effects["Suppressed"] then
+		net.Start("DoEcho")
+		net.WriteString(self.Primary.SoundFar)
+		net.WriteVector(pos)
+		net.WritePlayer(ply)
+		net.Broadcast()
 	end
 
 	ply:LagCompensation(false)

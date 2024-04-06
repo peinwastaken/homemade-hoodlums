@@ -27,12 +27,12 @@ SWEP.DrawCrosshair			= false
 
 SWEP.WorldModel				= ""
 
+SWEP.cooldown = 0
+
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 end
 
-SWEP.Interacting = nil
-SWEP.InteractingPhys = nil
 function SWEP:GetInteract()
 	return self.Interacting, self.InteractingPhys
 end
@@ -47,9 +47,18 @@ function SWEP:SetInteract(ent, physbone)
 	end
 end
 
+function SWEP:SetCooldown(time)
+	self.cooldown = CurTime() + time
+end
+
+function SWEP:IsOnCooldown()
+	return CurTime() < self.cooldown
+end
+
 local allowgrab = {
 	["prop_ragdoll"] = true,
-	["prop_physics"] = true
+	["prop_physics"] = true,
+	["prop_physics_multiplayer"] = true,
 }
 
 SWEP.holding = false
@@ -57,17 +66,17 @@ function SWEP:Think()
 	local ply = self:GetOwner()
 
 	if SERVER then
+		if self:IsOnCooldown() then return end
+
 		local eyepos, eyeang = ply:EyePos(), ply:EyeAngles()
 		if not self.holding and ply:KeyDown(IN_ATTACK) then
 			self.holding = true
 
-			print(self.holding)
 		elseif self.holding and not ply:KeyDown(IN_ATTACK) then
 			self.holding = false
 
-			print(self.holding)
-
 			self:SetInteract(nil, nil)
+			self:SetCooldown(0.5)
 		end
 
 		if self.holding then
@@ -80,7 +89,7 @@ function SWEP:Think()
 					end
 				end
 			else
-				local physobj = ent:GetPhysicsObject(phys)
+				local physobj = ent:GetPhysicsObjectNum(phys)
 				local phys_pos = physobj:GetPos()
 				local diff = (eyepos + eyeang:Forward() * self.Reach) - phys_pos
 
@@ -89,6 +98,13 @@ function SWEP:Think()
 				end
 
 				physobj:SetVelocity(diff * 5)
+
+				if ply:KeyPressed(IN_ATTACK2) then
+					physobj:SetVelocity(eyeang:Forward() * 500)
+					physobj:SetAngleVelocity(Vector(math.random(-5, 5), math.random(-5, 5), 5) * math.random(-200, 200))
+					self:SetInteract(nil, nil)
+					self:SetCooldown(1)
+				end
 			end
 		end
 	end
@@ -103,13 +119,16 @@ function SWEP:DrawHUD()
 	local eyepos, eyeang = ply:EyePos(), ply:EyeAngles()
 	
 	local tr = util.QuickTrace(eyepos, eyeang:Forward() * self.Reach, {ply})
-	
 	if tr.Hit then
 		local pos = tr.HitPos:ToScreen()
 		local dist = (eyepos - tr.HitPos):Length()
 		local size = math.Clamp(1 - dist / self.Reach + 0.25, 0, 1)
 		
-		surface.SetDrawColor(255, 255, 255, 80)
+		if tr.Entity and allowgrab[tr.Entity:GetClass()] then
+			surface.SetDrawColor(121, 181, 98, 80)
+		else
+			surface.SetDrawColor(255, 255, 255, 80)
+		end
 		draw.Circle(pos.x, pos.y, ScreenScale(12) * size, 32)
 	end
 end

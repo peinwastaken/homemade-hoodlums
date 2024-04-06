@@ -19,7 +19,7 @@ SWEP.Primary.BulletCount    = 1
 
 SWEP.ReloadTime             = 2
 
-SWEP.Primary.Sound          = "weapons/ak47/ak47-1.wav"
+SWEP.Primary.Sound          = "pein/ak74/ak_single.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.1, 0) -- CAMERA RECOIL
@@ -31,7 +31,7 @@ SWEP.AimWeaponTilt = 0
 
 SWEP.AimOffsetPos           = Vector(6, -4.3, 1.43)
 SWEP.AimOffsetAng           = Angle(-5, 0, 0)
-SWEP.AimSpeed               = 7
+SWEP.AimSpeed               = 8
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
 

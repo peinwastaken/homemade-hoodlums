@@ -68,8 +68,9 @@ SWEP.Attachments = {
 
 if SERVER then
     util.AddNetworkString("SendAttachments")
+    util.AddNetworkString("SetAttachment")
 
-    function SWEP:SetRandomAttachments(tbl)
+    function SWEP:SetRandomAttachments()
         local attachments = self:GetRandomAttachments()
     
         for slot, tbl in pairs(attachments) do
@@ -92,17 +93,41 @@ if SERVER then
 end
 
 if CLIENT then
+    net.Receive("SetAttachment", function(ply)
+        local lply = LocalPlayer()
+        local entindex = net.ReadInt(32)
+        local slot = net.ReadString()
+        local att = net.ReadString()
+
+        local valid = false 
+        local tries = 0
+
+        local function check()
+            local ent = Entity(entindex)
+            if not IsValid(ent) or not ent.SetAttachmentSlot then
+                if tries < 30 then
+                    timer.Simple(0.1, check)
+                    tries = tries + 1
+                end
+            else
+                ent:SetAttachmentSlot(slot, att)
+            end
+        end
+
+        check()
+    end)
+
     net.Receive("SendAttachments", function()
         local lply = LocalPlayer()
         local entindex = net.ReadInt(32)
         local attachments = net.ReadTable()
-        
+
         local valid = false
         local tries = 0
 
         local function check()
             local ent = Entity(entindex)
-            if not IsValid(ent) then
+            if not IsValid(ent) or not ent.SetAttachmentSlot then
                 if tries < 30 then
                     timer.Simple(0.1, check)
                     tries = tries + 1
@@ -155,10 +180,23 @@ end
 
 function SWEP:SetAttachmentSlot(slot, new)
     if not self.Attachments[slot] then return end
+
+    if SERVER then
+        net.Start("SetAttachment")
+        net.WriteInt(self:EntIndex(), 32)
+        net.WriteString(slot)
+        net.WriteString(new)
+        net.Broadcast()
+    end
+
     if self.Attachments[slot][new] then
         self.EquippedAttachments[slot] = new
         self:UpdateAttachment(slot)
     end
+end
+
+function SWEP:GetEquippedAttachments()
+    return self.EquippedAttachments
 end
 
 function SWEP:UpdateAttachment(slot)

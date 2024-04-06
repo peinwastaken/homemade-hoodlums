@@ -1,5 +1,6 @@
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply) 
     player_manager.SetPlayerClass(ply, "player_hoodlum")
+    player_manager.RunClass(ply, "OnRespawn")
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
 end)
 
@@ -20,7 +21,7 @@ local deathsounds = {
     "vo/npc/male01/ow01.wav",
     "vo/npc/male01/ow02.wav"
 }
-hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply)
+hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, attacker, dmginfo)
     if ply:LastHitGroup() ~= HITGROUP_HEAD then
         local snd = deathsounds[math.random(1, #deathsounds)]
         ply:EmitSound( snd, SNDLVL_NORM, 100 )
@@ -33,4 +34,14 @@ end)
 
 hook.Add("GetFallDamage", "hoodlum_falldamage", function(ply, velocity)
     return velocity/6
+end)
+
+hook.Add("PlayerCanPickupWeapon", "canpickupwep", function(ply, wep)
+    local class = wep:GetClass()
+
+    if ply:HasWeapon(class) then
+        return false
+    end
+
+    return true
 end)

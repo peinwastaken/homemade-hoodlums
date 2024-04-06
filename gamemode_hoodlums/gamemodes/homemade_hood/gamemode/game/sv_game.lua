@@ -1,5 +1,3 @@
-print("server game")
-
 -- network strings
 util.AddNetworkString("PlayerDeath")
 util.AddNetworkString("DeathEvent")
@@ -64,10 +62,6 @@ function RespawnPlayer(ply, t)
         hook.Run("PlayerRespawn", ply)
     end)
 end
-
-hook.Add("GameStart", "hoodlum_gamestart", function()
-
-end)
 
 hook.Add("PlayerInitialSpawn", "hoodlum_initialspawn", function(ply)
     ply:KillSilent()

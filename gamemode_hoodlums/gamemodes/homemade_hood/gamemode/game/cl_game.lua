@@ -1,5 +1,3 @@
-print("client game")
-
 net.Receive("PlayerDeath", function()
     local ply = net.ReadPlayer()
     local weapon = net.ReadEntity()

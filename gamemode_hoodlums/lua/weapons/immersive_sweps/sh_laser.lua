@@ -50,11 +50,11 @@ if CLIENT then
                 local dist = eyedir:Length()
                 local maxdist = 1000
                 local mult = math.Clamp(1 - dist/maxdist, 0, 1)
-                local dot = flashdir:Dot(eyedir:GetNormalized()) - 0.95
+                local dot = math.Clamp(flashdir:Dot(eyedir:GetNormalized()) - 0.98, 0, 1)
 
                 -- retarded,, will change later
                 if dot > 0 then
-                    local tr = util.QuickTrace(att.Pos, eyedir, {lply, ply})
+                    local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
                     local size = 16000 * mult * dot
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
@@ -107,7 +107,6 @@ if SERVER then
     concommand.Add("hoodlum_laser_toggle", function(ply)
         local enabled = ply:GetNWBool("laser")
         ply:SetNWBool("laser", !enabled)
-        print(!enabled)
     end)
 
     hook.Add("PlayerRespawn", "laser_respawn", function(ply)

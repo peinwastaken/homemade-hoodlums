@@ -1,7 +1,13 @@
+-- retardation incoming
 local PLAYER = FindMetaTable("Player")
 
 local RagdollCleanup = {}
 
+function PLAYER:GetRagdollCooldown()
+    return timer.Exists("ragdollcooldown"..self:EntIndex())
+end
+
+--[[
 local RagdollHierarchy = {
     -- HEAD
     [HITGROUP_HEAD] = {
@@ -72,7 +78,7 @@ local RagdollHierarchy = {
         ["ValveBiped.Bip01_L_Foot"] = 3,
         ["ValveBiped.Bip01_L_Toe0"] = 3
     }
-}
+}]]
 
 local RagdollHitGroups = {
     ["ValveBiped.Bip01_Head1"] = HITGROUP_HEAD,
@@ -82,8 +88,8 @@ local RagdollHitGroups = {
     ["ValveBiped.Bip01_L_UpperArm"] = HITGROUP_LEFTARM,
     ["ValveBiped.Bip01_L_Forearm"] = HITGROUP_LEFTARM,
     ["ValveBiped.Bip01_L_Hand"] = HITGROUP_LEFTARM,
-    --["ValveBiped.Bip01_Pelvis"] = HITGROUP_STOMACH,
-    --["ValveBiped.Bip01_Spine2"] = HITGROUP_CHEST,
+    ["ValveBiped.Bip01_Pelvis"] = HITGROUP_STOMACH,
+    ["ValveBiped.Bip01_Spine2"] = HITGROUP_CHEST,
     ["ValveBiped.Bip01_L_Thigh"] = HITGROUP_LEFTLEG,
     ["ValveBiped.Bip01_L_Calf"] = HITGROUP_LEFTLEG,
     ["ValveBiped.Bip01_L_Foot"] = HITGROUP_LEFTLEG,
@@ -92,11 +98,26 @@ local RagdollHitGroups = {
     ["ValveBiped.Bip01_R_Foot"] = HITGROUP_RIGHTLEG
 }
 
+local HitgroupDamageMultiplier = {
+    [HITGROUP_HEAD] = 2,
+    [HITGROUP_CHEST] = 1,
+    [HITGROUP_STOMACH] = 0.7,
+    [HITGROUP_RIGHTARM] = 0.3,
+    [HITGROUP_RIGHTLEG] = 0.3,
+    [HITGROUP_LEFTARM] = 0.3,
+    [HITGROUP_LEFTLEG] = 0.3
+}
+
+concommand.Add("hoodlum_ragdoll", function(ply)
+    ply:ToggleRagdoll(nil)
+end, false, "toggle ragdoll", FCVAR_NONE)
+
 function PLAYER:ClearRagdoll(time)
     local ragdoll = self:GetNWEntity("ragdoll")
 
     if IsValid(ragdoll) then
         self:SetNWEntity("ragdoll", NULL)
+        ragdoll:SetOwner(nil)
         RagdollCleanup[ragdoll] = CurTime() + time
     end
 end
@@ -104,39 +125,47 @@ end
 function PLAYER:ToggleRagdoll(hitgroup)
     local ragdoll = self:GetNWEntity("ragdoll")
 
+    if self:GetRagdollCooldown() then return end
+
     if not IsValid(ragdoll) then
         local new = ents.Create("prop_ragdoll")
+        new:SetOwner(self)
 
-        -- model
+        -- initial shit
         new:SetModel(self:GetModel())
+        new:SetHealth(self:Health())
 
         -- transform
         new:SetPos(self:GetPos())
         new:SetAngles(self:GetAngles())
 
-        -- physics
-        new:PhysWake()
         new:Spawn()
+        
         new:Activate()
-        new:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE)
 
-        local physobjs = new:GetPhysicsObjectCount()
-        for i = 0, physobjs - 1 do
+        local bonecount = new:GetBoneCount()
+        for i = 0, bonecount do
+            local physobj = new:TranslateBoneToPhysBone(i)
             local obj = new:GetPhysicsObjectNum(i)
+            if obj then
+                if IsValid(obj) then
+                    local bone = new:TranslatePhysBoneToBone(i)
+                    local matrix = self:GetBoneMatrix(bone)
+                    local pos = self:GetBonePosition(bone)
+                    local ang = matrix:GetAngles()
 
-            if IsValid(obj) then
-                local bone = new:TranslatePhysBoneToBone(i)
-                local matrix = self:GetBoneMatrix(bone)
-                local pos = self:GetBonePosition(bone)
-                local ang = matrix:GetAngles()
-
-                obj:SetPos(pos)
-                obj:SetAngles(ang)
-                obj:SetMass(obj:GetMass() * 15)
-                obj:SetVelocity(self:GetVelocity())
-                obj:SetBuoyancyRatio(15)
+                    obj:SetPos(pos)
+                    obj:SetAngles(ang)
+                    obj:SetMass(obj:GetMass() * 10)
+                    obj:SetVelocity(self:GetVelocity())
+                    obj:SetBuoyancyRatio(5)
+                end
             end
         end
+
+        -- physics
+        new:PhysWake()
+        new:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE)
 
         if hitgroup == HITGROUP_HEAD then
             local bone = new:LookupBone("ValveBiped.Bip01_Head1")
@@ -162,15 +191,36 @@ function PLAYER:ToggleRagdoll(hitgroup)
             end)
         end
 
+        timer.Create("ragdollcooldown"..self:EntIndex(), 2, 1, function() end)
+
+        self.lastweapon = self:GetActiveWeapon()
+        self:SetActiveWeapon(NULL)
         self:SetNWEntity("ragdoll", new)
         self:Spectate(OBS_MODE_CHASE)
-        self:SetActiveWeapon(NULL)
+        self:Lock()
+    else
+        if not self:Alive() then print("not alive") return end
+
+        self:UnSpectate()
+        self:Spawn()
+        self:UnLock()
+
+        self:SetPos(ragdoll:GetPos())
+        self:SetModel(ragdoll:GetModel())
+        self:SetHealth(ragdoll:Health())
+
+        self:SetActiveWeapon(self.lastweapon)
+
+        self:ClearRagdoll(0)
     end
 end
 
 hook.Add("PlayerRespawn", "sv_hoodlum_ragdoll_playerrespawn", function(ply)
     ply:ClearRagdoll(60)
     ply:SetLastHitGroup(-1)
+
+    ply:UnSpectate()
+    ply:UnLock()
 end)
 
 hook.Add("PlayerDeath", "sv_hoodlum_ragdoll_playerdeath", function(ply, inflictor, attacker)
@@ -246,6 +296,9 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
 
                     local bone = ent:TranslatePhysBoneToBone(trace.PhysicsBone)
                     local bonename = ent:GetBoneName(bone)
+                    local hitgroup = RagdollHitGroups[bonename]
+
+                    -- handle ragdoll headshot
                     if RagdollHitGroups[bonename] == HITGROUP_HEAD then
                         local head = ent:LookupBone("ValveBiped.Bip01_Head1")
                         ent:ManipulateBoneScale(head, Vector(0, 0, 0))
@@ -253,6 +306,16 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                         -- temp
                         if not ent.headshot then
                             ent.headshot = true
+
+                            local owner = ent:GetOwner()
+                            if IsValid(owner) and owner:Alive() then
+                                owner:Kill()
+                            end
+
+                            net.Start("DeathEvent")
+                            net.WriteBool(true)
+                            net.Send(owner)
+
                             timer.Create("bleed"..ent:EntIndex(), 0.1, 50, function()
                                 local bonepos = ent:GetBonePosition(head)
                                 local boneang = ent:GetBoneMatrix(head):GetAngles()
@@ -271,10 +334,56 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             
                                 util.Effect("bloodspray", effectData, true, true)
                             end)
+
+                            return
                         end 
+                    end
+
+                    local owner = ent:GetOwner()
+                    if IsValid(owner) and owner:Alive() then
+                        if HitgroupDamageMultiplier[hitgroup] then
+                            local damage = dmginfo:GetDamage()
+                            local health = ent:Health()
+                            local mult = HitgroupDamageMultiplier[hitgroup]
+
+                            ent:SetHealth(health - damage)
+
+                            if ent:Health() < 0 then
+                                owner:Kill()
+                            end
+                        end
                     end
                 end
             end
+        else -- if not player
+            local owner = ent:GetOwner()
+            if not IsValid(owner) or not owner:Alive() then return false end
+            local health = ent:Health()
+
+            if dmginfo:GetDamageType() == DMG_CRUSH then
+                dmginfo:ScaleDamage(0.5)
+            end
+
+            local damage = dmginfo:GetDamage()
+
+            local newhealth = health - damage
+
+            ent:SetHealth(newhealth)
+
+            if newhealth < 0 then
+                owner:Kill()
+            end
+        end
+    end
+end)
+
+hook.Add("Think", "hoodlum_preragdollthink", function()
+    for _,ply in player.Iterator() do
+        local ragdoll = ply:GetNWEntity("ragdoll")
+        if IsValid(ragdoll) then continue end
+        
+        if ply:GetVelocity():Length() > 500 then
+            ply:ToggleRagdoll()
         end
     end
 end)

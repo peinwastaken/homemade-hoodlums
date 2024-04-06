@@ -10,7 +10,7 @@ if CLIENT then
             self.flashlight = ProjectedTexture()
 			self.flashlight:SetTexture("effects/flashlight001")
 			self.flashlight:SetFarZ(1500)
-			self.flashlight:SetNearZ(10)
+			self.flashlight:SetNearZ(15)
 			self.flashlight:SetFOV(75)
 			self.flashlight:SetBrightness(1)
             self.flashlight:SetEnableShadows(true)
@@ -80,10 +80,8 @@ if CLIENT then
                 local mult = math.Clamp(1 - dist/maxdist, 0, 1)
                 local dot = flashdir:Dot(eyedir:GetNormalized()) - 0.25
 
-                print(dot)
-
                 if dot > 0 then
-                    local tr = util.QuickTrace(att.Pos, eyedir, {lply, ply})
+                    local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
                     local size = 1024 * dot * mult
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
@@ -121,6 +119,8 @@ if CLIENT then
                 else
                     ply:RemoveFlashlight()
                 end
+            else
+                ply:RemoveFlashlight()
             end
         end
     end)

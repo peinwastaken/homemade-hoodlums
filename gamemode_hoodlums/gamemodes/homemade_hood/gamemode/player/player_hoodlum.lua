@@ -22,7 +22,8 @@ PLAYER.Items = {
         "weapon_draco",
         "weapon_mpx",
         "weapon_remington700",
-        "weapon_aks74u"
+        "weapon_aks74u",
+        "weapon_remington870",
     },
     ["secondary"] = {
         "weapon_m1911",
@@ -40,12 +41,20 @@ local function GetRandomItem(tbl)
 end
 
 function PLAYER:Loadout()
+    -- :(
+end
+
+function PLAYER:OnRespawn()
     local ply = self.Player
 
+    ply:SetSuppressPickupNotices(true)
+
     ply:RemoveAllAmmo()
-    ply:Give(GetRandomItem(self.Items["primary"]))
-    ply:Give(GetRandomItem(self.Items["secondary"]))
+    ply:SetAmmo(9999, "pistol") -- temporary
+    ply:Give(GetRandomItem(self.Items["primary"])):SetRandomAttachments()
+    ply:Give(GetRandomItem(self.Items["secondary"])):SetRandomAttachments()
     ply:Give("weapon_hands")
+    ply:Give("weapon_flashlight")
 end
 
 function PLAYER:SetModel()
