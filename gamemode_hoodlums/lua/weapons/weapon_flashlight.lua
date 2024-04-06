@@ -182,8 +182,6 @@ hook.Add("PreDrawOpaqueRenderables", "predrawflashlights", function(drawingdepth
             
             if enabled and battery > 0 then
                 if not ply.Light then
-                    print("creating light for " .. ply:Name())
-
                     ply.Light = ProjectedTexture()
                     ply.Light:SetTexture("effects/flashlight001")
                     ply.Light:SetColor(Color(220, 242, 250))
@@ -200,8 +198,6 @@ hook.Add("PreDrawOpaqueRenderables", "predrawflashlights", function(drawingdepth
                 end
             else
                 if ply.Light then
-                    print("deleting light for " .. ply:Name())
-    
                     ply.Light:Remove()
                     ply.Light = nil
                 end
