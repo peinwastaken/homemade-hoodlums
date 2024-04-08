@@ -122,7 +122,7 @@ function PLAYER:ClearRagdoll(time)
     end
 end
 
-function PLAYER:ToggleRagdoll(hitgroup)
+function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon)
     local ragdoll = self:GetNWEntity("ragdoll")
 
     if self:GetRagdollCooldown() then return end
@@ -193,7 +193,21 @@ function PLAYER:ToggleRagdoll(hitgroup)
 
         timer.Create("ragdollcooldown"..self:EntIndex(), 2, 1, function() end)
 
-        self.lastweapon = self:GetActiveWeapon()
+        if dropweapon then
+            local wep = self:GetActiveWeapon()
+            local pos, ang = self:EyePos(), self:EyeAngles()
+            if IsValid(wep) and wep.CanDrop then
+                self:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 180)
+            end
+        end
+
+        if lastweapon then
+            self.lastweapon = lastweapon
+        else
+            if IsValid(self:GetActiveWeapon()) then
+                self.lastweapon = self:GetActiveWeapon():GetClass()
+            end
+        end
         self:SetActiveWeapon(NULL)
         self:SetNWEntity("ragdoll", new)
         self:Spectate(OBS_MODE_CHASE)
@@ -209,7 +223,10 @@ function PLAYER:ToggleRagdoll(hitgroup)
         self:SetModel(ragdoll:GetModel())
         self:SetHealth(ragdoll:Health())
 
-        self:SetActiveWeapon(self.lastweapon)
+        if self.lastweapon then
+            self:SelectWeapon(self.lastweapon)
+            self.lastweapon = nil
+        end
 
         self:ClearRagdoll(0)
     end
@@ -264,8 +281,22 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
         local attacker = dmginfo:GetAttacker()
 
         if attacker:IsPlayer() then
+            local owner = ent:GetOwner()
             local inflictor = dmginfo:GetInflictor()
             local wep = attacker:GetActiveWeapon()
+            local dmgtype = dmginfo:GetDamageType()
+
+            if IsValid(owner) and owner:Alive() and dmgtype == DMG_GENERIC then
+                local damage = dmginfo:GetDamage()
+                local health = ent:Health()
+
+                ent:SetHealth(health - damage)
+
+                if ent:Health() < 0 then
+                    owner:Kill()
+                end
+            end
+
             if IsValid(wep) and wep.GetMuzzle then
                 local start, ang = wep:GetMuzzle()
                 local hitpos = dmginfo:GetDamagePosition()

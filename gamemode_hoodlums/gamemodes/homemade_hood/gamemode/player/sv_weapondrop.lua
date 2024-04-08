@@ -74,23 +74,26 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
             wepgive:SetClip1(ent.Clip1)
             
             local attachments = ent.EquippedAttachments
-            for slot, att in pairs(attachments) do
-                wepgive:SetAttachmentSlot(slot, att)
+            if attachments then
+                for slot, att in pairs(attachments) do
+                    wepgive:SetAttachmentSlot(slot, att)
+                end
             end
 
             RemoveItemFromCleanup(ent)
             ent:Remove()
+            return false
         end
     end
 
-    return false
+    return true
 end)
 
 hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
     if IsValid(wep) and wep.CanDrop then
-        ply:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 10)
+        ply:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60)
     end
 end)
 
@@ -98,6 +101,6 @@ concommand.Add("drop", function(ply)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
     if IsValid(wep) and wep.CanDrop then
-        ply:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, nil)
+        ply:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 180)
     end
 end, nil, nil, 0)

@@ -1,8 +1,7 @@
 -- network strings
+util.AddNetworkString("Hoodlum_PlayerRespawn")
 util.AddNetworkString("PlayerDeath")
 util.AddNetworkString("DeathEvent")
-
--- other variables
 
 function GetRandomNavPoint()
     local navpoints = navmesh.GetAllNavAreas()
@@ -62,10 +61,6 @@ function RespawnPlayer(ply, t)
         hook.Run("PlayerRespawn", ply)
     end)
 end
-
-hook.Add("PlayerInitialSpawn", "hoodlum_initialspawn", function(ply)
-    ply:KillSilent()
-end)
 
 hook.Add("PlayerDeath", "hoodlum_playerdeath", function(ply, inflictor, attacker)
     RespawnPlayer(ply, 5)

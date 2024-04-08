@@ -32,12 +32,6 @@ SWEP.SlotPos				= 0
 SWEP.DrawAmmo				= true
 SWEP.DrawCrosshair			= false
 
--- otherer
-SWEP.MaxBattery = 100
-
-SWEP.MaxBatteries = 3
-SWEP.Batteries = 1
-
 local vertices = {}
 function makecircle()
     local posX, posY, radius, segments = 0, 0, 32, 16
@@ -80,7 +74,7 @@ if CLIENT then
             local wep = ply:GetActiveWeapon()
             if not IsValid(wep) or not wep.GetToggled then continue end
             local enabled = wep:GetToggled()
-            if not enabled or wep:Reloading() or wep:GetBattery() <= 0 then continue end
+            if not enabled then continue end
             local attachment = wep:GetAttachment(wep:LookupAttachment("light"))
             if not attachment then continue end
             local pos, ang = attachment.Pos, attachment.Ang
@@ -177,16 +171,15 @@ hook.Add("PreDrawOpaqueRenderables", "predrawflashlights", function(drawingdepth
             local attachment = wep:GetAttachment(wep:LookupAttachment("light"))
             local pos, ang = attachment.Pos, attachment.Ang
 
-            local battery = wep:GetBattery()
             local enabled = wep:GetToggled()
             
-            if enabled and battery > 0 then
+            if enabled then
                 if not ply.Light then
                     ply.Light = ProjectedTexture()
                     ply.Light:SetTexture("effects/flashlight001")
                     ply.Light:SetColor(Color(220, 242, 250))
-                    ply.Light:SetFOV(30)
-                    ply.Light:SetBrightness(3)
+                    ply.Light:SetFOV(55)
+                    ply.Light:SetBrightness(2)
                     ply.Light:SetFarZ(1000)
                     ply.Light:SetNearZ(1)
                     ply.Light:SetEnableShadows(true)
@@ -204,8 +197,6 @@ hook.Add("PreDrawOpaqueRenderables", "predrawflashlights", function(drawingdepth
             end
         else
             if ply.Light then
-                print("deleting light for " .. ply:Name())
-
                 ply.Light:Remove()
                 ply.Light = nil
             end
@@ -224,13 +215,9 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 0, "Toggled")
     self:NetworkVar("Bool", 1, "Crouching")
-    self:NetworkVar("Float", 2, "Battery")
-    self:NetworkVar("Float", 3, "Batteries")
 
     self:SetToggled(false)
     self:SetCrouching(false)
-    self:SetBattery(self.MaxBattery)
-    self:SetBatteries(1)
 end
 
 function SWEP:Initialize()
@@ -264,7 +251,6 @@ end
 
 function SWEP:ToggleLight(playsound)
     local enabled = self:GetToggled()
-    local battery = self:GetBattery()
 
     if playsound then
         self:EmitSound(self.ToggleSound, 60, 100, 1)
@@ -278,21 +264,7 @@ function SWEP:ToggleLight(playsound)
 end
 
 function SWEP:Reload()
-    if self:Reloading() then return end
-    local batteries = self:GetBatteries()
-
-    if batteries <= 0 then return end
-
-    local ply = self:GetOwner()
-
-    ply:SetAnimation(PLAYER_RELOAD)
-
-    timer.Create("reload"..self:EntIndex(), 1.5, 0, function()
-        timer.Remove("reload"..self:EntIndex())
-
-        self:SetBattery(self.MaxBattery)
-        self:SetBatteries(batteries - 1)
-    end)
+    
 end
 
 function SWEP:PrimaryAttack()
@@ -365,40 +337,10 @@ function SWEP:Think()
     local ply = self:GetOwner()
     local enabled = self:GetToggled()
     local crouched = self:GetCrouching(true)
-    local battery = self:GetBattery()
 
     if ply:KeyDown(IN_DUCK) then
         self:SetCrouching(true)
     else
         self:SetCrouching(false)
     end
-
-    if battery > 0 and enabled then
-        self:SetBattery(math.Clamp(battery - 0.01, 0, self.MaxBattery))
-    end
-end
-
-function SWEP:DrawHUD()
-    local batteries = self:GetBatteries()
-    local battery = self:GetBattery()
-
-    local size = {
-        x = 250,
-        y = 14
-    }
-    local pos = {
-        x = ScrW() / 2,
-        y = ScrH() - 50
-    }
-
-    local battery = self:GetBattery()
-    local sizemult = battery/self.MaxBattery
-    size.x = size.x * sizemult
-
-    surface.SetDrawColor(Color(228, 168, 0))
-    surface.DrawRect(ScrW()/2-size.x/2, ScrH() - 50, size.x, size.y)
-
-    draw.DrawText("Battery: " .. math.floor(battery), "DermaDefaultBold", pos.x, pos.y, Color(255, 255, 255), TEXT_ALIGN_CENTER)
-
-    draw.DrawText("Batteries Left: " .. batteries, "DermaDefaultBold", pos.x, pos.y - 20, Color(255, 255, 255), TEXT_ALIGN_CENTER)
 end

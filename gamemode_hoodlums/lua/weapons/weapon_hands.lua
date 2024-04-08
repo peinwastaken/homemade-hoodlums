@@ -12,7 +12,7 @@ SWEP.Primary.ClipSize       = 0
 SWEP.Primary.DefaultClip	= 0
 SWEP.Primary.Automatic = true
 
-SWEP.Reach = 64
+SWEP.Reach = 100
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
@@ -37,13 +37,17 @@ function SWEP:GetInteract()
 	return self.Interacting, self.InteractingPhys
 end
 
-function SWEP:SetInteract(ent, physbone)
+function SWEP:SetInteract(ent, physbone, worldPos, dist)
 	if IsValid(ent) then
 		self.Interacting = ent
 		self.InteractingPhys = physbone
+		self.InteractingPos = ent:WorldToLocal(worldPos)
+		self.InteractingDist = dist
 	else
 		self.Interacting = nil
 		self.InteractingPhys = nil
+		self.InteractingPos = nil
+		self.InteractingDist = nil
 	end
 end
 
@@ -85,23 +89,49 @@ function SWEP:Think()
 				local tr = util.QuickTrace(eyepos, eyeang:Forward() * self.Reach, {ply})
 				if IsValid(tr.Entity) and tr.PhysicsBone then
 					if allowgrab[tr.Entity:GetClass()] then
-						self:SetInteract(tr.Entity, tr.PhysicsBone)
+						local dist = (eyepos - tr.HitPos):Length()
+						self:SetInteract(tr.Entity, tr.PhysicsBone, tr.HitPos, dist)
 					end
 				end
 			else
+				if not IsValid(ent) then
+					self:SetInteract(nil)
+					self:SetCooldown(1)
+					return
+				end
 				local physobj = ent:GetPhysicsObjectNum(phys)
+				local ang_vel = physobj:GetAngleVelocity()
+				local phys_vel = physobj:GetVelocity()
 				local phys_pos = physobj:GetPos()
-				local diff = (eyepos + eyeang:Forward() * self.Reach) - phys_pos
+				local mass = physobj:GetMass()
 
-				if physobj:IsAsleep() then
-					physobj:Wake()
+				local forcemult = 50
+				local targetPos = ent:LocalToWorld(self.InteractingPos)
+				if ent:GetClass() == "prop_ragdoll" then
+					forcemult = 600
+					targetPos = physobj:GetPos()
 				end
 
-				physobj:SetVelocity(diff * 5)
+				local dir = (eyepos + eyeang:Forward() * self.InteractingDist) - targetPos
 
+				if dir:Length() > self.Reach then
+					self:SetInteract(nil)
+					return
+				end
+
+				local force = (dir * forcemult) / mass
+				local forceAmount = force:Length()
+				
+				-- damping
+				local dampingMult = 1
+				local dampingForce = -phys_vel * dampingMult
+
+				physobj:Wake()
+				physobj:ApplyForceOffset(force + dampingForce, targetPos)
+				physobj:AddAngleVelocity(-ang_vel * 0.5)
+				
 				if ply:KeyPressed(IN_ATTACK2) then
 					physobj:SetVelocity(eyeang:Forward() * 500)
-					physobj:SetAngleVelocity(Vector(math.random(-5, 5), math.random(-5, 5), 5) * math.random(-200, 200))
 					self:SetInteract(nil, nil)
 					self:SetCooldown(1)
 				end
@@ -125,11 +155,11 @@ function SWEP:DrawHUD()
 		local size = math.Clamp(1 - dist / self.Reach + 0.25, 0, 1)
 		
 		if tr.Entity and allowgrab[tr.Entity:GetClass()] then
-			surface.SetDrawColor(121, 181, 98, 80)
+			surface.SetDrawColor(121, 181, 98, 40)
 		else
-			surface.SetDrawColor(255, 255, 255, 80)
+			surface.SetDrawColor(255, 255, 255, 40)
 		end
-		draw.Circle(pos.x, pos.y, ScreenScale(12) * size, 32)
+		draw.Circle(pos.x, pos.y, ScreenScale(5) * size, 32)
 	end
 end
 

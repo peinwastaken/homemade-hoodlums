@@ -144,6 +144,12 @@ function SWEP:Reloading()
 	return timer.Exists("reload" .. self:EntIndex())
 end
 
+function SWEP:CancelReload()
+	if self:Reloading() then
+		timer.Remove("reload" .. self:EntIndex())
+	end
+end
+
 function SWEP:Reload()
 	if not self:Reloading() and self:Ammo1() > 0 and self:Clip1() < self.Primary.ClipSize then
 		local ply = self:GetOwner()
@@ -166,6 +172,7 @@ end
 function SWEP:Cycle()
 	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay + self.CycleTime)
 	timer.Create("cycle"..self:EntIndex(), self.CycleTime, 1, function()
+		if not IsValid(self) then return end
 		self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
 		self.cyclerequired = false
 	end)
@@ -486,6 +493,8 @@ function SWEP:Holster()
 	ply:ManipulateBoneAngles(upperL, Angle(0, 0, 0), true)
 	ply:ManipulateBoneAngles(lowerL, Angle(0, 0, 0), true)
 	ply:ManipulateBoneAngles(handL,	Angle(0, 0, 0), true)
+
+	self:CancelReload()
 
 	return true
 end
