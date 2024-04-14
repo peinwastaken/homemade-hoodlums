@@ -6,11 +6,15 @@ if SERVER then
 
 	AddCSLuaFile("sh_laser.lua")
 	include("sh_laser.lua")
+
+	AddCSLuaFile("sh_impacteffects.lua")
+	include("sh_impacteffects.lua")
 end
 if CLIENT then
 	include("cl_recoil.lua")
 	include("sh_attachments.lua")
 	include("sh_laser.lua")
+	include("sh_impacteffects.lua")
 end
 
 
@@ -238,21 +242,35 @@ end
 
 
 if SERVER then
-	util.AddNetworkString("DoEcho")
+	util.AddNetworkString("DoShot")
 end
 
 if CLIENT then
-	net.Receive("DoEcho", function()
+	net.Receive("DoShot", function()
 		-- farsound, pos, player
 		local snd = net.ReadString()
 		local pos = net.ReadVector()
 		local ply = net.ReadPlayer()
 		local lply = LocalPlayer()
 
+		if not IsValid(lply) then return end
+
 		local mindist = 150
 		local maxdist = 1500
 		local dist = (pos - lply:EyePos()):Length() - mindist
 		local mult = math.Clamp(dist / maxdist, 0, 1)
+
+		local light = DynamicLight(ply:EntIndex(), false)
+    	if light then
+    	   light.pos = pos
+    	   light.r = 255
+    	   light.g = 100
+    	   light.b = 50
+    	   light.brightness = 2
+    	   light.decay = 5000
+    	   light.size = 170
+    	   light.dietime = CurTime() + 0.1
+    	end
 
 		sound.Play(snd, pos, 500, 60, mult, 1)
 	end)
@@ -290,14 +308,25 @@ function SWEP:CalculateBulletPenetration(trace)
 				bullet.Num = 1
 				bullet.Src = pos + normal
 				bullet.Dir = normal
-				bullet.Spread = Vector(spread, spread)
+				bullet.Spread = 0
 				bullet.AmmoType = self.Primary.Ammo
 				bullet.Attacker = ply
 				bullet.IgnoreEntity = ply:GetVehicle() or nil
 				bullet.TracerName = "nil"
 				bullet.Tracer = 0
+				ply:FireBullets(bullet) -- actual bullet
 
-				ply:FireBullets(bullet)
+				local bullet = {}
+				bullet.Damage = 0
+				bullet.Num = 1
+				bullet.Src = pos + normal
+				bullet.Dir = -normal
+				bullet.Spread = 0
+				bullet.AmmoType = self.Primary.Ammo
+				bullet.Attacker = nil
+				bullet.TracerName = "nil"
+				bullet.Tracer = 0
+				ply:FireBullets(bullet) -- retarded
 			else
 				dist = dist + 5
 			end
@@ -335,6 +364,32 @@ function SWEP:PrimaryAttack()
 		if ply:KeyDown(IN_ATTACK2) and self.AimSpreadReduction then
 			spread = spread - spread * self.AimSpreadReductionMult
 		end
+
+		if not att_effects["Suppressed"] then
+			local effectdata = EffectData()
+			effectdata:SetOrigin(pos)
+			effectdata:SetNormal(ang:Forward())
+			util.Effect("effect_muzzleflash", effectdata)
+
+			local effectdatasmoke = EffectData()
+			effectdatasmoke:SetOrigin(pos)
+    		effectdatasmoke:SetNormal(ang:Forward())
+			util.Effect("effect_muzzlesmoke", effectdatasmoke)
+
+			if CLIENT then
+				local light = DynamicLight(self:EntIndex(), false)
+    			if light then
+    			   light.pos = pos
+    			   light.r = 255
+    			   light.g = 100
+    			   light.b = 50
+    			   light.brightness = 2
+    			   light.decay = 5000
+    			   light.size = 170
+    			   light.dietime = CurTime() + 0.1
+    			end
+			end
+		end
 		
 		local bullet = {}
 		bullet.Damage = self.Primary.Damage
@@ -363,11 +418,11 @@ function SWEP:PrimaryAttack()
 	end
 
 	if SERVER and not att_effects["Suppressed"] then
-		net.Start("DoEcho")
+		net.Start("DoShot")
 		net.WriteString(self.Primary.SoundFar)
 		net.WriteVector(pos)
 		net.WritePlayer(ply)
-		net.Broadcast()
+		net.SendOmit(self:GetOwner())
 	end
 
 	ply:LagCompensation(false)
@@ -375,20 +430,6 @@ function SWEP:PrimaryAttack()
 	if SERVER then
 		self:TakePrimaryAmmo(1)
 	end
-
-	if not att_effects["Suppressed"] then
-		local effectdata = EffectData()
-		effectdata:SetEntity(self)
-		effectdata:SetAttachment(self:LookupAttachment("muzzle"))
-		effectdata:SetFlags(3)
-		util.Effect("MuzzleFlash", effectdata)
-	end
-
-	local effectdatasmoke = EffectData()
-	effectdatasmoke:SetOrigin(pos)
-	effectdatasmoke:SetMagnitude(0)
-	effectdatasmoke:SetScale(0)
-	util.Effect("ElectricSpark", effectdatasmoke)
 end
 
 -- hello to whoever is reading this

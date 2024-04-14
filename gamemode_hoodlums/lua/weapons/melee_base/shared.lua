@@ -30,14 +30,11 @@ SWEP.WorldModel = "models/pein/flashlight/flashlight.mdl"
 
 SWEP.Range = 50
 SWEP.RagdollChance = 50
+SWEP.ShowCrosshairAlways = true
 
 SWEP.SwingSound = "WeaponFrag.Throw"
-SWEP.HitSounds = {}
+SWEP.HitSounds = {"Weapon_Crowbar.Melee_Hit"}
 SWEP.HitSoundEntity = "Weapon_Crowbar.Melee_Hit"
-
-function SWEP:SetupDataTables()
-    
-end
 
 function SWEP:Initialize()
     local ply = self:GetOwner()
@@ -45,11 +42,37 @@ function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
 end
 
+function SWEP:SetupDataTables()
+	self:NetworkVar("Bool", 0, "FightMode")
+
+	self:SetFightMode(true)
+end
+
+function SWEP:UpdateFightMode(state)
+	if state then
+		self:SetFightMode(true)
+
+		self:SetHoldType(self.HoldType)
+	else
+		self:SetFightMode(false)
+
+		self:SetHoldType("normal")
+	end
+end
+
+-- todo: add a debounce
 function SWEP:Reload()
-    
+    if IsFirstTimePredicted() then
+        local fightmode = self:GetFightMode()
+        self:UpdateFightMode(!fightmode)
+    end
 end
 
 function SWEP:PrimaryAttack()
+    local fightmode = self:GetFightMode()
+
+    if not fightmode then return end
+
     self:SetNextPrimaryFire(CurTime() + self.Primary.FireDelay)
     
     local ply = self:GetOwner()
@@ -67,9 +90,6 @@ function SWEP:PrimaryAttack()
         local distance = (trace.StartPos - trace.HitPos):Length()
 
         if distance < self.Range and trace.Hit then
-
-            print(trace.MatType)
-
             if trace.MatType == MAT_FLESH then
                 EmitSound(self.HitSoundEntity, trace.HitPos)
             else
@@ -92,7 +112,7 @@ function SWEP:PrimaryAttack()
                 if physbone then
                     local physobj = ent:GetPhysicsObjectNum(physbone)
                     if IsValid(physobj) then
-                        physobj:SetVelocity(aimvector * 500)
+                        physobj:ApplyForceCenter(aimvector * 5000)
                     end
                 end
 
@@ -113,19 +133,8 @@ function SWEP:PrimaryAttack()
     end
 end
 
-function SWEP:SecondaryAttack()
-    
-end
-
-function SWEP:Think()
-    self:SetHoldType(self.HoldType)
-end
-
-function SWEP:Equip()
-    
-end
-
 function SWEP:DrawHUD()
+    local fightmode = self:GetFightMode()
     local ply = self:GetOwner()
     local trace = ply:GetEyeTrace()
     local tracepos = trace.HitPos
@@ -135,15 +144,21 @@ function SWEP:DrawHUD()
     local size1 = 12
     local size2 = 6
 
-    if distance < self.Range then -- if can hit
-        surface.DrawCircle(pos.x, pos.y, size1, Color(255, 0, 0, 255))
-    else -- if not
-        surface.DrawCircle(pos.x, pos.y, size1, Color(255, 255, 255, 255))
+    if trace.Hit then
+        if distance < self.Range then -- if can hit
+            surface.DrawCircle(pos.x, pos.y, size1, Color(255, 0, 0, 255))
+        elseif distance > self.Range and self.ShowCrosshairAlways then -- if not
+            surface.DrawCircle(pos.x, pos.y, size1, Color(255, 255, 255, 255))
+        end
     end
 end
 
-function SWEP:DrawWorldModel()
-    self:DrawModel()
+function SWEP:SecondaryAttack()
+    
+end
+
+function SWEP:Equip()
+    
 end
 
 function SWEP:OnRemove()

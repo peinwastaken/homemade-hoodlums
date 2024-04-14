@@ -19,10 +19,11 @@ SWEP.Primary.BulletCount    = 1
 
 SWEP.ReloadTime             = 2
 
-SWEP.Primary.Sound          = "weapons/mp5navy/mp5-1.wav"
+SWEP.Primary.Sound          = "pein/mpx/mpx_close.wav"
+SWEP.Primary.SoundFar		= "pein/mpx/mpx_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(0.75, 0.1, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(1, 0.05, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1, 0, 0)
 SWEP.RecoilVertical = 70 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
@@ -115,7 +116,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["Suppressed"] = true,
-				["WeaponSound"] = "weapons/m4a1/m4a1-1.wav",
+				["WeaponSound"] = "pein/mpx/mpx_suppressed.wav",
 				["RecoilVertical"] = 15,
 				["RecoilHorizontal"] = 5
 			}

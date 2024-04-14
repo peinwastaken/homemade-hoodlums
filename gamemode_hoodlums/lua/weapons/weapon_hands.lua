@@ -1,24 +1,28 @@
-SWEP.Base = "weapon_base"
+SWEP.Base = "melee_base"
 
 SWEP.PrintName 				= "Hands"
 SWEP.Author 				= "pein"
-SWEP.Instructions			= "Walk around like a normal person for once."
+SWEP.Instructions			= "Walk around like a normal person or beat someone up. Your choice."
 SWEP.Category 				= "Immersive SWEPs"
 
 SWEP.Spawnable 				= true
 SWEP.AdminOnly 				= false
 
+SWEP.Primary.Damage = 10
 SWEP.Primary.ClipSize       = 0
 SWEP.Primary.DefaultClip	= 0
-SWEP.Primary.Automatic = true
+SWEP.Primary.Delay = 0.5
+SWEP.Primary.Automatic = false
 
-SWEP.Reach = 100
+SWEP.Range = 100
+SWEP.RagdollChance = 0
+SWEP.ShowCrosshairAlways = false
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false
 
-SWEP.HoldType               = "normal"
+SWEP.HoldType               = "fist"
 
 SWEP.Slot					= 2
 SWEP.SlotPos				= 1
@@ -27,11 +31,12 @@ SWEP.DrawCrosshair			= false
 
 SWEP.WorldModel				= ""
 
-SWEP.cooldown = 0
+SWEP.SwingSound = "WeaponFrag.Throw"
+SWEP.HitSounds = {"Weapon_Crowbar.Melee_Hit"}
+SWEP.HitSoundEntity = "Weapon_Crowbar.Melee_Hit"
 
-function SWEP:Initialize()
-	self:SetHoldType(self.HoldType)
-end
+SWEP.cooldown = 0
+SWEP.holding = false
 
 function SWEP:GetInteract()
 	return self.Interacting, self.InteractingPhys
@@ -65,9 +70,11 @@ local allowgrab = {
 	["prop_physics_multiplayer"] = true,
 }
 
-SWEP.holding = false
 function SWEP:Think()
 	local ply = self:GetOwner()
+	local fightmode = self:GetFightMode()
+
+	if fightmode then return end
 
 	if SERVER then
 		if self:IsOnCooldown() then return end
@@ -86,7 +93,7 @@ function SWEP:Think()
 		if self.holding then
 			local ent, phys = self:GetInteract()
 			if not ent or not phys then
-				local tr = util.QuickTrace(eyepos, eyeang:Forward() * self.Reach, {ply})
+				local tr = util.QuickTrace(eyepos, eyeang:Forward() * self.Range, {ply})
 				if IsValid(tr.Entity) and tr.PhysicsBone then
 					if allowgrab[tr.Entity:GetClass()] then
 						local dist = (eyepos - tr.HitPos):Length()
@@ -114,7 +121,7 @@ function SWEP:Think()
 
 				local dir = (eyepos + eyeang:Forward() * self.InteractingDist) - targetPos
 
-				if dir:Length() > self.Reach then
+				if dir:Length() > self.Range then
 					self:SetInteract(nil)
 					return
 				end
@@ -131,35 +138,12 @@ function SWEP:Think()
 				physobj:AddAngleVelocity(-ang_vel * 0.5)
 				
 				if ply:KeyPressed(IN_ATTACK2) then
-					physobj:SetVelocity(eyeang:Forward() * 500)
+					physobj:SetVelocity(eyeang:Forward() * 1000 / mass)
 					self:SetInteract(nil, nil)
 					self:SetCooldown(1)
 				end
 			end
 		end
-	end
-end
-
-function SWEP:PrimaryAttack()
-	
-end
-
-function SWEP:DrawHUD()
-	local ply = self:GetOwner()
-	local eyepos, eyeang = ply:EyePos(), ply:EyeAngles()
-	
-	local tr = util.QuickTrace(eyepos, eyeang:Forward() * self.Reach, {ply})
-	if tr.Hit then
-		local pos = tr.HitPos:ToScreen()
-		local dist = (eyepos - tr.HitPos):Length()
-		local size = math.Clamp(1 - dist / self.Reach + 0.25, 0, 1)
-		
-		if tr.Entity and allowgrab[tr.Entity:GetClass()] then
-			surface.SetDrawColor(121, 181, 98, 40)
-		else
-			surface.SetDrawColor(255, 255, 255, 40)
-		end
-		draw.Circle(pos.x, pos.y, ScreenScale(5) * size, 32)
 	end
 end
 

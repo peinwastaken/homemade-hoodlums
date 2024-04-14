@@ -413,9 +413,10 @@ hook.Add("Think", "hoodlum_preragdollthink", function()
         local ragdoll = ply:GetNWEntity("ragdoll")
         if IsValid(ragdoll) then continue end
         
+        --[[
         if ply:GetVelocity():Length() > 500 then
             ply:ToggleRagdoll()
-        end
+        end]]
     end
 end)
 

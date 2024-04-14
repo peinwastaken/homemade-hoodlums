@@ -27,7 +27,7 @@ SWEP.Spawnable = false
 SWEP.ViewModel = "models/pein/flashlight/flashlight.mdl"
 SWEP.WorldModel = "models/pein/flashlight/flashlight.mdl"
 
-SWEP.Slot					= 2
+SWEP.Slot					= 3
 SWEP.SlotPos				= 0
 SWEP.DrawAmmo				= true
 SWEP.DrawCrosshair			= false

@@ -12,14 +12,15 @@ SWEP.Primary.ClipSize       = 12
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "pistol"
-SWEP.Primary.Delay          = 0.07
+SWEP.Primary.Delay          = 0.08
 SWEP.Primary.Damage         = 50
 SWEP.Primary.Spread         = 0.02
 SWEP.Primary.BulletCount    = 1
 
 SWEP.ReloadTime             = 2
 
-SWEP.Primary.Sound          = "weapons/glock/glock18-1.wav"
+SWEP.Primary.Sound          = "pein/glock/glock_close.wav"
+SWEP.Primary.SoundFar		= "pein/glock/glock_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.25, 0) -- CAMERA RECOIL

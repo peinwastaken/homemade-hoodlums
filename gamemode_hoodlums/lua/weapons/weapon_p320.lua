@@ -67,7 +67,7 @@ SWEP.Attachments = {
                 ["AimPosAttachment"] = "pos_romeo",
                 ["ReticleMaterial"] = Material("reticles/reticle_aimpoint.vmt"),
                 ["ReticleSize"] = 200,
-                ["SightSize"] = {x = 100, y = 100},
+                ["SightSize"] = {x = 100, y = 50},
 				["RecoilVertical"] = -10,
                 ["AimOffset"] = Vector(-12, 0, 0)
 			}
