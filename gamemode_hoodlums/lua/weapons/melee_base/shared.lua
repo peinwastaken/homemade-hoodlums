@@ -60,11 +60,14 @@ function SWEP:UpdateFightMode(state)
 	end
 end
 
--- todo: add a debounce
 function SWEP:Reload()
-    if IsFirstTimePredicted() then
-        local fightmode = self:GetFightMode()
-        self:UpdateFightMode(!fightmode)
+    local ply = self:GetOwner()
+
+    if ply:KeyPressed(IN_RELOAD) then
+        if IsFirstTimePredicted() then
+            local fightmode = self:GetFightMode()
+            self:UpdateFightMode(!fightmode)
+        end
     end
 end
 
