@@ -30,6 +30,7 @@ PLAYER.Items = {
         "weapon_remington700",
         "weapon_aks74u",
         "weapon_remington870",
+        "weapon_uzi",
     },
     ["secondary"] = {
         "weapon_m1911",
