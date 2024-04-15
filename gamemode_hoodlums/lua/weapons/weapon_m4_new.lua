@@ -133,7 +133,8 @@ SWEP.Attachments = {
 			["bodygroup_id"] = 0,
 			["bodygroup_value"] = 0,
             ["effects"] = {
-				["Automatic"] = true
+				["Automatic"] = true,
+				["WeaponName"] = "M4A1"
 			}
 		},
 		["pistol"] = {

@@ -39,5 +39,6 @@ SWEP.HitSoundEntity = "Weapon_Crowbar.Melee_Hit"
 SWEP.Range = 100
 SWEP.RagdollChance = 20
 SWEP.ShowCrosshairAlways = true
+SWEP.DefaultFightMode = true
 
 SWEP.CanDrop = true

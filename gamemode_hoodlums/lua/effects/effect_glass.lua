@@ -26,7 +26,7 @@ function EFFECT:Init(effectdata)
         particle:SetRollDelta(math.random(-30, 30))
 
         particle:SetGravity(Vector(0, 0, -500))
-        particle:SetVelocity(normal * math.random(80, 150) + VectorRand() * 40)
+        particle:SetVelocity(normal * math.random(30, 150) + VectorRand() * 40)
 
         particle:SetCollide(true)
         particle:SetBounce(0.2)

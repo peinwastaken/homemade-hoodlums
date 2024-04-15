@@ -11,6 +11,8 @@ function CreateImpactEffect(ent, pos, normal, mat)
     data:SetOrigin(pos)
     data:SetNormal(normal)
 
+    if mat == MAT_DEFAULT then return end
+
     if effectlist[mat] then
         util.Effect(effectlist[mat], data)
     else

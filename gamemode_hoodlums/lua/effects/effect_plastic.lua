@@ -10,10 +10,9 @@ function EFFECT:Init(effectdata)
 
     local emitter = ParticleEmitter(pos)
 
-    for i = 1, 15 do
+    for i = 1, 5 do
         local particle = emitter:Add(table.Random(concrete), pos)
-
-        particle:SetDieTime(5)
+        particle:SetDieTime(2)
 
         particle:SetStartAlpha(255)
         particle:SetEndAlpha(0)

@@ -31,6 +31,7 @@ SWEP.WorldModel = "models/pein/flashlight/flashlight.mdl"
 SWEP.Range = 50
 SWEP.RagdollChance = 50
 SWEP.ShowCrosshairAlways = true
+SWEP.DefaultFightMode = true
 
 SWEP.SwingSound = "WeaponFrag.Throw"
 SWEP.HitSounds = {"Weapon_Crowbar.Melee_Hit"}
@@ -38,24 +39,20 @@ SWEP.HitSoundEntity = "Weapon_Crowbar.Melee_Hit"
 
 function SWEP:Initialize()
     local ply = self:GetOwner()
-
-    self:SetHoldType(self.HoldType)
 end
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 0, "FightMode")
 
-	self:SetFightMode(true)
+    self:ToggleFightMode(self.DefaultFightMode)
 end
 
-function SWEP:UpdateFightMode(state)
+function SWEP:ToggleFightMode(state)
 	if state then
 		self:SetFightMode(true)
-
 		self:SetHoldType(self.HoldType)
 	else
 		self:SetFightMode(false)
-
 		self:SetHoldType("normal")
 	end
 end
@@ -66,7 +63,7 @@ function SWEP:Reload()
     if ply:KeyPressed(IN_RELOAD) then
         if IsFirstTimePredicted() then
             local fightmode = self:GetFightMode()
-            self:UpdateFightMode(!fightmode)
+            self:ToggleFightMode(!fightmode)
         end
     end
 end
@@ -88,7 +85,14 @@ function SWEP:PrimaryAttack()
     ply:SetAnimation(PLAYER_ATTACK1)
 
     if SERVER then
-        local trace = util.QuickTrace(eyepos, aimvector * self.Range, {ply})
+        local size = Vector(4, 4, 4)
+        local trace = util.TraceHull({
+            start = eyepos,
+            endpos = eyepos + aimvector * self.Range,
+            maxs = size,
+            mins = -size,
+            filter = ply,
+        })
         local ent = trace.Entity
         local distance = (trace.StartPos - trace.HitPos):Length()
 
@@ -115,7 +119,7 @@ function SWEP:PrimaryAttack()
                 if physbone then
                     local physobj = ent:GetPhysicsObjectNum(physbone)
                     if IsValid(physobj) then
-                        physobj:ApplyForceCenter(aimvector * 5000)
+                        physobj:ApplyForceOffset(aimvector * 2500, trace.HitPos)
                     end
                 end
 
@@ -139,19 +143,35 @@ end
 function SWEP:DrawHUD()
     local fightmode = self:GetFightMode()
     local ply = self:GetOwner()
-    local trace = ply:GetEyeTrace()
+    local eyepos = ply:EyePos()
+    local eyeang = ply:EyeAngles()
+    local aimvector = ply:GetAimVector()
+    local size = Vector(4, 4, 4)
+    local trace = util.TraceHull({
+        start = eyepos,
+        endpos = eyepos + aimvector * self.Range,
+        maxs = size,
+        mins = -size,
+        filter = ply,
+    })
     local tracepos = trace.HitPos
     local distance = (trace.StartPos - trace.HitPos):Length()
     local pos = tracepos:ToScreen()
 
-    local size1 = 12
-    local size2 = 6
+    local mult = math.Clamp(1 - distance/self.Range, 0.2, 1)
+
+    local size1 = ScreenScale(20)
 
     if trace.Hit then
         if distance < self.Range then -- if can hit
-            surface.DrawCircle(pos.x, pos.y, size1, Color(255, 0, 0, 255))
-        elseif distance > self.Range and self.ShowCrosshairAlways then -- if not
-            surface.DrawCircle(pos.x, pos.y, size1, Color(255, 255, 255, 255))
+            surface.SetDrawColor(Color(255, 0, 0, 20))
+            draw.Circle(pos.x, pos.y, size1 * mult, 16)
+
+            surface.DrawCircle(pos.x, pos.y, size1 * mult, Color(255, 43, 43))
+        end
+    else
+        if self.ShowCrosshairAlways then
+            surface.DrawCircle(pos.x, pos.y, size1 * mult, Color(255, 255, 255, 255))
         end
     end
 end

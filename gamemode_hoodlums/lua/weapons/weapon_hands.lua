@@ -8,7 +8,7 @@ SWEP.Category 				= "Immersive SWEPs"
 SWEP.Spawnable 				= true
 SWEP.AdminOnly 				= false
 
-SWEP.Primary.Damage = 10
+SWEP.Primary.Damage = 3
 SWEP.Primary.ClipSize       = 0
 SWEP.Primary.DefaultClip	= 0
 SWEP.Primary.Delay = 0.5
@@ -17,6 +17,7 @@ SWEP.Primary.Automatic = false
 SWEP.Range = 100
 SWEP.RagdollChance = 0
 SWEP.ShowCrosshairAlways = false
+SWEP.DefaultFightMode = false
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false

@@ -37,10 +37,6 @@ end
 net.Receive("DeathEvent", function()
     local headshot = net.ReadBool()
 
-    if headshot then
-        RunConsoleCommand("stopsound")
-    end
-
     CreateDeathScreen(headshot)
 
     hook.Run("ClientDeath")

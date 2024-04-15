@@ -22,12 +22,12 @@ function EFFECT:Init(effectdata)
 
     local emitter = ParticleEmitter(pos)
     
-    for i = 1, 15 do -- impact smoke
+    for i = 1, 5 do -- impact smoke
         local particle = emitter:Add(table.Random(smoke), pos)
         if particle then
             particle:SetDieTime(2)
 
-            particle:SetStartAlpha(math.random(30, 60))
+            particle:SetStartAlpha(math.random(60, 90))
             particle:SetEndAlpha(0)
 
             particle:SetStartSize(math.random(3, 7))
@@ -36,16 +36,15 @@ function EFFECT:Init(effectdata)
             particle:SetRoll(math.random(-180, 180))
             particle:SetRollDelta(math.random(-1, 1))
 
-            particle:SetGravity(Vector(0, 0, 40))
             particle:SetVelocity(normal * math.random(50, 200) + VectorRand() * 24)
 
-            particle:SetAirResistance(200)
+            particle:SetAirResistance(120)
 
             particle:SetLighting(true)
         end
     end
 
-    for i = 1, 15 do
+    for i = 1, 8 do
         local particle = emitter:Add(table.Random(concrete), pos)
 
         particle:SetDieTime(5)

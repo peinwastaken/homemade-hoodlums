@@ -463,7 +463,9 @@ function SWEP:Animate()
 
 	-- head distance from wall
 	local maxdist = 30
-	local att = ply:GetAttachment(ply:LookupAttachment("eyes"))
+	local eyes = ply:LookupAttachment("eyes")
+	local att = ply:GetAttachment(eyes)
+	if not att then return end
 	local eye_pos, eye_ang = att.Pos, att.Ang
 	local tr = util.QuickTrace(eye_pos, eye_ang:Forward() * maxdist, {ply})
 	local lerp = math.Clamp(tr.Fraction, 0, 1)

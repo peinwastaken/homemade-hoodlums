@@ -194,6 +194,8 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         return view
     end
 
+    ply:SetEyeAngles(Angle(math.Clamp(eyeang.x, -85, 85), eyeang.y, eyeang.z))
+
     local view = {
 		origin = finalpos,
 		angles = finalang,

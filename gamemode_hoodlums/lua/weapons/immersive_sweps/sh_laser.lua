@@ -29,6 +29,7 @@ if CLIENT then
 
     hook.Add("PostDrawEffects", "laser_postdraw", function()
         local lply = LocalPlayer()
+        local ragdoll = lply:GetNWEntity("ragdoll")
         for _,ply in player.Iterator() do
             local wep = ply:GetActiveWeapon()
             local enabled = ply:GetNWBool("laser")
@@ -42,6 +43,10 @@ if CLIENT then
                 local att = wep:GetAttachment(wep:LookupAttachment(att_name))
 
                 -- glare
+                if IsValid(ragdoll) then
+                    lply = ragdoll
+                end
+
                 local att_eyes = lply:GetAttachment(lply:LookupAttachment("eyes"))
 
                 local flashdir = att.Ang:Forward() * -1
@@ -49,13 +54,12 @@ if CLIENT then
 
                 local dist = eyedir:Length()
                 local maxdist = 1000
-                local mult = math.Clamp(1 - dist/maxdist, 0, 1)
-                local dot = math.Clamp(flashdir:Dot(eyedir:GetNormalized()) - 0.98, 0, 1)
+                local dot = flashdir:Dot(eyedir:GetNormalized())
+                local scale = (dot - 0.98) / (1 - 0.98)
 
-                -- retarded,, will change later
-                if dot > 0 then
+                if dot > 0.98 then
                     local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
-                    local size = 16000 * mult * dot
+                    local size = 2048 * scale
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
                         cam.Start2D()

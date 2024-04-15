@@ -340,6 +340,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
 
                             local owner = ent:GetOwner()
                             if IsValid(owner) and owner:Alive() then
+                                owner:SetLastHitGroup(HITGROUP_HEAD)
                                 owner:Kill()
                             end
 
