@@ -21,6 +21,7 @@ hook.Add("Think", "cleanupitems", function()
 end)
 
 function PLAYER:DropItem(wep, pos, vel, time)
+    if wep == NULL then return end
     local classname = wep:GetClass()
 
     local drop = ents.Create("prop_physics")

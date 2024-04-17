@@ -112,6 +112,9 @@ function SWEP:Think()
 				local phys_vel = physobj:GetVelocity()
 				local phys_pos = physobj:GetPos()
 				local mass = physobj:GetMass()
+				if mass < 1 then 
+					mass = 1
+				end
 
 				local forcemult = 50
 				local targetPos = ent:LocalToWorld(self.InteractingPos)

@@ -59,4 +59,15 @@ if SERVER then
     hook.Add("PlayerRespawn", "reseteffects", function(ply)
         ply:SetAlcohol(0)
     end)
+
+    hook.Add("KeyPress", "alcoholfall", function(ply, key) -- you're drunk go home
+        local alcohol = ply:GetAlcohol()
+        local rand = math.random(70, 110)
+
+        if ply:Alive() and ply:IsSprinting() then
+            if rand < (alcohol * 100) then
+                ply:ToggleRagdoll(nil)
+            end
+        end
+    end)
 end
