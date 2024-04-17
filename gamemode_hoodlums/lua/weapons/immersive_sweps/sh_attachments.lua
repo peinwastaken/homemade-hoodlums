@@ -8,26 +8,6 @@ if CLIENT then
     include("sh_flashlight.lua")
 end
 
--- currently added attachment effects
---[[
-WEAPON PROPERTIES
-
-Automatic - bool
-RecoilVertical - number
-RecoilHorizontal - number
-Suppressed - bool
-WeaponSound - sound
-
-SIGHTS
-
-HoloSight - bool
-AimPosAttachment - string attachment
-AimOffset - vector
-ReticleMaterial - material
-ReticleSize - number
-SightSize - table {x = 0, y = 0}
-]]
-
 SWEP.Attachments = {
 	["sight"] = {
 		["none"] = {

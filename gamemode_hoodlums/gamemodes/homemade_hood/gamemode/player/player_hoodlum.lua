@@ -40,6 +40,9 @@ PLAYER.Items = {
     },
     ["melee"] = {
         "melee_bat"
+    },
+    ["consumable"] = {
+        "consumable_liquor"
     }
 }
 
@@ -79,6 +82,7 @@ function PLAYER:OnRespawn()
     ply:Give(GetRandomItem(self.Items["primary"])):SetRandomAttachments()
     ply:Give(GetRandomItem(self.Items["secondary"])):SetRandomAttachments()
     ply:Give(GetRandomItem(self.Items["melee"]))
+    ply:Give(GetRandomItem(self.Items["consumable"]))
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
 

@@ -160,18 +160,22 @@ function SWEP:DrawHUD()
 
     local mult = math.Clamp(1 - distance/self.Range, 0.2, 1)
 
-    local size1 = ScreenScale(20)
+    local sizeMax = ScreenScale(14)
+    local sizeMin = ScreenScale(10)
+    local sizeLerp = Lerp(mult, sizeMin, sizeMax)
 
     if trace.Hit then
-        if distance < self.Range then -- if can hit
+        if distance < self.Range and fightmode then
             surface.SetDrawColor(Color(255, 0, 0, 20))
-            draw.Circle(pos.x, pos.y, size1 * mult, 16)
+            draw.Circle(pos.x, pos.y, sizeLerp * mult, 16)
 
-            surface.DrawCircle(pos.x, pos.y, size1 * mult, Color(255, 43, 43))
+            surface.DrawCircle(pos.x, pos.y, sizeLerp * mult, Color(255, 43, 43))
+        else
+            surface.DrawCircle(pos.x, pos.y, sizeLerp * mult, Color(255, 255, 255, 255))
         end
     else
         if self.ShowCrosshairAlways then
-            surface.DrawCircle(pos.x, pos.y, size1 * mult, Color(255, 255, 255, 255))
+            surface.DrawCircle(pos.x, pos.y, sizeLerp * mult, Color(255, 255, 255, 255))
         end
     end
 end
@@ -185,5 +189,19 @@ function SWEP:Equip()
 end
 
 function SWEP:OnRemove()
+	local ply = self:GetOwner()
 
+	if IsValid(ply) then
+		ResetBones(ply)
+	end
+end
+
+function SWEP:Holster()
+	local ply = self:GetOwner()
+
+	if IsValid(ply) then
+		ResetBones(ply)
+	end
+
+	return true
 end

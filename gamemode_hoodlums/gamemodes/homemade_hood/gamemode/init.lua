@@ -4,7 +4,6 @@ include("player/ragdoll/sv_ragdoll.lua")
 include("game/sv_game.lua")
 include("player/suppression/sv_suppression.lua")
 include("player/sv_weapondrop.lua")
-include("player/sv_healthregen.lua") -- temp
 
 -- client
 AddCSLuaFile("cl_init.lua")
@@ -12,6 +11,7 @@ AddCSLuaFile("game/cl_game.lua")
 AddCSLuaFile("player/cl_death.lua")
 AddCSLuaFile("player/cl_view.lua")
 AddCSLuaFile("player/cl_hud.lua")
+AddCSLuaFile("player/cl_taa.lua")
 AddCSLuaFile("player/suppression/cl_suppression.lua")
 
 -- shared

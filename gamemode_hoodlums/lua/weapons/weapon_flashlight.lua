@@ -114,41 +114,7 @@ if CLIENT then
     end)
 end
 
-function ResetBones(ply)
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_UpperArm"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Forearm"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Hand"), Angle(0, 0, 0))
-
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_UpperArm"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Forearm"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_L_Hand"), Angle(0, 0, 0))
-
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Finger1"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Finger11"), Angle(0, 0, 0))
-    ply:ManipulateBoneAngles(ply:LookupBone("ValveBiped.Bip01_R_Finger12"), Angle(0, 0, 0))
-end
-
 hook.Add("Think", "animateflashlights", function()
-    -- never do this
-    --[[
-    for flashlight,_ in pairs(flashlights) do
-        if not IsValid(flashlight) then 
-            flashlights[flashlight] = false 
-            continue 
-        end
-
-        local owner = flashlight:GetOwner()
-
-        if not IsValid(owner) or owner:GetActiveWeapon() ~= flashlight then
-            ResetBones(owner)
-            continue 
-        end
-        
-        if flashlight.Animate then
-            flashlight:Animate()
-        end
-    end]]
-
     local plys = player.GetAll()
 
     for _,ply in pairs(plys) do

@@ -7,6 +7,18 @@ function PLAYER:GetRagdollCooldown()
     return timer.Exists("ragdollcooldown"..self:EntIndex())
 end
 
+concommand.Add("hoodlum_ragdolls_clear", function(ply)
+    if ply:IsAdmin() then
+        for _,ent in pairs(ents.GetAll()) do
+            if ent:GetClass() == "prop_ragdoll" then
+                ent:Remove()
+            end
+        end
+    else
+        ply:PrintMessage(HUD_PRINTCONSOLE, "sod off")
+    end
+end, nil, "Clear hoodlum ragdolls", FCVAR_NONE)
+
 --[[
 local RagdollHierarchy = {
     -- HEAD

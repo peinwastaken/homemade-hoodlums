@@ -21,26 +21,33 @@ hook.Add("Think", "cleanupitems", function()
 end)
 
 function PLAYER:DropItem(wep, pos, vel, time)
+    local classname = wep:GetClass()
+
     local drop = ents.Create("prop_physics")
-    drop:SetCreator(self)
     drop:SetModel(wep:GetModel())
 
     -- some properties
-    drop.WeaponId = wep:GetClass()
+    drop.WeaponId = classname
     drop.Type = "weapon"
     drop.Attachments = wep:GetAttachments()
     drop.EquippedAttachments = wep.EquippedAttachments
+    drop.Name = wep.PrintName
 
     local bodygroups = wep:GetBodyGroups()
     for i,tbl in ipairs(bodygroups) do
         drop:SetBodygroup(tbl.id, wep:GetBodygroup(tbl.id)) 
     end
 
+    if wep.Base == "consumable_base" then
+        drop.Remaining = wep:GetRemaining()
+    end
+
     -- save some variables
-    drop.Clip1 = wep:Clip1()
+    drop.Clip = wep:Clip1()
 
     drop:Spawn()
     drop:Activate()
+    drop:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
 
     drop:SetPos(pos)
     local physobjs = drop:GetPhysicsObjectCount()
@@ -59,7 +66,7 @@ function PLAYER:DropItem(wep, pos, vel, time)
 end
 
 function PLAYER:PickUpWeapon(wep)
-
+    -- this just exists then i guess??????
 end
 
 hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
@@ -71,7 +78,6 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
         else -- if he (or she) doesnt
             ply:Give(weaponId)
             local wepgive = ply:GetWeapon(weaponId)
-            wepgive:SetClip1(ent.Clip1)
             
             local attachments = ent.EquippedAttachments
             if attachments then
@@ -79,6 +85,13 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
                     wepgive:SetAttachmentSlot(slot, att)
                 end
             end
+
+            local remaining = ent.Remaining
+            if remaining then
+                wepgive:SetRemaining(remaining)
+            end
+
+            wepgive:SetClip1(ent.Clip)
 
             RemoveItemFromCleanup(ent)
             ent:Remove()
@@ -92,8 +105,17 @@ end)
 hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
-    if IsValid(wep) and wep.CanDrop then
-        ply:DropItem(wep, pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60)
+
+    local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
+
+    ply:DropItem(wep, pos, vel, time)
+    local rand = math.random(0, 100)
+    if rand < 30 then
+        local liquor = ply:GetWeapon("consumable_liquor")
+
+        if IsValid(liquor) then
+            ply:DropItem(liquor, pos, vel, time)
+        end
     end
 end)
 
