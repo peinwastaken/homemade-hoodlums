@@ -110,8 +110,10 @@ hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
     local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
 
     ply:DropItem(wep, pos, vel, time)
+    local wepClass = wep:GetClass()
     local rand = math.random(0, 100)
-    if rand < 30 then
+    if rand < 30 and wepClass ~= "consumable_liquor" then
+        ply:Give("consumable_liquor")
         local liquor = ply:GetWeapon("consumable_liquor")
 
         if IsValid(liquor) then
