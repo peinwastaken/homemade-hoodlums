@@ -4,9 +4,9 @@ local pipMaterial = CreateMaterial("PIPScope" .. pip_size, "UnlitGeneric",{
     ["$ignorez"] = 1
 })
 
--- i like it :) toggleable because some might not :(
-CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
-CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
+-- liked it until it started causing issues, maybe ill like it once more when i fix it
+--CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
+--CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
 
 function draw.Circle( x, y, radius, seg )
 	local cir = {}
@@ -57,11 +57,12 @@ function DoScope()
         else
             render.RenderView({origin = scope_pos + scope_ang:Forward() * 12, angles = scope_ang, fov = effect["PIPFov"], znear = 5, drawviewer = false})
         end
-
+        
+        --[[
         if GetConVar("hoodlum_pip_fisheye"):GetBool() then
             local amount = GetConVar("hoodlum_pip_fisheye_amount"):GetFloat()
             DrawRefract(amount)
-        end
+        end]]
 
         render.PopRenderTarget()
 
@@ -122,7 +123,7 @@ end
 hook.Add("PreDrawEffects", "predraweffects", function()
     local lply = LocalPlayer()
     local wep = lply:GetActiveWeapon()
-    if wep.Base == "immersive_sweps" then
+    if wep.Base == "immersive_sweps" and lply:KeyDown(IN_ATTACK2) then
         local effect = wep:GetAttachmentEffects()
         if effect["PIPSight"] then
             DoScope()

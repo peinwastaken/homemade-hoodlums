@@ -126,9 +126,9 @@ end
 function SWEP:DrawHUD()
     local remaining = self:GetRemaining()
 
-	local percent = math.Clamp(remaining, 0, 100)
+	local mult = math.Clamp(remaining / self.MaxAmount, 0, 100)
 
-    draw.SimpleText(string.format("%.1f", percent) .. "%", "CloseCaption_Bold", 100, ScrH() - 200, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText(string.format("%.1f", 100 * mult) .. "%", "CloseCaption_Bold", 100, ScrH() - 200, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 end
 
 function SWEP:SecondaryAttack()

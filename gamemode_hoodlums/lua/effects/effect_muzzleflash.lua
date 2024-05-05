@@ -9,9 +9,10 @@ function EFFECT:Init(effectdata)
     local pos = effectdata:GetOrigin()
     local normal = effectdata:GetNormal()
     local amount = effectdata:GetMagnitude()
+    local attachment = effectdata:GetAttachment()
 
     local emitter = ParticleEmitter(pos)
-
+    
     for i = 1, 1 do
         local particle = emitter:Add(table.Random(muzzle), pos)
 

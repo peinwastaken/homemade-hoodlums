@@ -6,7 +6,7 @@ local effectlist = {
     [MAT_FLESH] = "effect_blood"
 }
 
-function CreateImpactEffect(ent, pos, normal, mat)
+function CreateImpactEffect(pos, normal, mat)
     local data = EffectData()
     data:SetOrigin(pos)
     data:SetNormal(normal)
@@ -24,5 +24,5 @@ hook.Add("PostEntityFireBullets", "postfire_effect", function(ent, data)
     local trace = data.Trace
     local pos, normal, mat = trace.HitPos, trace.HitNormal, trace.MatType
 
-    CreateImpactEffect(ent, pos, normal, mat)
+    CreateImpactEffect(pos, normal, mat)
 end) 

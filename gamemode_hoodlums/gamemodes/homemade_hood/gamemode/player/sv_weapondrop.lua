@@ -21,7 +21,6 @@ hook.Add("Think", "cleanupitems", function()
 end)
 
 function PLAYER:DropItem(wep, pos, vel, time)
-    if wep == NULL then return end
     local classname = wep:GetClass()
 
     local drop = ents.Create("prop_physics")
@@ -74,9 +73,9 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
     if ent:GetClass() == "prop_physics" and ent.Type == "weapon" then
         local weaponId = ent.WeaponId
         local wep = ply:GetWeapon(weaponId)
-        if IsValid(wep) then -- if player already has the weapon
+        if IsValid(wep) then
             -- do something here?????
-        else -- if he (or she) doesnt
+        else
             ply:Give(weaponId)
             local wepgive = ply:GetWeapon(weaponId)
             
@@ -103,21 +102,30 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
     return true
 end)
 
+local le_drinks = {"consumable_liquor", "consumable_henny"}
 hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
 
     local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
 
-    ply:DropItem(wep, pos, vel, time)
-    local wepClass = wep:GetClass()
+    if wep.CanDrop then
+        ply:DropItem(wep, pos, vel, time)
+    end
+    
     local rand = math.random(0, 100)
-    if rand < 30 and wepClass ~= "consumable_liquor" then
-        ply:Give("consumable_liquor")
-        local liquor = ply:GetWeapon("consumable_liquor")
+    if rand < 30 then
+        local drink = le_drinks[math.random(1, #le_drinks)]
+        local item = ply:GetWeapon(drink)
 
-        if IsValid(liquor) then
-            ply:DropItem(liquor, pos, vel, time)
+        if IsValid(item) then
+            print("drink valid")
+            ply:DropItem(drink, pos, vel, time)
+        else
+            print("give drink and drop")
+            local item = ply:Give(drink)
+
+            ply:DropItem(item, pos, vel, time)
         end
     end
 end)

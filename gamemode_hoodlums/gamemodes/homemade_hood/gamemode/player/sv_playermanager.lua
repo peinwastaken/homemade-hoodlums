@@ -28,6 +28,7 @@ local deathsounds = {
 
 hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, attacker, dmginfo)
     local hitgroup = ply:LastHitGroup()
+
     if hitgroup == HITGROUP_HEAD then
         hook.Run("HoodlumDeath", ply, true)
     else
@@ -35,8 +36,8 @@ hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, a
     end
 end)
 
-hook.Add("HoodlumDeath", "hoodlum_death", function(ply, hitgroup)
-    if headshot then
+hook.Add("HoodlumDeath", "hoodlum_death", function(ply, headshot)
+    if not headshot then
         local snd = deathsounds[math.random(1, #deathsounds)]
         ply:EmitSound(snd, SNDLVL_NORM, 100)
     end

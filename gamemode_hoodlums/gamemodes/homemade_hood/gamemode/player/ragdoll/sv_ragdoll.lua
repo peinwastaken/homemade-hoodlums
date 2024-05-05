@@ -17,7 +17,7 @@ concommand.Add("hoodlum_ragdolls_clear", function(ply)
     else
         ply:PrintMessage(HUD_PRINTCONSOLE, "sod off")
     end
-end, nil, "Clear hoodlum ragdolls", FCVAR_NONE)
+end, nil, "Clear hoodlum ragdolls (Admin)", FCVAR_NONE)
 
 --[[
 local RagdollHierarchy = {
@@ -134,7 +134,7 @@ function PLAYER:ClearRagdoll(time)
     end
 end
 
-function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon)
+function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon, velocity)
     local ragdoll = self:GetNWEntity("ragdoll")
 
     if self:GetRagdollCooldown() then return end
@@ -155,23 +155,20 @@ function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon)
         
         new:Activate()
 
-        local bonecount = new:GetBoneCount()
-        for i = 0, bonecount do
-            local physobj = new:TranslateBoneToPhysBone(i)
+        local physobjs = new:GetPhysicsObjectCount()
+        for i = 0, physobjs - 1 do
             local obj = new:GetPhysicsObjectNum(i)
-            if obj then
-                if IsValid(obj) then
-                    local bone = new:TranslatePhysBoneToBone(i)
-                    local matrix = self:GetBoneMatrix(bone)
-                    local pos = self:GetBonePosition(bone)
-                    local ang = matrix:GetAngles()
-
-                    obj:SetPos(pos)
-                    obj:SetAngles(ang)
-                    obj:SetMass(obj:GetMass() * 10)
-                    obj:SetVelocity(self:GetVelocity())
-                    obj:SetBuoyancyRatio(5)
-                end
+            if IsValid(obj) then
+                local bone = new:TranslatePhysBoneToBone(i)
+                local matrix = self:GetBoneMatrix(bone)
+                local pos = self:GetBonePosition(bone)
+                local ang = matrix:GetAngles()
+                
+                obj:SetPos(pos)
+                obj:SetAngles(ang)
+                obj:SetMass(obj:GetMass() * 10)
+                obj:SetVelocity(velocity or self:GetVelocity())
+                obj:SetBuoyancyRatio(5)
             end
         end
 
@@ -220,9 +217,11 @@ function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon)
                 self.lastweapon = self:GetActiveWeapon():GetClass()
             end
         end
+
         self:SetActiveWeapon(NULL)
         self:SetNWEntity("ragdoll", new)
         self:Spectate(OBS_MODE_CHASE)
+        self:SpectateEntity(new)
         self:Lock()
     else
         if not self:Alive() then print("not alive") return end
@@ -289,6 +288,15 @@ local function getthingstodestroy(bone)
 end
 
 hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
+    if ent:IsPlayer() and dmginfo:GetDamageType() == DMG_BLAST then
+        if dmginfo:GetDamage() > 20 then
+            local dir = dmginfo:GetDamageForce()
+            local dirNormal = dir:GetNormalized()
+            local vel = dirNormal * 300
+            ent:ToggleRagdoll(nil, true, "weapon_hands", vel)
+        end
+    end
+
     if ent:GetClass() == "prop_ragdoll" then
         local attacker = dmginfo:GetAttacker()
 
@@ -298,7 +306,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
             local wep = attacker:GetActiveWeapon()
             local dmgtype = dmginfo:GetDamageType()
 
-            if IsValid(owner) and owner:Alive() and dmgtype == DMG_GENERIC then
+            if IsValid(owner) and owner:Alive() and (dmgtype == DMG_GENERIC or dmgtype == DMG_BLAST) then
                 local damage = dmginfo:GetDamage()
                 local health = ent:Health()
 

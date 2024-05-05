@@ -8,8 +8,8 @@ PLAYER.SlowWalkSpeed = 75
 
 PLAYER.Models = {
     ["bloods"] = {
-        "models/player/bloodz/slow_1.mdl", 
-        "models/player/bloodz/slow_2.mdl", 
+        "models/player/bloodz/slow_1.mdl",
+        "models/player/bloodz/slow_2.mdl",
         "models/player/bloodz/slow_3.mdl", 
     },
     ["crips"] = {
@@ -41,8 +41,11 @@ PLAYER.Items = {
     ["melee"] = {
         "melee_bat"
     },
-    ["consumable"] = {
+    ["consumable"] = { -- :(
         "consumable_liquor"
+    },
+    ["throwable"] = {
+        "weapon_pipebomb"
     }
 }
 
@@ -84,6 +87,11 @@ function PLAYER:OnRespawn()
     ply:Give(GetRandomItem(self.Items["melee"]))
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
+
+    local randThrowable = math.random(0, 100)
+    if randThrowable < 50 then
+        ply:Give(self.Items["throwable"][1]) -- :/
+    end
 
     local tbl = self.Models[self.Teams[math.random(1, #self.Teams)]]
     local model = GetRandomItem(tbl)

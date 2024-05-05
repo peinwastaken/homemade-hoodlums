@@ -81,13 +81,13 @@ if CLIENT then
                 local eyedir = att.Pos - att_eyes.Pos
 
                 local dist = eyedir:Length()
-                local maxdist = 1000
+                local maxdist = 1500
                 local dot = flashdir:Dot(eyedir:GetNormalized())
-                local scale = (dot - 0.1) / (1 - 0.1)
+                local scale = dist / maxdist
 
-                if dot > 0.1 then
+                if dot > 0.4 then
                     local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
-                    local size = 1024 * scale
+                    local size = 1024 * math.Clamp(0.6 - scale, 0, 1) * dot -- retard
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
                         cam.Start2D()
