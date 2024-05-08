@@ -101,7 +101,7 @@ end
 hook.Add("OnPlayerChat", "hoodlum_bindmenucmd", function(ply, text, teamChat, isDead)
     local lply = LocalPlayer()
 
-    if not ply == lply then return end
+    if ply ~= lply then return end
 
     if text == "!binds" then
         OpenBindMenu()
