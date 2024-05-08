@@ -84,27 +84,29 @@ function SWEP:PrimaryAttack()
 
     ply:SetAnimation(PLAYER_ATTACK1)
 
-    if SERVER then
-        local size = Vector(4, 4, 4)
-        local trace = util.TraceHull({
-            start = eyepos,
-            endpos = eyepos + aimvector * self.Range,
-            maxs = size,
-            mins = -size,
-            filter = ply,
-        })
-        local ent = trace.Entity
-        local distance = (trace.StartPos - trace.HitPos):Length()
+    ply:LagCompensation(true)
 
-        if distance < self.Range and trace.Hit then
-            if trace.MatType == MAT_FLESH then
-                EmitSound(self.HitSoundEntity, trace.HitPos)
-            else
-                local hitsound = self.HitSounds[math.random(1, #self.HitSounds)]
+    local size = Vector(4, 4, 4)
+    local trace = util.TraceHull({
+        start = eyepos,
+        endpos = eyepos + aimvector * self.Range,
+        maxs = size,
+        mins = -size,
+        filter = ply,
+    })
+    local ent = trace.Entity
+    local distance = (trace.StartPos - trace.HitPos):Length()
 
-                EmitSound(hitsound, trace.HitPos)
-            end
+    if distance < self.Range and trace.Hit then
+        if trace.MatType == MAT_FLESH then
+            EmitSound(self.HitSoundEntity, trace.HitPos)
+        else
+            local hitsound = self.HitSounds[math.random(1, #self.HitSounds)]
 
+            EmitSound(hitsound, trace.HitPos)
+        end
+
+        if SERVER then
             if IsValid(ent) then
                 local damage = DamageInfo()
                 damage:SetDamage(self.Primary.Damage)
@@ -112,9 +114,9 @@ function SWEP:PrimaryAttack()
                 damage:SetInflictor(self)
                 damage:SetDamagePosition(pos)
                 damage:SetDamageType(DMG_GENERIC)
-
+    
                 ent:TakeDamageInfo(damage)
-
+    
                 local physbone = trace.PhysicsBone
                 if physbone then
                     local physobj = ent:GetPhysicsObjectNum(physbone)
@@ -122,7 +124,7 @@ function SWEP:PrimaryAttack()
                         physobj:ApplyForceOffset(aimvector * 2500, trace.HitPos)
                     end
                 end
-
+    
                 local bone = ent:TranslatePhysBoneToBone(physbone)
                 local bonename = ent:GetBoneName(bone)
                 local rand = math.random(0, 100)
@@ -133,11 +135,11 @@ function SWEP:PrimaryAttack()
                         ent:ToggleRagdoll()
                     end
                 end
-
-                EmitSound(self.HitSoundEntity, trace.HitPos)
             end
         end
     end
+
+    ply:LagCompensation(false)
 end
 
 function SWEP:DrawHUD()

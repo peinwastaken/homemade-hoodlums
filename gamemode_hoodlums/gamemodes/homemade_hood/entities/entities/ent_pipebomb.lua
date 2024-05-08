@@ -62,6 +62,7 @@ function ENT:Think()
 end
 
 function ENT:Draw()
+    -- mentally deficient. 
     local att = self:GetAttachment(self:LookupAttachment("spark"))
     if att then
         local data = EffectData()

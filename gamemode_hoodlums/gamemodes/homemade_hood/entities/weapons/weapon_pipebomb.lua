@@ -54,7 +54,7 @@ function SWEP:ThrowGrenade(force)
 		local angle = Angle(0, 0, 0)
 
 		local grenade = ents.Create("ent_pipebomb")
-		grenade:SetPos(ply:GetPos() + Vector(0, 0, 64))
+		grenade:SetPos(ply:EyePos())
 		grenade:SetAngles(angle)
 		grenade:SetOwner(ply)
 		grenade:Spawn()

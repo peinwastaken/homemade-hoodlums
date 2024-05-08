@@ -340,7 +340,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                         bonelist[i] = pair.key
                     end
 
-                    for i,v in ipairs(bonelist) do
+                    for i,v in ipairs(bonelist) dow
                         local b = ent:LookupBone(v)
                         ent:ManipulateBoneScale(b, Vector(0, 0, 0))
                     end]]

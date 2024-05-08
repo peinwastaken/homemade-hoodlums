@@ -6,6 +6,8 @@ include("player/cl_view.lua")
 include("player/cl_hud.lua")
 include("player/cl_taa.lua")
 include("player/suppression/cl_suppression.lua")
+include("settings/cl_binds.lua")
+include("settings/cl_settings.lua")
 
 surface.CreateFont("FancyOldTimey", {
     font = "DS Cloister Black",

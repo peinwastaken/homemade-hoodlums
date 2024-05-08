@@ -132,10 +132,12 @@ if CLIENT then
 end
 
 if SERVER then
-    hook.Add("PlayerSwitchFlashlight", "homemade.flashlight", function(ply, enabled)
-        local state = ply:GetNWBool("flashlight")
-        ply:SetNWBool("flashlight", !state)
+    concommand.Add("hoodlum_flashlight_toggle", function(ply)
+        local enabled = ply:GetNWBool("flashlight")
+        ply:SetNWBool("flashlight", !enabled)
+    end)
 
+    hook.Add("PlayerSwitchFlashlight", "homemade.flashlight", function(ply, enabled)
         return false
     end)
 end

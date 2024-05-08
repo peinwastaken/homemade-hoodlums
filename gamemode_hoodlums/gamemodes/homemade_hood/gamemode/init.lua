@@ -13,6 +13,8 @@ AddCSLuaFile("player/cl_view.lua")
 AddCSLuaFile("player/cl_hud.lua")
 AddCSLuaFile("player/cl_taa.lua")
 AddCSLuaFile("player/suppression/cl_suppression.lua")
+AddCSLuaFile("settings/cl_binds.lua")
+AddCSLuaFile("settings/cl_settings.lua")
 
 -- shared
 AddCSLuaFile("sh_init.lua")

@@ -17,7 +17,6 @@ if CLIENT then
 	include("sh_impacteffects.lua")
 end
 
-
 SWEP.Base = "weapon_base"
 
 SWEP.PrintName 				= "immersive_sweps"
@@ -525,6 +524,8 @@ function SWEP:Holster()
 	if IsValid(ply) then
 		ResetBones(ply)
 	end
+
+	self:CancelReload()
 
 	return true
 end

@@ -27,16 +27,16 @@ function EFFECT:Init(effectdata)
         local particle = emitter:Add(table.Random(smoke), pos)
         if particle then
             local angle = math.rad(i * (360 / smokeAmount))
-            particle:SetDieTime(4)
+            particle:SetDieTime(3)
 
             particle:SetStartAlpha(math.random(50, 130))
             particle:SetEndAlpha(0)
 
             particle:SetStartSize(math.random(20, 50))
-            particle:SetEndSize(math.random(180, 200))
+            particle:SetEndSize(math.random(180, 350))
 
             particle:SetRoll(math.random(-180, 180))
-            particle:SetRollDelta(math.random(-1, 1))
+            particle:SetRollDelta(-0.1)
 
             local vel = Vector(math.sin(angle), - math.cos(angle), 0) * math.random(400, 1400)
             particle:SetVelocity(vel)
@@ -62,9 +62,9 @@ function EFFECT:Init(effectdata)
             particle:SetEndSize(math.random(180, 200))
 
             particle:SetRoll(math.random(-180, 180))
-            particle:SetRollDelta(math.random(-1, 1))
-
-            particle:SetVelocity(Vector(0, 0, 1) * math.random(100, 400) + Vector(math.random(-1, 1), math.random(-1, 1), 0) * math.random(70, 150))
+            particle:SetRollDelta(-0.1)
+            
+            particle:SetVelocity(Vector(0.2, 0.2, 1) * math.random(100, 400) + Vector(math.random(-1, 1), math.random(-1, 1), 0) * math.random(70, 150))
 
             particle:SetAirResistance(60)
 
@@ -86,10 +86,9 @@ function EFFECT:Init(effectdata)
             particle:SetEndSize(0)
 
             particle:SetRoll(math.random(-180, 180))
-            particle:SetRollDelta(math.random(-30, 30))
 
             particle:SetGravity(Vector(0, 0, -900))
-            particle:SetVelocity(Vector(0, 0, 1) + VectorRand() * math.random(300, 800))
+            particle:SetVelocity(Vector(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(0.5, 3)) * math.random(200, 600))
 
             particle:SetCollide(true)
             particle:SetBounce(0.2)
@@ -97,6 +96,31 @@ function EFFECT:Init(effectdata)
             particle:SetLighting(true)
         end
     end
+
+    -- shrapnel sparks or something???? idfk
+    for i = 1, 32 do
+        local particle = emitter:Add("effects/spark", pos)
+
+        particle:SetDieTime(math.random() * 0.2)
+
+        particle:SetStartAlpha(255)
+        particle:SetEndAlpha(0)
+
+        particle:SetStartSize(math.random(3, 8))
+        particle:SetEndSize(0)
+
+        particle:SetStartLength(0)
+        particle:SetEndLength(math.random(40, 100))
+
+        particle:SetGravity(Vector(0, 0, -100))
+        particle:SetVelocity(Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(0.1, 0.6)) * math.random(800, 1600))
+
+        particle:SetCollide(true)
+        particle:SetBounce(1)
+    end
+
+    -- blast decal
+    util.Decal("Scorch", pos, pos + Vector(0, 0, -5))
 end
 
 function EFFECT:Think()

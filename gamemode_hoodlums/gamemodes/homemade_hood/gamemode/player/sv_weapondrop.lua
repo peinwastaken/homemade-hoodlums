@@ -78,6 +78,8 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
         else
             ply:Give(weaponId)
             local wepgive = ply:GetWeapon(weaponId)
+
+            wepgive.PrintName = ent.Name
             
             local attachments = ent.EquippedAttachments
             if attachments then
