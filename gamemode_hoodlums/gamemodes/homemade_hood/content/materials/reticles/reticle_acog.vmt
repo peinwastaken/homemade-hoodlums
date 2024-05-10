@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "reticles/reticle_acog"
+	"$ignorez" 1
+	"$translucent" 1
+}

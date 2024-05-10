@@ -2,6 +2,7 @@
 include("player/sv_playermanager.lua")
 include("player/ragdoll/sv_ragdoll.lua")
 include("game/sv_game.lua")
+include("game/sv_objectives.lua")
 include("player/suppression/sv_suppression.lua")
 include("player/sv_weapondrop.lua")
 

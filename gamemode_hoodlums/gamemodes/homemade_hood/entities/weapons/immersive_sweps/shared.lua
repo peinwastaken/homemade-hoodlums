@@ -364,16 +364,16 @@ function SWEP:PrimaryAttack()
 			spread = spread - spread * self.AimSpreadReductionMult
 		end
 
+		local effectdatasmoke = EffectData()
+		effectdatasmoke:SetOrigin(pos)
+    	effectdatasmoke:SetNormal(ang:Forward())
+		util.Effect("effect_muzzlesmoke", effectdatasmoke)
+
 		if not att_effects["Suppressed"] then
 			local effectdata = EffectData()
 			effectdata:SetOrigin(pos)
 			effectdata:SetNormal(ang:Forward())
 			util.Effect("effect_muzzleflash", effectdata)
-
-			local effectdatasmoke = EffectData()
-			effectdatasmoke:SetOrigin(pos)
-    		effectdatasmoke:SetNormal(ang:Forward())
-			util.Effect("effect_muzzlesmoke", effectdatasmoke)
 
 			if CLIENT then
 				local light = DynamicLight(self:EntIndex(), false)

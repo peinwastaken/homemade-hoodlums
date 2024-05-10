@@ -39,12 +39,15 @@ function SWEP:ApplyRecoil()
 	local ply = self:GetOwner()
     local att_effects = self:GetAttachmentEffects()
 
-    local recoil_vert_add, recoil_hor_add = 0, 0
+    local recoil_vert_add, recoil_hor_add, recoil_vis_add = 0, 0, Vector(0, 0, 0)
     if att_effects["RecoilVertical"] then
         recoil_vert_add = recoil_vert_add + att_effects["RecoilVertical"]
     end
     if att_effects["RecoilHorizontal"] then
         recoil_hor_add = recoil_hor_add + att_effects["RecoilHorizontal"]
+    end
+    if att_effects["VisualRecoilAdd"] then
+        recoil_vis_add = recoil_vis_add + att_effects["VisualRecoilAdd"]
     end
 
     local mult = 1
@@ -64,7 +67,7 @@ function SWEP:ApplyRecoil()
         mult = self.CrouchRecoilMult
     end
 
-    self.eyeoffset = self.eyeoffset + self.VisualRecoil
+    self.eyeoffset = self.eyeoffset + self.VisualRecoil + recoil_vis_add
     self.eyeangleoffset = self.eyeangleoffset + Angle(self.VisualRecoilAngle.x, self.VisualRecoilAngle.y, math.random(-self.VisualRecoilAngle.z, self.VisualRecoilAngle.z))
 end
 

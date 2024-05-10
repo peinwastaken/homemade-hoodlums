@@ -21,6 +21,7 @@ hook.Add("Think", "cleanupitems", function()
 end)
 
 function PLAYER:DropItem(wep, pos, vel, time)
+    if wep == NULL or not IsValid(wep) then return end
     local classname = wep:GetClass()
 
     local drop = ents.Create("prop_physics")
@@ -69,8 +70,59 @@ function PLAYER:PickUpWeapon(wep)
     -- this just exists then i guess??????
 end
 
+function CreateDroppedWeapon(weaponClass, pos, randomAttachments, time)
+    local wep = weapons.Get(weaponClass)
+
+    local drop = ents.Create("prop_physics")
+    drop:SetModel(wep.WorldModel)
+
+    -- some properties
+    drop.WeaponId = weaponClass
+    drop.Type = "weapon"
+    drop.Name = wep.PrintName
+    drop.Clip = wep.Primary.ClipSize
+
+    drop:Spawn()
+    drop:Activate()
+    drop:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
+
+    if randomAttachments and wep.Attachments then
+        drop.EquippedAttachments = wep.EquippedAttachments
+        local attsIndexed = wep:GetRandomAttachments()
+
+        for slot, att in pairs(drop.EquippedAttachments) do
+            local att_slot = wep.Attachments[slot]
+            if att_slot then
+                if attsIndexed[slot] then
+                    drop.EquippedAttachments[slot] = attsIndexed[slot][math.random(1, #attsIndexed[slot])]
+
+                    local data = wep.Attachments[slot][drop.EquippedAttachments[slot]]
+                    drop:SetBodygroup(data["bodygroup_id"], data["bodygroup_value"])
+                end
+            end
+        end
+
+        --[[
+        local id, value = att_slot["bodygroup_id"], att_slot["bodygroup_value"]
+
+        self:SetBodygroup(id, value)
+
+        for slot, tbl in pairs(drop.EquippedAttachments) do
+            local rnd = math.random(1, #tbl)
+            self:SetAttachmentSlot(slot, tbl[rnd])
+        end]]
+    end
+
+    drop:SetPos(pos)
+
+    if time then
+        CleanupItem(drop, time)
+    end
+end
+
 hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
     if ent:GetClass() == "prop_physics" and ent.Type == "weapon" then
+        if not ply:KeyPressed(IN_USE) then return end
         local weaponId = ent.WeaponId
         local wep = ply:GetWeapon(weaponId)
         if IsValid(wep) then

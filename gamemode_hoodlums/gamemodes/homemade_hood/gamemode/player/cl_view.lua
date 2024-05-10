@@ -88,6 +88,31 @@ hook.Add("Think", "fallthing", function()
     fall_ang = LerpAngle(2 * FrameTime(), fall_ang, falloffset_ang)
 end)
 
+local function GetCameraClipOffset()
+    local ply = LocalPlayer()
+    local size = Vector(6, 6, 6)
+    local att = ply:GetAttachment(ply:LookupAttachment("eyes"))
+    local pos, ang = att.Pos, att.Ang
+
+    local trace = util.TraceHull({
+        start = ply:EyePos(),
+        endpos = pos,
+        filter = ply,
+        mins = -size,
+        maxs = size,
+        mask = MASK_SOLID
+    })
+
+    --debugoverlay.SweptBox(ply:EyePos(), pos, -size, size, Angle(0, 0, 0), 1, color_white)
+
+    if trace.Hit then
+        local dist = (pos - trace.HitPos):Length()
+        return trace.HitNormal * dist
+    end
+
+    return Vector(0, 0, 0)
+end
+
 -- RETARDED!!!!!!!!!!!!!!!!!!
 local camang, eyeangLerp = Angle(0, 0, 0), Angle(0, 0, 0)
 local movelerp = 0
@@ -95,10 +120,10 @@ local aimlerp = 0
 local recoil_cam_ang = Angle(0, 0, 0)
 local recoil_pos, recoil_ang = Vector(0, 0, 0), Angle(0, 0, 0)
 local suppression_ang_lerp = Angle(0, 0, 0)
+local cliplerp = Vector(0, 0, 0)
 hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)    
     local cam_offset = Vector(2, 1, 0)
     local cam_ang_offset = Angle(10, 5, 0)
-
     local ply = LocalPlayer()
     local wep = ply:GetActiveWeapon()
     local ragdoll = ply:GetNWEntity("ragdoll")
@@ -153,7 +178,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         muzzle_forward = muzzle_ang:Forward()
     
         recoil_pos, recoil_ang = wep:GetRecoil()
-        recoil_cam_ang = LerpAngleFT(12, recoil_cam_ang, wep.eyeangleoffset)
+        recoil_cam_ang = LerpAngleFT(24, recoil_cam_ang, wep.eyeangleoffset)
     end
 
     local max = speed / ply:GetRunSpeed()
@@ -162,6 +187,8 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     else
         movelerp = math.Clamp(movelerp - 1 * FrameTime(), 0, max)
     end
+
+    cliplerp = LerpVectorFT(16, cliplerp, GetCameraClipOffset())
     
     local strafespeed = GetStrafeSpeed(velocity, ply:EyeAngles():Forward())
     local strafemult = math.Clamp(strafespeed / ply:GetRunSpeed(), -1, 1)
@@ -175,7 +202,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     camang = LerpAngle(GetConVar("hoodlum_cam_smooth"):GetFloat() * FrameTime(), camang, eyeang + velocityang * aimlerp)
     eyeangLerp = LerpAngle(8 * FrameTime(), eyeangLerp, eye_ang)
 
-    local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos
+    local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos + cliplerp
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
     
     if IsValid(ragdoll) then

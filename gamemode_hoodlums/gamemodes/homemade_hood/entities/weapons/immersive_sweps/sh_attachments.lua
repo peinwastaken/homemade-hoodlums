@@ -46,6 +46,15 @@ SWEP.Attachments = {
 	}
 }
 
+SWEP.EquippedAttachments = {
+    ["sight"] = "none",
+    ["stock"] = "none",
+    ["barrel"] = "none",
+    ["underbarrel"] = "none",
+    ["magazine"] = "none",
+    ["extra"] = "none"
+}
+
 if SERVER then
     util.AddNetworkString("SendAttachments")
     util.AddNetworkString("SetAttachment")
@@ -65,6 +74,7 @@ if SERVER then
     end
     
     concommand.Add("hoodlum_rand_atts", function(ply)
+        if not ply:IsAdmin() or not GetConVar("sv_cheats"):GetBool() then return end
         local wep = ply:GetActiveWeapon()
         if IsValid(wep) and wep.Base == "immersive_sweps" then
             wep:SetRandomAttachments(wep:GetRandomAttachments())

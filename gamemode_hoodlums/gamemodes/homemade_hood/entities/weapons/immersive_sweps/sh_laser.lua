@@ -1,6 +1,8 @@
 if CLIENT then
     local white = Material("reticles/white")
     local glow = Material("Sprites/light_glow02_add_noz")
+    local lasermat = Material("effects/laser1")
+    local glowmat = Material("sprites/laserdot/glow")
     hook.Add("PostDrawTranslucentRenderables", "laser_posttranslucent", function()
         local lply = LocalPlayer()
         for _,ply in player.Iterator() do
@@ -14,14 +16,19 @@ if CLIENT then
                 local att_name = effect["LaserAttachment"]
                 if not att_name then continue end
                 local att = wep:GetAttachment(wep:LookupAttachment(att_name))
+                local tracelol = util.QuickTrace(att.Pos, att.Ang:Up() * -1024)
 
                 -- laser beam
                 att.Ang:RotateAroundAxis(att.Ang:Right(), 90)
                 cam.Start3D()
-                    local r, g, b, a = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a")
+                    local size = math.random(5, 10)
                     local trace = util.QuickTrace(att.Pos, att.Ang:Up() * -1024)
-                    render.SetMaterial(Material("effects/laser1"))
+                    local r, g, b, a = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a")
+                    render.SetMaterial(lasermat)
                     render.DrawBeam(trace.StartPos, trace.HitPos, 1, 0, 12.5, Color(r, g, b, a))
+
+                    render.SetMaterial(glowmat)
+                    render.DrawQuadEasy(trace.HitPos, trace.HitNormal, size, size, Color(r, g, b), 0)
                 cam.End3D()
             end
         end

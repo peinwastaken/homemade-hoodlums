@@ -16,8 +16,22 @@ local settings = {
         ["Name"] = "Invisible Head",
         ["Type"] = "Bool",
         ["Value"] = true,
-        ["ConVars"] = {"hoodlum_cam_smooth"},
+        ["ConVars"] = {"hoodlum_invishead"},
         ["ToolTip"] = "Makes your head small so it doesn't block the camera."
+    },
+    ["Taa"] = {
+        ["Name"] = "Temporal Anti-Aliasing",
+        ["Type"] = "Bool",
+        ["Value"] = false,
+        ["ConVars"] = {"cl_taa"},
+        ["ToolTip"] = "Gets rid of jagged edges and shimmering."
+    },
+    ["Sharpen"] = {
+        ["Name"] = "Sharpen",
+        ["Type"] = "Float",
+        ["Value"] = false,
+        ["ConVars"] = {"cl_sharpen"},
+        ["ToolTip"] = "Sharpen filter to mitigate loss of detail caused by TAA."
     },
     ["LaserColor"] = {
         ["Name"] = "Laser Color",
@@ -27,10 +41,10 @@ local settings = {
     }
 }
 
-local settingOrder = {"Fov", "CamSmooth", "InvisHead", "LaserColor"}
+local settingOrder = {"Fov", "CamSmooth", "InvisHead", "Taa", "Sharpen", "LaserColor"}
 
 function OpenSettingsMenu()
-    local sizeX, sizeY = 300, 300
+    local sizeX, sizeY = 300, 350
 
     local mainFrame = vgui.Create("DFrame")
     mainFrame:SetPos(ScrW()/2 - sizeX/2, ScrH()/2 - sizeY/2)
@@ -52,12 +66,12 @@ function OpenSettingsMenu()
         local name = vgui.Create("DLabel")
         name:SetText(settingName)
         name:SetPos(25, y)
-        name:SetSize(100, 15)
+        name:SetSize(200, 15)
         name:SetParent(mainFrame)
 
         if set["Type"] == "Float" then
             local slider = vgui.Create("DNumSlider", mainFrame)
-            slider:SetPos(30, y + 5)
+            slider:SetPos(50, y + 5)
             slider:SetSize(220, 10)
             slider:SetMin(GetConVar(set["ConVars"][1]):GetMin())
             slider:SetMax(GetConVar(set["ConVars"][1]):GetMax())
@@ -69,7 +83,7 @@ function OpenSettingsMenu()
             end
         elseif set["Type"] == "Bool" then
             local bool = vgui.Create("DCheckBox", mainFrame)
-            bool:SetPos(110, y + 5)
+            bool:SetPos(150, y + 5)
             bool:SetSize(12, 12)
             bool:SetChecked(GetConVar(set["ConVars"][1]):GetBool())
 
@@ -79,9 +93,9 @@ function OpenSettingsMenu()
 
             function bool:OnChange(state)
                 if state then
-                    RunConsoleCommand("hoodlum_invishead", 1)
+                    RunConsoleCommand(set["ConVars"][1], 1)
                 else
-                    RunConsoleCommand("hoodlum_invishead", 0)
+                    RunConsoleCommand(set["ConVars"][1], 0)
                 end
             end
         elseif set["Type"] == "Color" then

@@ -1,10 +1,16 @@
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:GetTeam()
+    return player_manager.RunClass(self, "GetAlliance")
+end
+
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply) 
     player_manager.SetPlayerClass(ply, "player_hoodlum")
     player_manager.RunClass(ply, "OnRespawn")
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
 
     net.Start("Hoodlum_PlayerRespawn")
-    net.WriteString(player_manager.RunClass(ply, "GetAlliance"))
+    net.WriteString(ply:GetTeam())
     net.Send(ply)
 end)
 

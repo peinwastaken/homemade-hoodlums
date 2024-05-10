@@ -27,7 +27,6 @@ PLAYER.Items = {
         "weapon_m4_new",
         "weapon_draco",
         "weapon_mpx",
-        "weapon_remington700",
         "weapon_aks74u",
         "weapon_remington870",
         "weapon_uzi",
@@ -40,9 +39,6 @@ PLAYER.Items = {
     },
     ["melee"] = {
         "melee_bat"
-    },
-    ["consumable"] = { -- :(
-        "consumable_liquor"
     },
     ["throwable"] = {
         "weapon_pipebomb"

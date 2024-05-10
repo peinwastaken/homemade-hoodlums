@@ -49,7 +49,7 @@ function RespawnPlayer(ply, t)
                 if not trace.Hit then
                     print("found spawn!")
                     found = true
-                    spawnpos = pos
+                    spawnpos = pos + Vector(0, 0, 8)
                 else
                     print("finding new spawn")
                 end
