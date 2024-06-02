@@ -19,8 +19,8 @@ PLAYER.Items = {
         "weapon_asval",
     },
     ["secondary"] = {
-        "weapon_glock",
-        "weapon_m1911"
+        "weapon_p320", -- cant believe i forgot this..
+        "weapon_m1911",
     },
 }
 

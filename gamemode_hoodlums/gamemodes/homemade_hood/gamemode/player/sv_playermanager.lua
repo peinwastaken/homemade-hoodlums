@@ -6,7 +6,7 @@ end
 
 local specialClasses = {"player_demoncompany"}
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
-    local specialChance = 5
+    local specialChance = 5 -- make a convar
     local rand = math.Rand(0, 100)
     if rand < specialChance then -- if is special...
         local specialClass = table.Random(specialClasses)
