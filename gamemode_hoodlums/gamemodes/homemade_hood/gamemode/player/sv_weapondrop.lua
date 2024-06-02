@@ -167,21 +167,22 @@ hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
         ply:DropItem(wep, pos, vel, time)
     end
     
+    --[[
     local rand = math.random(0, 100)
     if rand < 30 then
         local drink = le_drinks[math.random(1, #le_drinks)]
         local item = ply:GetWeapon(drink)
 
         if IsValid(item) then
-            print("drink valid")
+            --print("drink valid")
             ply:DropItem(drink, pos, vel, time)
         else
-            print("give drink and drop")
+            --print("give drink and drop")
             local item = ply:Give(drink)
 
             ply:DropItem(item, pos, vel, time)
         end
-    end
+    end]]
 end)
 
 concommand.Add("drop", function(ply)

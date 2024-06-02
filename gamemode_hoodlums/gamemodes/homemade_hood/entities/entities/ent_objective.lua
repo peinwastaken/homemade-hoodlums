@@ -9,13 +9,8 @@ if CLIENT then
         local t = net.ReadString()
         local obj = net.ReadString()
 
-        if t == "bloods" then
-            local color = Color(255, 40, 40)
-            chat.AddText(color, string.format("%s captured the %s!", "Bloodz", obj))
-        else
-            local color = Color(66, 66, 255)
-            chat.AddText(color, string.format("%s captured the %s!", "Cripz", obj))
-        end
+        local color = _G.Teams[t]["ChatColor"]
+        chat.AddText(color, string.format("%s captured the %s!", _G.Teams[t]["Name"], obj))
     end)
 
     hook.Add("PostDrawTranslucentRenderables", "rendercapturepercent", function(dDepth, dSkybox, isDraw3dSkybox)
@@ -52,6 +47,7 @@ local smoke = {
 ENT.Type = "anim"
 ENT.PrintName = "ent_objective"
 ENT.Author = "pein"
+ENT.Spawnable = false
 
 ENT.Model = "models/props_junk/wood_crate001a.mdl"
 ENT.Radius = 200
@@ -67,13 +63,14 @@ ENT.ObjectiveTypes = {
             "weapon_aks74u",
             "weapon_remington870",
             "weapon_pipebomb",
-            "weapon_mcxspear"
+            "weapon_mcxspear",
+            "weapon_mac10"
         },
-        ["CaptureDelay"] = 0.3,
+        ["CaptureDelay"] = 0.03,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 6,
         ["Flare"] = true,
-        ["FlareColor"] = Color(115, 0, 255, 99),
+        ["FlareColor"] = Color(106, 26, 255, 124),
     },
     ["AlcoholCache"] = {
         ["Name"] = "Alcohol Stash",
@@ -81,7 +78,7 @@ ENT.ObjectiveTypes = {
             "consumable_liquor",
             "consumable_henny"
         },
-        ["CaptureDelay"] = 0.1,
+        ["CaptureDelay"] = 0.01,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 3,
         ["Flare"] = true,
@@ -91,7 +88,6 @@ ENT.ObjectiveTypes = {
 
 -- fucking retarded
 local retarded_shit = {"WeaponCache", "AlcoholCache"}
-ENT.Spawnable = false
 
 -- i should create some sort of utilities script... whatever lol its not like anyone is ever gonna go through the code anyway
 function LerpColor(frac, from, to)
@@ -105,6 +101,50 @@ function LerpColor(frac, from, to)
 	return col
 end
 
+-- following 2 functions.....so...fvcking....neurodivergent...
+local function CheckContested(leadingTable, capturingTable)
+    local leadingTeam, leadingAmount = leadingTable[1], capturingTable[leadingTable[1]]
+
+    for alliance, amount in pairs(capturingTable) do
+        if alliance == leadingTeam then
+            continue
+        else
+            if amount == leadingAmount then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+local function GetLeadingTeam(tbl)
+    local leading = {}
+
+    -- copy it.
+    for i in pairs(tbl) do table.insert(leading, i) end
+    -- sort it.
+    table.sort(leading, function(a, b)
+        return tbl[a] > tbl[b]
+    end)
+
+    local contested = CheckContested(leading, tbl)
+    
+    if not contested then 
+        return leading[1] 
+    end
+
+    return "neutral"
+end
+
+local function GetValueOrZero(val)
+    if val then
+        return val
+    end
+
+    return 0
+end
+
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "StartCaptureTime")
     self:NetworkVar("Int", 0, "CaptureProgress")
@@ -113,6 +153,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("String", 1, "ObjectiveType")
     self:NetworkVar("Float", 2, "NextCapture")
     self:NetworkVar("Float", 3, "DespawnTime")
+    
 
     self:SetStartCaptureTime(CurTime())
     self:SetCaptureProgress(0)
@@ -194,10 +235,10 @@ function ENT:Think()
         -- all of this is probably very expensive and im sure there are a bagorillion different ways of doing this kinda stuff
         -- but as long as it works im fine with it :)
 
-        if self:GetDespawnTime() < CurTime() then
-            --print("despawning objective " .. self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
-            self:Remove()
-        end
+        --if self:GetDespawnTime() < CurTime() then
+        --    --print("despawning objective " .. self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
+        --    self:Remove()
+        --end
 
         -- get all players in zone
         local playersInZone = {}
@@ -219,7 +260,13 @@ function ENT:Think()
         end
 
         -- get capturing player teams
-        local capturing = {["bloods"] = 0, ["crips"] = 0}
+        local all_teams = _G.Teams
+        local capturing = {}
+        for i,v in pairs(all_teams) do
+            capturing[i] = 0
+        end
+
+        -- how many people capturing in each team
         for _,ply in pairs(playersInZone) do
             local t = ply:GetTeam()
             if capturing[t] then
@@ -227,39 +274,40 @@ function ENT:Think()
             end
         end
 
-        if capturing.bloods > capturing.crips then
-            self:SetCaptureTeam("bloods")
-        elseif capturing.bloods < capturing.crips then
-            self:SetCaptureTeam("crips")
-        elseif captureProgress == 0 then
-            self:SetCaptureTeam("neutral")
-        end
-
+        local leadingTeam = GetLeadingTeam(capturing)
         if self:GetNextCapture() < CurTime() then
             local delay = self.ObjectiveTypes[objType]["CaptureDelay"]
+            local nextTime = CurTime() + delay
 
-            if capturing.bloods == 0 and captureTeam == "bloods" then
-                captureProgress = captureProgress - 1
-                self:SetNextCapture(CurTime() + delay)
-                self:SetDespawnTime(CurTime() + self.DespawnTime)
-            elseif capturing.crips == 0 and captureTeam == "crips" then
-                captureProgress = captureProgress - 1
-                self:SetNextCapture(CurTime() + delay)
-                self:SetDespawnTime(CurTime() + self.DespawnTime)
-            elseif capturing.crips == 0 and capturing.bloods == 0 or capturing.crips == capturing.bloods then
-                captureProgress = captureProgress - 1
-                self:SetNextCapture(CurTime() + delay)
-            else
-                captureProgress = captureProgress + 1
-                self:SetNextCapture(CurTime() + delay)
-                self:SetDespawnTime(CurTime() + self.DespawnTime)
+            local capturingCount = GetValueOrZero(capturing[leadingTeam])
+
+            if captureProgress == 0 and captureTeam == "neutral" and capturingCount > 0 then
+                captureTeam = leadingTeam
             end
-        end
 
-        captureProgress = math.Clamp(captureProgress, 0, 100)
+            if leadingTeam ~= captureTeam then
+                captureProgress = captureProgress - 1
+            else
+                if capturingCount == 0 then
+                    captureProgress = captureProgress - 1
+                else
+                    captureProgress = captureProgress + 1
+                    self:SetCaptureTeam(leadingTeam)
+                end
+            end
+
+            if captureProgress == 0 and captureTeam ~= "neutral" then
+                self:SetCaptureTeam("neutral")
+            end
+
+            self:SetNextCapture(nextTime)
+            captureProgress = math.Clamp(captureProgress, 0, 100)
+            --print("CaptureProgress " .. captureProgress)
+        end
 
         self:SetCaptureProgress(captureProgress)
 
+        -- if 100% captured
         if self:GetCaptureProgress() == 100 then
             net.Start("CaptureMessage")
             net.WriteString(self:GetCaptureTeam())

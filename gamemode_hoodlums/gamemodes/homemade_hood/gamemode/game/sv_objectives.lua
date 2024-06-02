@@ -17,8 +17,9 @@ function KILL_EVERY_OBJECTIVE_THERE_IS_ON_RELOAD_PLEASE_THANKS()
 end
 KILL_EVERY_OBJECTIVE_THERE_IS_ON_RELOAD_PLEASE_THANKS()
 
+--[[
 hook.Add("Think", "spawnobjectives", function()
-    --retarded loop shit
+    --retarded loop shit, if you see this in the future change it !!!!!
     local objs = ents.FindByClass("ent_objective")
     if #objs >= maxObjectives:GetInt() then return end
     if nextObjective > CurTime() then return end
@@ -54,4 +55,4 @@ hook.Add("Think", "spawnobjectives", function()
             end
         until found or tries >= maxtries
     end
-end)
+end)]]

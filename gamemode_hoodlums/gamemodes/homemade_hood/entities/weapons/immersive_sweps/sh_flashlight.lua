@@ -1,4 +1,5 @@
 local PLAYER = FindMetaTable("Player")
+local clickSound = "pein/attachments/click.wav"
 
 if CLIENT then
     function PLAYER:GetFlashlight()
@@ -81,7 +82,7 @@ if CLIENT then
                 local eyedir = att.Pos - att_eyes.Pos
 
                 local dist = eyedir:Length()
-                local maxdist = 1500
+                local maxdist = 2500
                 local dot = flashdir:Dot(eyedir:GetNormalized())
                 local scale = dist / maxdist
 
@@ -134,7 +135,14 @@ end
 if SERVER then
     concommand.Add("hoodlum_flashlight_toggle", function(ply)
         local enabled = ply:GetNWBool("flashlight")
-        ply:SetNWBool("flashlight", !enabled)
+        local wep = ply:GetActiveWeapon()
+        if wep.GetAttachmentEffects then
+            local att_effects = wep:GetAttachmentEffects()
+            if att_effects["Flashlight"] then
+                ply:SetNWBool("flashlight", !enabled)
+                ply:EmitSound(clickSound, 35)
+            end
+        end
     end)
 
     hook.Add("PlayerSwitchFlashlight", "homemade.flashlight", function(ply, enabled)

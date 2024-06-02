@@ -71,11 +71,13 @@ function DoScope()
 end
 
 local black = Material("reticles/black")
+local vignetteMat = Material("reticles/vignette")
 function DoPip(wep, pos, ang)
     if not IsValid(wep) then return end
 
     local effect = wep:GetAttachmentEffects()
     local reticlemat, reticlesize, pipradius = effect["ReticleMaterial"], effect["ReticleSize"], effect["PIPRadius"]
+    local vignettesize = effect["VignetteSize"] or reticlesize
     
     cam.Start3D2D(pos + ang:Up() * -64, ang, 0.01)
         cam.Start3D2D(pos, ang, 0.01)
@@ -108,13 +110,20 @@ function DoPip(wep, pos, ang)
         surface.SetMaterial(black)
         surface.DrawTexturedRect(-size/2, -size/2, size, size)
 
+        -- vignette
         surface.SetDrawColor(0, 0, 0, 255)
         surface.SetMaterial(pipMaterial)
-        draw.Circle(0, 0, reticlesize/2, 32)
+        draw.Circle(0, 0, vignettesize/2, 32)
 
+        -- reticle
         surface.SetDrawColor(255, 255, 255, 255)
         surface.SetMaterial(reticlemat)
         surface.DrawTexturedRect(-reticlesize/2, -reticlesize/2, reticlesize, reticlesize)
+
+        -- vignette
+        surface.SetDrawColor(255, 255, 255)
+        surface.SetMaterial(vignetteMat)
+        surface.DrawTexturedRect(-vignettesize/2, -vignettesize/2, vignettesize, vignettesize)
 
         render.SetStencilEnable(false)
     cam.End3D2D()

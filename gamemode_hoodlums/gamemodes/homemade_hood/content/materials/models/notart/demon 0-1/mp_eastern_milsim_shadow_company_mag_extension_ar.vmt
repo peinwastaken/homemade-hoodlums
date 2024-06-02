@@ -1,0 +1,29 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/notart/Demon 0-1/mag_ext_c"
+	"$bumpmap"		"models/notart/Demon 0-1/mag_ext_n"
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "0.1" 	//< Change as needed
+	"$PhongExponent"            "1" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0.3 1 4]"
+	"$PhongAlbedoTint"          "0"
+	"$PhongDisableHalfLambert"  "1"
+	"$NormalmapAlphaPhongMask"  "1"
+
+//Rimlight
+	"$Rimlight" 			    "1"
+	"$Rimlightboost"			"0.1"
+	"$Rimlightexponent"			"1"
+	"$Rimmask"					"1"
+
+//Other
+	"$Model"                    "1"
+	"$HalfLambert" 			    "0"
+	"$NoDecal" 				    "0"
+	"$AmbientOcclusion" 	    "1"
+	"$NoCull" 				    "0"
+	"$SurfaceProp" 			    "flesh"
+	"$CloakPassEnabled" 		"1" 	//< For SFM and TF2
+}

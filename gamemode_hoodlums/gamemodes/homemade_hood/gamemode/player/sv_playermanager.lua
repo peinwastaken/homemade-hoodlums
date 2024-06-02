@@ -4,9 +4,20 @@ function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
 end
 
-hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply) 
-    player_manager.SetPlayerClass(ply, "player_hoodlum")
-    player_manager.RunClass(ply, "OnRespawn")
+local specialClasses = {"player_demoncompany"}
+hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
+    local specialChance = 5
+    local rand = math.Rand(0, 100)
+    if rand < specialChance then -- if is special...
+        local specialClass = table.Random(specialClasses)
+
+        player_manager.SetPlayerClass(ply, specialClass)
+        player_manager.RunClass(ply, "OnRespawn")
+    else -- if not :/
+        player_manager.SetPlayerClass(ply, "player_hoodlum")
+        player_manager.RunClass(ply, "OnRespawn")
+    end
+
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
 
     net.Start("Hoodlum_PlayerRespawn")
@@ -47,6 +58,9 @@ hook.Add("HoodlumDeath", "hoodlum_death", function(ply, headshot)
         local snd = deathsounds[math.random(1, #deathsounds)]
         ply:EmitSound(snd, SNDLVL_NORM, 100)
     end
+
+    ply:SetNWBool("flashlight", false)
+    ply:SetNWBool("laser", false)
 end)
 
 hook.Add("PlayerDeathSound", "hoodlum_deathsound", function(ply)

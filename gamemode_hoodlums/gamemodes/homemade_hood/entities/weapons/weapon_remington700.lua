@@ -70,9 +70,10 @@ SWEP.Attachments = {
 				["AimOffset"] = Vector(-3, -0.23, -0.12),
 				["PIPSight"] = true,
 				["PIPRadius"] = 90,
-				["PIPFov"] = 20,
+				["PIPFov"] = 18,
 				["ReticleMaterial"] = Material("reticles/reticle_remington"),
-                ["ReticleSize"] = 7000,
+                ["ReticleSize"] = 6000,
+				["VignetteSize"] = 5000
 			}
 		}
 	},

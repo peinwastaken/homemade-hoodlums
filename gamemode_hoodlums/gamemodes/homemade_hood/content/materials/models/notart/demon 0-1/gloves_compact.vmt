@@ -1,0 +1,35 @@
+"VertexLitGeneric"
+{
+//Basic
+	"$BaseTexture" 			    "models/notart/Demon 0-1/compacted_col_murphy_c"
+	"$BumpMap" 				    "models/notart/Demon 0-1/compacted_n"
+	"$PhongExponentTexture"     "models/notart/Demon 0-1/compacted_m"
+
+//Warp
+	"$LightWarpTexture"         "models/notart/Demon 0-1/clothes_wrp2"		//< Change as needed
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "2.1" 	//< Change as needed
+//	"$PhongExponent"            "15" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0.3 1 4]"
+	"$PhongAlbedoTint"          "0"
+	"$PhongDisableHalfLambert"  "1"
+	"$NormalmapAlphaPhongMask"  "1"
+
+//Rimlight
+	"$Rimlight" 			    "0"
+
+//Other
+	"$Model"                    "1"
+	"$HalfLambert" 			    "0"
+	"$NoDecal" 				    "0"
+	"$AmbientOcclusion" 	    "1"
+	"$NoCull" 				    "0"
+	"$SurfaceProp" 			    "flesh"
+//	"$BlendTintByBaseAlpha"     "1"
+	"$Color2"					"{ 187 187 187 }"	//< RGB colors
+	"$CloakPassEnabled" 		"1" 	//< For SFM and TF2
+//	"$CloakColorTint" 			"[0.4 0.5 1]" // BLU
+//	"$CloakColorTint" 			"[1 0.5 0.4]" // RED
+}

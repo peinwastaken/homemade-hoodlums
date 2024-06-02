@@ -67,7 +67,7 @@ function SWEP:ApplyRecoil()
         mult = self.CrouchRecoilMult
     end
 
-    self.eyeoffset = self.eyeoffset + self.VisualRecoil + recoil_vis_add
+    self.eyeoffset = self.eyeoffset + (self.VisualRecoil + recoil_vis_add) * (att_effects["VisualRecoilMult"] or 1)
     self.eyeangleoffset = self.eyeangleoffset + Angle(self.VisualRecoilAngle.x, self.VisualRecoilAngle.y, math.random(-self.VisualRecoilAngle.z, self.VisualRecoilAngle.z))
 end
 

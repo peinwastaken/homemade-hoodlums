@@ -21,8 +21,14 @@ AddCSLuaFile("settings/cl_settings.lua")
 AddCSLuaFile("sh_init.lua")
 include("sh_init.lua")
 
+AddCSLuaFile("sh_globals.lua")
+include("sh_globals.lua")
+
 AddCSLuaFile("player/player_hoodlum.lua")
 include("player/player_hoodlum.lua")
+
+AddCSLuaFile("player/player_demoncompany.lua")
+include("player/player_demoncompany.lua")
 
 AddCSLuaFile("player/ragdoll/sh_ragdoll.lua")
 include("player/ragdoll/sh_ragdoll.lua")

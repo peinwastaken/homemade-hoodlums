@@ -1,3 +1,5 @@
+local clickSound = "pein/attachments/click.wav"
+
 if CLIENT then
     local white = Material("reticles/white")
     local glow = Material("Sprites/light_glow02_add_noz")
@@ -117,7 +119,14 @@ end
 if SERVER then
     concommand.Add("hoodlum_laser_toggle", function(ply)
         local enabled = ply:GetNWBool("laser")
-        ply:SetNWBool("laser", !enabled)
+        local wep = ply:GetActiveWeapon()
+        if wep.GetAttachmentEffects then
+            local att_effects = wep:GetAttachmentEffects()
+            if att_effects["Laser"] then
+                ply:SetNWBool("laser", !enabled)
+                ply:EmitSound(clickSound, 35)
+            end
+        end
     end)
 
     hook.Add("PlayerRespawn", "laser_respawn", function(ply)

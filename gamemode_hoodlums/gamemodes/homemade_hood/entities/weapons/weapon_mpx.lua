@@ -26,7 +26,7 @@ SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 SWEP.VisualRecoil = Vector(1, 0.03, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1, 0, 0)
 SWEP.RecoilVertical = 60 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 20 -- HORIZONTAL RECOIL
+SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.5 -- CROUCH RECOIL MULTIPLIER
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
@@ -102,7 +102,9 @@ SWEP.Attachments = {
 		["extended"] = {
 			["bodygroup_id"] = 3,
 			["bodygroup_value"] = 2,
-            ["effects"] = {}
+            ["effects"] = {
+				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
+			}
 		},
     },
     ["barrel"] = {

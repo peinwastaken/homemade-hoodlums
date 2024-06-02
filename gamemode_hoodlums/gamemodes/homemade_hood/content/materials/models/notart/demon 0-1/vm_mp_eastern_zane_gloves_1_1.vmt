@@ -1,0 +1,26 @@
+
+"VertexLitGeneric"
+{
+//Basic
+	"$BaseTexture" 			    "models/notart/Demon 0-1/knuckled_col_zane"
+	$bumpmap					"models/notart/Demon 0-1/oakleys_n"
+	$phongexponenttexture		"models/notart/Demon 0-1/oakleys_s"
+
+//Warp
+	"$LightWarpTexture"         "models/notart/Demon 0-1/clothes_wrp2"		//< Change as needed
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "1.05" 	//< Change as needed
+//	"$PhongExponent"            "15" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0.3 1 4]"
+	"$PhongAlbedoTint"          "0"
+	"$PhongDisableHalfLambert"  "1"
+
+//Other
+	"$HalfLambert" 			    "0"
+	"$NoDecal" 				    "0"
+	"$NoCull" 				    "0"
+//	"$BlendTintByBaseAlpha"     "1"
+	"$Color2"					"{ 200 200 200 }"	//< RGB colors
+}

@@ -16,10 +16,16 @@ PLAYER.Models = {
         "models/player/cripz/slow_1.mdl", 
         "models/player/cripz/slow_2.mdl", 
         "models/player/cripz/slow_3.mdl",
+    },
+    ["groves"] = {
+        "models/player/grovez/grovez_1.mdl",
+        "models/player/grovez/grovez_2.mdl",
+        "models/player/grovez/grovez_3.mdl",
+        "models/player/grovez/grovez_4.mdl"
     }
 }
 
-PLAYER.Teams = {"bloods", "crips"}
+PLAYER.Teams = {"bloods", "crips", "groves"}
 
 PLAYER.Items = {
     ["primary"] = {
@@ -30,12 +36,14 @@ PLAYER.Items = {
         "weapon_aks74u",
         "weapon_remington870",
         "weapon_uzi",
+        "weapon_mac10"
     },
     ["secondary"] = {
         "weapon_m1911",
         "weapon_glock",
         "weapon_sawedoff",
-        "weapon_p320"
+        "weapon_p320",
+        "weapon_vz61"
     },
     ["melee"] = {
         "melee_bat"
@@ -59,6 +67,8 @@ end
 function PLAYER:GetAlliance()
     local ply = self.Player
     local model = ply:GetModel()
+
+    -- i should **really** be using the built in teams system but im restarted
 
     for t, tbl in pairs(self.Models) do -- why cant i just call it team... gotta call it t instead gg
         for _,mdl in pairs(tbl) do

@@ -21,11 +21,8 @@ hook.Add("Think", "homemade_doalpha", function()
 end)
 
 hook.Add("HUDPaint", "homemade_drawhud", function()
-    if alliance == "crips" then
-        surface.SetDrawColor(50, 50, 255, alpha)
-    else
-        surface.SetDrawColor(255, 50, 50, alpha)
-    end
+    local name, color = _G.Teams[alliance]["Name"], _G.Teams[alliance]["RespawnColor"]
+    surface.SetDrawColor(color.r, color.g, color.b, alpha)
 
     surface.DrawTexturedRect(-1, -1, ScrW() + 1, ScrH() + 1)
 end)
@@ -42,12 +39,10 @@ local function DoRespawnScreen(t)
     }
 
     hook.Add("HUDPaint", "showteam", function()
-        if alliance == "crips" then
-            draw.DrawText("Crips", "FancyOldTimey", pos.x, 150, Color(0, 0, 255, 100 * alphamult), TEXT_ALIGN_CENTER)
-        else
-            draw.DrawText("Bloods", "FancyOldTimey", pos.x, 150, Color(255, 0, 0, 100 * alphamult), TEXT_ALIGN_CENTER)
-        end
-        
+        local name, color = _G.Teams[alliance]["Name"], _G.Teams[alliance]["RespawnColor"]
+        --print(name, color)
+
+        draw.DrawText(_G.Teams[alliance]["Name"], "FancyOldTimey", pos.x, 150, Color(color.r, color.g, color.b, 100 * alphamult), TEXT_ALIGN_CENTER)
     end)
     timer.Simple(2, function()
         hook.Remove("HUDPaint", "showteam")

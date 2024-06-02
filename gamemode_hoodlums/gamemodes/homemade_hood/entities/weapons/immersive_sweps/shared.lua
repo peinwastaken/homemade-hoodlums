@@ -39,6 +39,8 @@ SWEP.Primary.BulletCount = 1
 
 SWEP.Automatic = true
 
+SWEP.EjectEffect = "EjectBrass_57"
+
 SWEP.ReloadTime = 2
 SWEP.ReloadSound = ""
 
@@ -250,6 +252,7 @@ if CLIENT then
 		local snd = net.ReadString()
 		local pos = net.ReadVector()
 		local ply = net.ReadPlayer()
+		local suppressed = net.ReadBool()
 		local lply = LocalPlayer()
 
 		if not IsValid(lply) then return end
@@ -259,19 +262,26 @@ if CLIENT then
 		local dist = (pos - lply:EyePos()):Length() - mindist
 		local mult = math.Clamp(dist / maxdist, 0, 1)
 
-		local light = DynamicLight(ply:EntIndex(), false)
-    	if light then
-    	   light.pos = pos
-    	   light.r = 255
-    	   light.g = 100
-    	   light.b = 50
-    	   light.brightness = 2
-    	   light.decay = 5000
-    	   light.size = 170
-    	   light.dietime = CurTime() + 0.1
-    	end
+		if not suppressed then
+			local light = DynamicLight(ply:EntIndex(), false)
+    		if light then
+    		   light.pos = pos
+    		   light.r = 255
+    		   light.g = 100
+    		   light.b = 50
+    		   light.brightness = 2
+    		   light.decay = 5000
+    		   light.size = 170
+    		   light.dietime = CurTime() + 0.1
+			end
 
-		sound.Play(snd, pos, 500, 60, mult, 1)
+			sound.Play(snd, pos, 500, 60, mult, 1)
+		end
+
+		local wep = ply:GetActiveWeapon()
+		if IsValid(wep) then
+			wep:DoBolt()
+		end
 	end)
 end
 
@@ -337,18 +347,18 @@ function SWEP:BulletCallback(ply, trace, dmginfo)
 	self:CalculateBulletPenetration(trace)
 end
 
+SWEP.bolt = 0 -- maybe change this?
 function SWEP:PrimaryAttack()
     local ply = self:GetOwner()
+	local att_effects = self:GetAttachmentEffects()
 
 	if not self:CanFire() then return end
 
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+	self:SetNextPrimaryFire(CurTime() + (att_effects["FireRate"] or self.Primary.Delay))
     
     local muzzle = self:GetAttachment(self:LookupAttachment("muzzle"))
     if not muzzle then return end
     local pos, ang = muzzle.Pos, muzzle.Ang
-
-	local att_effects = self:GetAttachmentEffects()
 
 	ply:LagCompensation(true)
 
@@ -368,6 +378,24 @@ function SWEP:PrimaryAttack()
 		effectdatasmoke:SetOrigin(pos)
     	effectdatasmoke:SetNormal(ang:Forward())
 		util.Effect("effect_muzzlesmoke", effectdatasmoke)
+
+		if CLIENT then
+			self:DoBolt()
+		end
+
+		-- eject brass
+		local eject = self:GetAttachment(self:LookupAttachment("brasseject"))
+		if eject then
+			local ePos, eAng = eject.Pos, eject.Ang
+			--debugoverlay.Line(ePos, ePos + eAng:Up() * 16, 1, color_white, true)
+
+			eAng:RotateAroundAxis(eAng:Right(), 90)
+			local effectDataBrass = EffectData()
+			effectDataBrass:SetOrigin(ePos)
+			effectDataBrass:SetAngles(eAng)
+			effectDataBrass:SetFlags(150)
+			util.Effect(self.EjectEffect, effectDataBrass, false, ply)
+		end
 
 		if not att_effects["Suppressed"] then
 			local effectdata = EffectData()
@@ -391,7 +419,7 @@ function SWEP:PrimaryAttack()
 		end
 		
 		local bullet = {}
-		bullet.Damage = self.Primary.Damage
+		bullet.Damage = self.Primary.Damage + (att_effects["DamageAdd"] or 0)
 		bullet.Num = self.Primary.BulletCount
 		bullet.Src = pos
 		bullet.Dir = ang:Forward()
@@ -416,11 +444,12 @@ function SWEP:PrimaryAttack()
 		end
 	end
 
-	if SERVER and not att_effects["Suppressed"] then
+	if SERVER then
 		net.Start("DoShot")
 		net.WriteString(self.Primary.SoundFar)
 		net.WriteVector(pos)
 		net.WritePlayer(ply)
+		net.WriteBool(att_effects["Suppressed"])
 		net.SendOmit(self:GetOwner())
 	end
 
@@ -431,11 +460,25 @@ function SWEP:PrimaryAttack()
 	end
 end
 
+function SWEP:DoBolt()
+	self.bolt = 1
+end
+
 -- hello to whoever is reading this
 -- this is retarded i know. maybe ill fix it later?? who knows :)
 function SWEP:Animate()
 	local ply = self:GetOwner()
 
+	-- WEAPON
+	-- bolt
+	local bolt = self:GetPoseParameter("bolt")
+	if bolt and CLIENT then
+		self:SetPoseParameter("bolt", self.bolt)
+		self.bolt = math.Clamp(self.bolt - 25 * FrameTime(), 0, 1)
+		self:InvalidateBoneCache()
+	end
+
+	-- CHARACTER
 	-- head
 	local head = ply:LookupBone("ValveBiped.Bip01_Head1")
 

@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	$basetexture	"models/notart/Demon 0-1/weapon_vm_ar_valpha_stocktube_c"
+	$bumpmap	"models/notart/Demon 0-1/weapon_vm_ar_valpha_stocktube_n"
+	$phongexponenttexture	"models/notart/Demon 0-1/weapon_vm_ar_valpha_stocktube_m"
+	$color2	"[ .3 .3 .3 ]"
+	$blendtintbybasealpha	"1"
+
+	$phong	"1"
+	$phongboost	"1"
+	"$PhongFresnelRanges"	    "[ 2 4 30 ]"
+
+	$envmap	"env_cubemap"
+	$basemapalphaenvmapmask	"1"
+	$envmapfresnel	".3"
+	$envmaptint	"[ .035 .035 .035 ]"
+}

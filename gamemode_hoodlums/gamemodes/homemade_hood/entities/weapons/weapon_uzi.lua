@@ -123,7 +123,8 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["RecoilVertical"] = -15,
-				["RecoilHorizontal"] = -5
+				["RecoilHorizontal"] = -5,
+				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
 			}
 		},
 		["wood"] = {
@@ -131,7 +132,8 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 2,
             ["effects"] = {
 				["RecoilVertical"] = -30,
-				["RecoilHorizontal"] = -5
+				["RecoilHorizontal"] = -5,
+				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
 			}
 		},
 	},

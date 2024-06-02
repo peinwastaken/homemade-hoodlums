@@ -47,11 +47,11 @@ function RespawnPlayer(ply, t)
                 })
     
                 if not trace.Hit then
-                    print("found spawn!")
+                    --print("found spawn!")
                     found = true
                     spawnpos = pos + Vector(0, 0, 8)
                 else
-                    print("finding new spawn")
+                    --print("finding new spawn")
                 end
             until found
     
