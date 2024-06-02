@@ -66,7 +66,7 @@ ENT.ObjectiveTypes = {
             "weapon_mcxspear",
             "weapon_mac10"
         },
-        ["CaptureDelay"] = 0.03,
+        ["CaptureDelay"] = 0.3,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 6,
         ["Flare"] = true,
@@ -78,7 +78,7 @@ ENT.ObjectiveTypes = {
             "consumable_liquor",
             "consumable_henny"
         },
-        ["CaptureDelay"] = 0.01,
+        ["CaptureDelay"] = 0.1,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 3,
         ["Flare"] = true,
