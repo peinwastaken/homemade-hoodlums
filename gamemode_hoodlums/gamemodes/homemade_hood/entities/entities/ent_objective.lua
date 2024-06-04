@@ -57,11 +57,9 @@ ENT.ObjectiveTypes = {
     ["WeaponCache"] = {
         ["Name"] = "Weapon Cache",
         ["Items"] = {
-            "weapon_m4",
             "weapon_m4_new",
             "weapon_remington700",
             "weapon_aks74u",
-            "weapon_remington870",
             "weapon_pipebomb",
             "weapon_mcxspear",
             "weapon_mac10"

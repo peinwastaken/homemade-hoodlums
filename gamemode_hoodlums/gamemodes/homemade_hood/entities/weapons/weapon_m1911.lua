@@ -12,10 +12,12 @@ SWEP.Primary.ClipSize       = 7
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "pistol"
-SWEP.Primary.Delay          = 0.09
+SWEP.Primary.Delay          = 0.1
 SWEP.Primary.Damage         = 60
 SWEP.Primary.Spread         = 0.02
 SWEP.Primary.BulletCount    = 1
+
+SWEP.EjectEffect = "EjectBrass_9mm"
 
 SWEP.ReloadTime             = 2
 
@@ -23,9 +25,9 @@ SWEP.Primary.Sound          = "pein/m1911/1911_close.wav"
 SWEP.Primary.SoundFar		= "pein/m1911/1911_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(3, 0.5, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(4, 0, 2)
-SWEP.RecoilVertical = 80 -- VERTICAL RECOIL
+SWEP.VisualRecoil = Vector(1.5, 0.2, 0) -- CAMERA RECOIL
+SWEP.VisualRecoilAngle = Angle(2, 0, 2)
+SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 
@@ -57,7 +59,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["AimPosAttachment"] = "ironsights",
-				["AimOffset"] = Vector(-11, 0, 0)
+				["AimOffset"] = Vector(-10, 0.05, 0)
 			}
 		}
 	}

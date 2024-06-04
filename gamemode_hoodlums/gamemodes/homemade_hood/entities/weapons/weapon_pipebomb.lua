@@ -40,7 +40,10 @@ SWEP.DrawCrosshair			= false
 SWEP.ViewModel				= "models/pein/pipebomb/w_pipebomb.mdl"
 SWEP.WorldModel				= "models/pein/pipebomb/w_pipebomb.mdl"
 
-SWEP.CanDrop = false
+SWEP.CanDrop = true
+
+SWEP.Type = "grenade"
+SWEP.MaxAmmo = 3
 
 function SWEP:ThrowGrenade(force)
 	local ply = self:GetOwner()
@@ -65,7 +68,9 @@ function SWEP:ThrowGrenade(force)
 		local axis = grenade:GetAngles():Up() - grenade:GetAngles():Forward()
 		phys:SetAngleVelocity(axis * 500)
 
-		self:Remove()
+		if self:Clip1() == 0 then
+			self:Remove()
+		end
 	end
 end
 
@@ -77,7 +82,9 @@ function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(CurTime() + self.ShootWait)
     self:ThrowGrenade(800)
 
-	ply:SetAnimation(PLAYER_ATTACK1)
+	if SERVER then
+		self:TakePrimaryAmmo(1)
+	end
 end
 
 function SWEP:SecondaryAttack()
@@ -88,6 +95,10 @@ function SWEP:SecondaryAttack()
 	if self:GetNextPrimaryFire() > CurTime() then return end
 	self:SetNextPrimaryFire(CurTime() + self.ShootWait)
     self:ThrowGrenade(400)
+
+	if SERVER then
+		self:TakePrimaryAmmo(1)
+	end
 end
 
 function SWEP:DrawHUD()

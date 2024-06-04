@@ -37,8 +37,6 @@ SWEP.Primary.SoundFar       = Sound("pein/m1911/m1911_far.wav")
 SWEP.Primary.Delay = 0.12
 SWEP.Primary.BulletCount = 1
 
-SWEP.Automatic = true
-
 SWEP.EjectEffect = "EjectBrass_57"
 
 SWEP.ReloadTime = 2
@@ -279,7 +277,7 @@ if CLIENT then
 		end
 
 		local wep = ply:GetActiveWeapon()
-		if IsValid(wep) then
+		if IsValid(wep) and wep.DoBolt then
 			wep:DoBolt()
 		end
 	end)
@@ -291,6 +289,7 @@ local SurfaceHardness = {
 	[MAT_PLASTIC] = 0.25,
 	[MAT_WOOD] = 0.5,
 	[MAT_FLESH] = 0.35,
+	[MAT_GLASS] = 0.1,
 }
 
 function SWEP:CalculateBulletPenetration(trace)
@@ -461,21 +460,55 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:DoBolt()
+	self.timesincelastshot = 0
 	self.bolt = 1
+
+	--[[
+	--hmm...
+	local ply = self:GetOwner()
+	if ply == LocalPlayer() then return end
+	ply:SetAnimation(PLAYER_ATTACK1)]]
+end
+
+-- thank you gpt!
+function linear(t)
+    t = t % 1  -- Ensure t is within the range [0, 1)
+    if t < 0.5 then
+        return t * 2  -- Linearly ramp up from 0 to 1 over the first half
+    else
+        return 2 - (t * 2)  -- Linearly ramp down from 1 to 0 over the second half
+    end
 end
 
 -- hello to whoever is reading this
 -- this is retarded i know. maybe ill fix it later?? who knows :)
+SWEP.timesincelastshot = 999
 function SWEP:Animate()
 	local ply = self:GetOwner()
 
+	-- shouldnt be doing this here but whatever
+	self.timesincelastshot = self.timesincelastshot + FrameTime()
+
 	-- WEAPON
 	-- bolt
-	local bolt = self:GetPoseParameter("bolt")
+	local bolt = self:LookupPoseParameter("bolt")
+	local ham = self:LookupPoseParameter("hammer")
+
+	local cycleTime = 0.05
+	local cycle = math.Clamp(self.timesincelastshot / cycleTime, 0, 1)
+	local cycleDelta = 180 * cycle
+	
 	if bolt and CLIENT then
-		self:SetPoseParameter("bolt", self.bolt)
-		self.bolt = math.Clamp(self.bolt - 25 * FrameTime(), 0, 1)
-		self:InvalidateBoneCache()
+		if ham then -- for pistols and such
+			self.bolt = math.sin(math.rad(cycleDelta))
+			self:SetPoseParameter("bolt", linear(cycle)) -- weird
+			self:SetPoseParameter("hammer", cycle * 2)
+			self:InvalidateBoneCache()
+		else -- for other weapons
+			self:SetPoseParameter("bolt", self.bolt)
+			self.bolt = math.Clamp(self.bolt - 25 * FrameTime(), 0, 1)
+			self:InvalidateBoneCache()
+		end
 	end
 
 	-- CHARACTER
@@ -569,6 +602,10 @@ function SWEP:Holster()
 	end
 
 	self:CancelReload()
+
+	if CLIENT then
+		self:ResetRecoil()
+	end
 
 	return true
 end

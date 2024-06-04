@@ -2,7 +2,7 @@ SWEP.Base = "immersive_sweps"
 
 SWEP.PrintName 				= "AS VAL"
 SWEP.Author 				= "pein"
-SWEP.Instructions			= "Demon 0-1's beloved."
+SWEP.Instructions			= "Demon 0-1's beloved... Right after Demon 0-2. Actually I'm not sure."
 SWEP.Category 				= "Immersive SWEPs"
 
 SWEP.Spawnable 				= true
@@ -21,15 +21,15 @@ SWEP.EjectEffect = "EjectBrass_57"
 
 SWEP.ReloadTime             = 1.5
 
-SWEP.Primary.Sound          = "pein/mcx/mcx_close.wav"
-SWEP.Primary.SoundFar		= "pein/mcx/mcx_far.wav"
+SWEP.Primary.Sound          = "pein/as_val/as_val_close.wav"
+SWEP.Primary.SoundFar		= "pein/as_val/as_val_close.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(0.5, 0.02, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(0.8, 0, 1)
 SWEP.RecoilVertical = 70 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
-SWEP.CrouchRecoilMult = 0.8 -- CROUCH RECOIL MULTIPLIER
+SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
+SWEP.CrouchRecoilMult = 0.7 -- CROUCH RECOIL MULTIPLIER
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
 SWEP.AimOffsetAng           = Angle(3, -3, 0)
@@ -129,13 +129,6 @@ SWEP.Attachments = {
 			}
 		},
     },
-	["stock"] = {
-		["none"] = {
-			["bodygroup_id"] = 4,
-			["bodygroup_value"] = 0,
-            ["effects"] = {}
-		},
-	},
 	["extra"] = {
 		["none"] = {
 			["bodygroup_id"] = 0,
@@ -150,11 +143,11 @@ SWEP.Attachments = {
 		},
 		["vss"] = {
 			["bodygroup_id"] = 0,
-			["bodygroup_value"] = 1,
+			["bodygroup_value"] = 1, -- doesnt apply when picking up a dropped vss but automatic works fine?????
             ["effects"] = {
 				["Automatic"] = false,
-				["RecoilVertical"] = 45,
-				["RecoilHorizontal"] = 7,
+				["RecoilVertical"] = 30,
+				["RecoilHorizontal"] = -5,
 				["WeaponName"] = "VSS Vintorez",
 				["ClipSize"] = 10,
 				["DamageAdd"] = 30,

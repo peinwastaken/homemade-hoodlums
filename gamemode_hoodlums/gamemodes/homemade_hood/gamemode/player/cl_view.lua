@@ -178,8 +178,9 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         muzzle_forward = muzzle_ang:Forward()
     
         recoil_pos, recoil_ang = wep:GetRecoil()
-        recoil_cam_ang = LerpAngleFT(24, recoil_cam_ang, wep.eyeangleoffset)
     end
+
+    recoil_cam_ang = LerpAngleFT(24, recoil_cam_ang, (wep.eyeangleoffset or Angle(0, 0, 0))) -- still weird
 
     local max = speed / ply:GetRunSpeed()
     if speed > 1 then

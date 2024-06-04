@@ -1,10 +1,3 @@
---[[
-    objective = {
-        ["ClearTime"] = 999,
-    }
-
-]]
-
 local objectiveDelay, nextObjective = 1, CurTime()
 local maxObjectives = CreateConVar("hoodlum_objectives_max", 3, FCVAR_NONE, "Hoodlums max objectives count. 0 to disable objectives.", 0, 100)
 
@@ -17,7 +10,6 @@ function KILL_EVERY_OBJECTIVE_THERE_IS_ON_RELOAD_PLEASE_THANKS()
 end
 KILL_EVERY_OBJECTIVE_THERE_IS_ON_RELOAD_PLEASE_THANKS()
 
---[[
 hook.Add("Think", "spawnobjectives", function()
     --retarded loop shit, if you see this in the future change it !!!!!
     local objs = ents.FindByClass("ent_objective")
@@ -55,4 +47,4 @@ hook.Add("Think", "spawnobjectives", function()
             end
         until found or tries >= maxtries
     end
-end)]]
+end)

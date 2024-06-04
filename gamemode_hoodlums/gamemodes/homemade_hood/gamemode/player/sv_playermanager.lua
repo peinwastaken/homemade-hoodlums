@@ -19,6 +19,7 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
     end
 
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
+    ply:SetSuppressPickupNotices(true)
 
     net.Start("Hoodlum_PlayerRespawn")
     net.WriteString(ply:GetTeam())

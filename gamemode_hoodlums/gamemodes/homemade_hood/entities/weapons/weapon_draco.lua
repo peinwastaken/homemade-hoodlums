@@ -17,13 +17,15 @@ SWEP.Primary.Damage         = 80
 SWEP.Primary.Spread         = 0.05
 SWEP.Primary.BulletCount    = 1
 
+SWEP.EjectEffect = "EjectBrass_556"
+
 SWEP.ReloadTime             = 2
 
 SWEP.Primary.Sound          = "pein/ak74/ak_single.wav"
 SWEP.Primary.SoundFar		= "pein/ak74/ak_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(3, 0.4, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(2, 0.2, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(3, 0, 3)
 SWEP.RecoilVertical = 150 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 50 -- HORIZONTAL RECOIL
@@ -57,7 +59,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["AimPosAttachment"] = "ironsights",
-				["AimOffset"] = Vector(-13, 0.05, 0.01)
+				["AimOffset"] = Vector(-19, -1.7, -0.42)
 			}
 		},
         ["holo"] = {
@@ -69,7 +71,7 @@ SWEP.Attachments = {
                 ["ReticleMaterial"] = Material("reticles/reticle_eotech.vmt"),
                 ["ReticleSize"] = 400,
                 ["SightSize"] = {x = 200, y = 300},
-				["AimOffset"] = Vector(-13, -0.2, 0),
+				["AimOffset"] = Vector(-13, -1.2, -0.25),
 				["RecoilVertical"] = -40,
 				["RecoilHorizontal"] = -20,
             }

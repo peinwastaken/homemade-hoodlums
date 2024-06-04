@@ -31,6 +31,13 @@ hook.Add("StartCommand", "recoil setupmove", function(ply, cmd)
     last = SysTime()
 end)
 
+function SWEP:ResetRecoil()
+    self.eyeoffset = Vector(0, 0, 0)
+    self.eyeangleoffset = Angle(0, 0, 0)
+    self.rec_vertical = 0
+    self.rec_horizontal = 0
+end
+
 function SWEP:GetRecoil()
 	return self.eyeoffset, Vector(self.rec_vertical, self.rec_horizontal, 0)
 end

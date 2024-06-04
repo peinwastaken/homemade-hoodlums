@@ -29,7 +29,7 @@ function PLAYER:DropItem(wep, pos, vel, time)
 
     -- some properties
     drop.WeaponId = classname
-    drop.Type = "weapon"
+    drop.Type = wep.Type or "weapon"
     drop.Attachments = wep:GetAttachments()
     drop.EquippedAttachments = wep.EquippedAttachments
     drop.Name = wep.PrintName
@@ -61,6 +61,18 @@ function PLAYER:DropItem(wep, pos, vel, time)
 
     if time then
         CleanupItem(drop, time)
+    end
+
+    if drop.Type == "grenade" then
+        local plyAmmo = self:GetAmmoCount("grenade")
+        if plyAmmo <= 1 then
+            self:SetAmmo(0, "grenade")
+            self:StripWeapon(wep:GetClass())
+            return
+        else
+            wep:TakePrimaryAmmo(1)
+            return
+        end
     end
 
     self:StripWeapon(wep:GetClass())
@@ -125,32 +137,49 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
         if not ply:KeyPressed(IN_USE) then return end
         local weaponId = ent.WeaponId
         local wep = ply:GetWeapon(weaponId)
+
+        ply:Give(weaponId)
+        local wepgive = ply:GetWeapon(weaponId)
+        
+        -- for guns
+        local attachments = ent.EquippedAttachments
+        if attachments then
+            for slot, att in pairs(attachments) do
+                wepgive:SetAttachmentSlot(slot, att)
+            end
+        end
+
+        -- for drinks
+        local remaining = ent.Remaining
+        if remaining then
+            wepgive:SetRemaining(remaining)
+        end
+
+        wepgive:SetClip1(ent.Clip)
+
+        RemoveItemFromCleanup(ent)
+        ent:Remove()
+        return false
+    elseif ent:GetClass() == "prop_physics" and ent.Type == "grenade" then
+        if not ply:KeyPressed(IN_USE) then return end
+
+        local weaponId = ent.WeaponId
+        local wep = ply:GetWeapon(weaponId)
+        local wepClass = weapons.Get(weaponId)
+
+        -- temp hardcoded grenade ammo until i add more ammotypes and more nades :thumbsup:
         if IsValid(wep) then
-            -- do something here?????
+            local plyAmmo = ply:GetAmmoCount("grenade")
+            if plyAmmo < wepClass.MaxAmmo then
+                ply:GiveAmmo(1, "grenade")
+            end
         else
             ply:Give(weaponId)
-            local wepgive = ply:GetWeapon(weaponId)
-
-            wepgive.PrintName = ent.Name
-            
-            local attachments = ent.EquippedAttachments
-            if attachments then
-                for slot, att in pairs(attachments) do
-                    wepgive:SetAttachmentSlot(slot, att)
-                end
-            end
-
-            local remaining = ent.Remaining
-            if remaining then
-                wepgive:SetRemaining(remaining)
-            end
-
-            wepgive:SetClip1(ent.Clip)
-
-            RemoveItemFromCleanup(ent)
-            ent:Remove()
-            return false
+            ply:SetAmmo(1, "grenade")
         end
+
+        ent:Remove()
+        return false
     end
 
     return true

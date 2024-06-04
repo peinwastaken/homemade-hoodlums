@@ -30,6 +30,13 @@ SWEP.Attachments = {
             ["effects"] = {}
 		}
     },
+    ["underbarrel"] = {
+        ["none"] = {
+			["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {}
+		}
+    },
     ["magazine"] = {
         ["none"] = {
 			["bodygroup_id"] = 0,
@@ -74,10 +81,11 @@ if SERVER then
     end
     
     concommand.Add("hoodlum_rand_atts", function(ply)
-        if not ply:IsAdmin() or not GetConVar("sv_cheats"):GetBool() then return end
-        local wep = ply:GetActiveWeapon()
-        if IsValid(wep) and wep.Base == "immersive_sweps" then
-            wep:SetRandomAttachments(wep:GetRandomAttachments())
+        if ply:IsAdmin() or GetConVar("sv_cheats"):GetBool() then
+            local wep = ply:GetActiveWeapon()
+            if IsValid(wep) and wep.Base == "immersive_sweps" then
+                wep:SetRandomAttachments(wep:GetRandomAttachments())
+            end
         end
     end, false, "Randomize current weapon attachments")
 end
