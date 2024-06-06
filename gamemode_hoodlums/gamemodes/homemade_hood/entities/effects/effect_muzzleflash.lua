@@ -9,30 +9,33 @@ function EFFECT:Init(effectdata)
     local pos = effectdata:GetOrigin()
     local normal = effectdata:GetNormal()
     local amount = effectdata:GetMagnitude()
+    local ent = effectdata:GetEntity()
     local attachment = effectdata:GetAttachment()
 
     local emitter = ParticleEmitter(pos)
     
-    for i = 1, 1 do
-        local particle = emitter:Add(table.Random(muzzle), pos)
+    local particle = emitter:Add(table.Random(muzzle), pos)
 
-        particle:SetDieTime(0.05)
+    particle:SetDieTime(0.05)
 
-        particle:SetStartAlpha(255)
-        particle:SetEndAlpha(0)
+    particle:SetStartAlpha(255)
+    particle:SetEndAlpha(0)
 
-        particle:SetStartSize(math.random(5, 7))
-        particle:SetEndSize(0)
+    particle:SetStartSize(math.random(5, 7))
+    particle:SetEndSize(0)
 
-        particle:SetRoll(math.random(-180, 180))
-        particle:SetRollDelta(math.random(-30, 30))
+    particle:SetRoll(math.random(-180, 180))
+    particle:SetRollDelta(math.random(-30, 30))
 
-        particle:SetGravity(Vector(0, 0, 0))
-        particle:SetVelocity(normal * math.random(80, 150) + VectorRand() * 10)
+    particle:SetGravity(Vector(0, 0, 0))
 
-        particle:SetCollide(true)
-        particle:SetBounce(0.2)
-    end
+    particle:SetCollide(true)
+    particle:SetBounce(0.2)
+
+    particle:SetThinkFunction(function(p)
+        local att = ent:GetAttachment(attachment)
+        p:SetPos(att.Pos)
+    end)
 
     emitter:Finish()
 end

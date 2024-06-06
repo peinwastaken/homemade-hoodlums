@@ -19,7 +19,7 @@ SWEP.Primary.Damage = 0
 SWEP.Primary.Spread = 0
 SWEP.Primary.Sound = ""
 SWEP.Primary.Force = 450
-SWEP.ShootWait = 5
+SWEP.ShootWait = 3
 							
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= 1
@@ -68,7 +68,9 @@ function SWEP:ThrowGrenade(force)
 		local axis = grenade:GetAngles():Up() - grenade:GetAngles():Forward()
 		phys:SetAngleVelocity(axis * 500)
 
-		if self:Clip1() == 0 then
+		self:TakePrimaryAmmo(1)
+
+		if self:Ammo1() <= 0 then
 			self:Remove()
 		end
 	end
@@ -81,10 +83,6 @@ function SWEP:PrimaryAttack()
 
     self:SetNextPrimaryFire(CurTime() + self.ShootWait)
     self:ThrowGrenade(800)
-
-	if SERVER then
-		self:TakePrimaryAmmo(1)
-	end
 end
 
 function SWEP:SecondaryAttack()
@@ -95,10 +93,6 @@ function SWEP:SecondaryAttack()
 	if self:GetNextPrimaryFire() > CurTime() then return end
 	self:SetNextPrimaryFire(CurTime() + self.ShootWait)
     self:ThrowGrenade(400)
-
-	if SERVER then
-		self:TakePrimaryAmmo(1)
-	end
 end
 
 function SWEP:DrawHUD()

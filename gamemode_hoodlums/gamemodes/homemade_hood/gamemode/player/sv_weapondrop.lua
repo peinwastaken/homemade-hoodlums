@@ -43,6 +43,10 @@ function PLAYER:DropItem(wep, pos, vel, time)
         drop.Remaining = wep:GetRemaining()
     end
 
+    if wep.GetMagazinesRemaining then
+        drop.Magazines = wep:GetMagazinesRemaining()
+    end
+
     -- save some variables
     drop.Clip = wep:Clip1()
 
@@ -90,7 +94,7 @@ function CreateDroppedWeapon(weaponClass, pos, randomAttachments, time)
 
     -- some properties
     drop.WeaponId = weaponClass
-    drop.Type = "weapon"
+    drop.Type = wep.Type or "weapon"
     drop.Name = wep.PrintName
     drop.Clip = wep.Primary.ClipSize
 
@@ -138,6 +142,8 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
         local weaponId = ent.WeaponId
         local wep = ply:GetWeapon(weaponId)
 
+        if IsValid(wep) then return false end
+
         ply:Give(weaponId)
         local wepgive = ply:GetWeapon(weaponId)
         
@@ -149,10 +155,24 @@ hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
             end
         end
 
+        -- just for some retarded vss issue lol
+        -- tbf the attachment system is all a bit restarted but its fine since the player will never see this code anyway
+        -- and all that matters is that it plays well :)
+        local count = ent:GetNumBodyGroups()
+        for id = 0, count - 1 do
+            local value = ent:GetBodygroup(id)
+            wepgive:SetBodygroup(id, value)
+        end
+
         -- for drinks
         local remaining = ent.Remaining
         if remaining then
             wepgive:SetRemaining(remaining)
+        end
+
+        local mags = ent.Magazines
+        if mags then
+            wepgive:SetMagazinesRemaining(ent.Magazines)
         end
 
         wepgive:SetClip1(ent.Clip)

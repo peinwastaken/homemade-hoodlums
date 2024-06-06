@@ -9,12 +9,16 @@ if SERVER then
 
 	AddCSLuaFile("sh_impacteffects.lua")
 	include("sh_impacteffects.lua")
+
+	AddCSLuaFile("sh_magazines.lua")
+	include("sh_magazines.lua")
 end
 if CLIENT then
 	include("cl_recoil.lua")
 	include("sh_attachments.lua")
 	include("sh_laser.lua")
 	include("sh_impacteffects.lua")
+	include("sh_magazines.lua")
 end
 
 SWEP.Base = "weapon_base"
@@ -154,22 +158,7 @@ function SWEP:CancelReload()
 end
 
 function SWEP:Reload()
-	if not self:Reloading() and self:Ammo1() > 0 and self:Clip1() < self.Primary.ClipSize then
-		local ply = self:GetOwner()
-		ply:SetAnimation(PLAYER_RELOAD)
-		self:EmitSound(self.ReloadSound, 60, 100, 1, CHAN_AUTO)
-		timer.Create("reload" .. self:EntIndex(), self.ReloadTime, 1, function()
-			if not IsValid(self) then return end
-
-			local ammo = self:Ammo1()
-			local clip = self:Clip1()
-			local maxclip = self.Primary.ClipSize
-			local missing = maxclip - clip
-			
-			ply:SetAmmo(ammo - missing, self.Primary.Ammo)
-			self:SetClip1(maxclip)
-		end)
-	end
+	return false
 end
 
 function SWEP:Cycle()
@@ -202,9 +191,13 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 0, "Aiming")
 	self:NetworkVar("Bool", 1, "Crouching")
+	self:NetworkVar("Bool", 3, "FirstEquip")
 
 	self:SetAiming(false)
 	self:SetCrouching(false)
+	self:SetFirstEquip(true)
+
+	self:InitMagazines()
 end
 
 function SWEP:SecondaryAttack()
@@ -223,6 +216,7 @@ end)
 
 function SWEP:Think()
 	local ply = self:GetOwner()
+	local timeSinceMagCheck = self:GetTimeSinceMagCheck()
 
 	if ply:KeyDown(IN_ATTACK2) then
 		self:SetAiming(true)
@@ -235,6 +229,8 @@ function SWEP:Think()
 	else
 		self:SetCrouching(false)
 	end
+
+	self:MagThink()
 
 	self:SetWeaponHoldType(self.HoldType)
 end
@@ -400,6 +396,8 @@ function SWEP:PrimaryAttack()
 			local effectdata = EffectData()
 			effectdata:SetOrigin(pos)
 			effectdata:SetNormal(ang:Forward())
+			effectdata:SetEntity(self)
+			effectdata:SetAttachment(self:LookupAttachment("muzzle"))
 			util.Effect("effect_muzzleflash", effectdata)
 
 			if CLIENT then
@@ -464,7 +462,7 @@ function SWEP:DoBolt()
 	self.bolt = 1
 
 	--[[
-	--hmm...
+	--seemingly doesnt fuck with where bullets land but who knows
 	local ply = self:GetOwner()
 	if ply == LocalPlayer() then return end
 	ply:SetAnimation(PLAYER_ATTACK1)]]
@@ -472,11 +470,11 @@ end
 
 -- thank you gpt!
 function linear(t)
-    t = t % 1  -- Ensure t is within the range [0, 1)
+    t = t % 1
     if t < 0.5 then
-        return t * 2  -- Linearly ramp up from 0 to 1 over the first half
+        return t * 2
     else
-        return 2 - (t * 2)  -- Linearly ramp down from 1 to 0 over the second half
+        return 2 - (t * 2)
     end
 end
 
@@ -601,6 +599,7 @@ function SWEP:Holster()
 		ResetBones(ply)
 	end
 
+	self:StopCheckingMag()
 	self:CancelReload()
 
 	if CLIENT then
@@ -608,4 +607,14 @@ function SWEP:Holster()
 	end
 
 	return true
+end
+
+function SWEP:Deploy()
+	local firstEquip = self:GetFirstEquip()
+
+	if firstEquip then
+		self:SetFirstEquip(false)
+
+		self:StartCheckingMag()
+	end
 end

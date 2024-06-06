@@ -14,7 +14,7 @@ SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
 SWEP.Primary.Delay          = 0.4
 SWEP.Primary.Damage         = 10
-SWEP.Primary.Spread         = 0.1
+SWEP.Primary.Spread         = 0.06
 SWEP.Primary.BulletCount    = 15
 
 SWEP.ReloadTime             = 2

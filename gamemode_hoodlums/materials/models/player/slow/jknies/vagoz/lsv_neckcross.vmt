@@ -1,0 +1,21 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/humangrunt/gtasa/lsv_neckcross"
+	"$bumpmap" "models/humangrunt/gtasa/normalmap_flat"
+	"$surfaceprop" "flesh"
+	"$alphatest" 1
+	"$allowalphatocoverage" "1"
+	"$model" 1
+	"$nocull" 0
+
+	"$phong" "1"
+	"$phongexponent" "1"
+	"$phongboost" "5"	
+	"$phongfresnelranges"	"[.1 0.2 1]"
+	"$halflambert" "1"
+
+
+	"$rimlight" "1"										
+	"$rimlightexponent" "20"							
+	"$rimlightboost" "0.1"
+}

@@ -151,7 +151,7 @@ hook.Add("PreDrawOpaqueRenderables", "predrawflashlights", function(drawingdepth
                     ply.Light:SetEnableShadows(true)
                     ply.Light:Update()
                 else
-                    ply.Light:SetPos(pos)
+                    ply.Light:SetPos(pos + ang:Forward() * 8)
                     ply.Light:SetAngles(ang)
                     ply.Light:Update()
                 end

@@ -10,22 +10,27 @@ PLAYER.Models = {
     ["bloods"] = {
         "models/player/bloodz/slow_1.mdl",
         "models/player/bloodz/slow_2.mdl",
-        "models/player/bloodz/slow_3.mdl", 
+        "models/player/bloodz/slow_3.mdl"
     },
     ["crips"] = {
         "models/player/cripz/slow_1.mdl", 
         "models/player/cripz/slow_2.mdl", 
-        "models/player/cripz/slow_3.mdl",
+        "models/player/cripz/slow_3.mdl"
     },
     ["groves"] = {
         "models/player/grovez/grovez_1.mdl",
         "models/player/grovez/grovez_2.mdl",
         "models/player/grovez/grovez_3.mdl",
         "models/player/grovez/grovez_4.mdl"
+    },
+    ["vagos"] = {
+        "models/player/vagoz/lsv1pm.mdl",
+        "models/player/vagoz/lsv2pm.mdl",
+        "models/player/vagoz/lsv3pm.mdl",
     }
 }
 
-PLAYER.Teams = {"bloods", "crips", "groves"}
+PLAYER.Teams = {"bloods", "crips", "groves", "vagos"}
 
 PLAYER.Items = {
     ["primary"] = {

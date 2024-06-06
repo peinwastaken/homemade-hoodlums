@@ -16,3 +16,9 @@ surface.CreateFont("FancyOldTimey", {
     size = ScreenScale(32),
     weight = 500
 })
+
+surface.CreateFont("HudMedium", {
+    font = "Chopin Light",
+    size = ScreenScale(16),
+    weight = 500,
+})

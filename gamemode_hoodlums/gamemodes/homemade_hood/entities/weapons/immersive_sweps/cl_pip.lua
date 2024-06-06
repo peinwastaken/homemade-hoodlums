@@ -78,6 +78,7 @@ function DoPip(wep, pos, ang)
     local effect = wep:GetAttachmentEffects()
     local reticlemat, reticlesize, pipradius = effect["ReticleMaterial"], effect["ReticleSize"], effect["PIPRadius"]
     local vignettesize = effect["VignetteSize"] or reticlesize
+    local aimlerp = GetAimLerp()
     
     cam.Start3D2D(pos + ang:Up() * -64, ang, 0.01)
         cam.Start3D2D(pos, ang, 0.01)
@@ -102,15 +103,17 @@ function DoPip(wep, pos, ang)
             render.SetStencilZFailOperation(STENCIL_KEEP)
 
             pipMaterial:SetTexture("$basetexture", pipRenderTarget)
+            pipMaterial:SetVector("$color", Vector(1, 1, 1) * math.Clamp(aimlerp * 2, 0, 1))
         cam.End3D2D()
 
-        local size = 99999
+        local size = 99999 -- weird
 
+        -- its black
         surface.SetDrawColor(0, 0, 0, 255)
         surface.SetMaterial(black)
         surface.DrawTexturedRect(-size/2, -size/2, size, size)
 
-        -- vignette
+        -- pip
         surface.SetDrawColor(0, 0, 0, 255)
         surface.SetMaterial(pipMaterial)
         draw.Circle(0, 0, vignettesize/2, 32)

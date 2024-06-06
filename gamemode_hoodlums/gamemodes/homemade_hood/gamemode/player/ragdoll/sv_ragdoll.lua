@@ -288,6 +288,11 @@ local function getthingstodestroy(bone)
 end
 
 hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
+    if ent:IsPlayer() then
+        net.Start("PlayerDamage")
+        net.Send(ent)
+    end
+
     if ent:IsPlayer() and dmginfo:GetDamageType() == DMG_BLAST then
         if dmginfo:GetDamage() > 20 then
             local dir = dmginfo:GetDamageForce()

@@ -91,7 +91,7 @@ SWEP.Attachments = {
 				["ReticleMaterial"] = Material("reticles/reticle_pso.vmt"),
                 ["ReticleSize"] = 4000,
 				["VignetteSize"] = 5000,
-				["VisualRecoilAdd"] = Vector(0, 0.2, 0),
+				["VisualRecoilAdd"] = Vector(0, 0.12, 0),
 				["VisualRecoilMult"] = 0.5
             }
 		}

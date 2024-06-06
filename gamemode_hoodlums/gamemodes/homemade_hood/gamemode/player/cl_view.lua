@@ -235,6 +235,10 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     return view
 end)
 
+function GetAimLerp()
+    return aimlerp
+end
+
 -- this is here only to hide some retarded rendertarget shit when the game is paused
 local ang = 0
 local logo = Material("gui/logo.png")

@@ -23,11 +23,11 @@ if CLIENT then
                 -- laser beam
                 att.Ang:RotateAroundAxis(att.Ang:Right(), 90)
                 cam.Start3D()
-                    local size = math.random(5, 10)
-                    local trace = util.QuickTrace(att.Pos, att.Ang:Up() * -1024)
+                    local size = math.Rand(2, 4)
+                    local trace = util.QuickTrace(att.Pos, att.Ang:Up() * -9999)
                     local r, g, b, a = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a")
                     render.SetMaterial(lasermat)
-                    render.DrawBeam(trace.StartPos, trace.HitPos, 1, 0, 12.5, Color(r, g, b, a))
+                    render.DrawBeam(trace.StartPos, trace.HitPos, 0.25, 0, 12.5, Color(r, g, b, a))
 
                     render.SetMaterial(glowmat)
                     render.DrawQuadEasy(trace.HitPos, trace.HitNormal, size, size, Color(r, g, b), 0)
@@ -62,13 +62,15 @@ if CLIENT then
                 local eyedir = att.Pos - att_eyes.Pos
 
                 local dist = eyedir:Length()
-                local maxdist = 1000
+                local maxdist = 2500
                 local dot = flashdir:Dot(eyedir:GetNormalized())
-                local scale = (dot - 0.98) / (1 - 0.98)
+                local scale = dist / maxdist
+                local dotLimit = 0.975
 
-                if dot > 0.98 then
+                if dot > dotLimit then
                     local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
-                    local size = 2048 * scale
+                    local mult = (dot - dotLimit) / (1 - dotLimit)
+                    local size = 1024 * mult * (1 - scale)
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
                         cam.Start2D()

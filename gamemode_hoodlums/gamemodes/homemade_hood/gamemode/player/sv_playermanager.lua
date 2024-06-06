@@ -6,7 +6,7 @@ end
 
 local specialClasses = {"player_demoncompany"}
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
-    local specialChance = 5 -- make a convar
+    local specialChance = 2 -- make a convar
     local rand = math.Rand(0, 100)
     if rand < specialChance then -- if is special...
         local specialClass = table.Random(specialClasses)
@@ -19,7 +19,6 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
     end
 
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)
-    ply:SetSuppressPickupNotices(true)
 
     net.Start("Hoodlum_PlayerRespawn")
     net.WriteString(ply:GetTeam())

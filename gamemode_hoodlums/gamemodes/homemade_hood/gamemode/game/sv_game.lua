@@ -2,6 +2,7 @@
 util.AddNetworkString("Hoodlum_PlayerRespawn")
 util.AddNetworkString("PlayerDeath")
 util.AddNetworkString("DeathEvent")
+util.AddNetworkString("PlayerDamage")
 
 function GetRandomNavPoint()
     local navpoints = navmesh.GetAllNavAreas()

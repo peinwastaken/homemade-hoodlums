@@ -166,6 +166,8 @@ function SWEP:DrawHUD()
     local sizeMin = ScreenScale(10)
     local sizeLerp = Lerp(mult, sizeMin, sizeMax)
 
+    draw.NoTexture()
+
     if trace.Hit then
         if distance < self.Range and fightmode then
             surface.SetDrawColor(Color(255, 0, 0, 20))

@@ -15,6 +15,7 @@ if CLIENT then
 
     hook.Add("PostDrawTranslucentRenderables", "rendercapturepercent", function(dDepth, dSkybox, isDraw3dSkybox)
         local lply = LocalPlayer()
+        local teams = _G.Teams
         local objs = ents.FindByClass("ent_objective")
 
         for _,ent in ipairs(objs) do
@@ -25,7 +26,11 @@ if CLIENT then
             local angle = dir:Angle()
             if dist < radius + 23 then
                 cam.Start3D2D(objPos + Vector(0, 0, 24), Angle(0, angle.y + 90, 90), 0.2)
-                    draw.SimpleText(string.format("%s", progress.."%"), "HudDefault", 0, 0, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    local capturing = ent:GetCaptureTeam()
+                    local alpha = progress / 100
+                    local colorLerp = LerpColor(math.Clamp(alpha * 2, 0, 1), color_white, teams[capturing]["Color"])
+
+                    draw.SimpleText(string.format("%s", progress.."%"), "HudDefault", 0, 0, colorLerp, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 cam.End3D2D()
             end
         end
@@ -57,12 +62,10 @@ ENT.ObjectiveTypes = {
     ["WeaponCache"] = {
         ["Name"] = "Weapon Cache",
         ["Items"] = {
+            "weapon_m4",
             "weapon_m4_new",
             "weapon_remington700",
-            "weapon_aks74u",
-            "weapon_pipebomb",
-            "weapon_mcxspear",
-            "weapon_mac10"
+            "weapon_mcxspear"
         },
         ["CaptureDelay"] = 0.3,
         ["ItemCountMin"] = 2,
@@ -81,11 +84,23 @@ ENT.ObjectiveTypes = {
         ["ItemCountMax"] = 3,
         ["Flare"] = true,
         ["FlareColor"] = Color(255, 106, 0),
-    }
+    },
+    ["UtilityCache"] = {
+        ["Name"] = "Utility Crate",
+        ["Items"] = {
+            "weapon_pipebomb",
+            "deployable_ammobox"
+        },
+        ["CaptureDelay"] = 0.1,
+        ["ItemCountMin"] = 2,
+        ["ItemCountMax"] = 5,
+        ["Flare"] = true,
+        ["FlareColor"] = Color(0, 255, 234, 124),
+    },
 }
 
 -- fucking retarded
-local retarded_shit = {"WeaponCache", "AlcoholCache"}
+local retarded_shit = {"WeaponCache", "AlcoholCache", "UtilityCache"}
 
 -- i should create some sort of utilities script... whatever lol its not like anyone is ever gonna go through the code anyway
 function LerpColor(frac, from, to)
@@ -283,6 +298,7 @@ function ENT:Think()
                 captureTeam = leadingTeam
             end
 
+            -- maybe decay faster when someone else is capturing it?
             if leadingTeam ~= captureTeam then
                 captureProgress = captureProgress - 1
             else
@@ -326,12 +342,6 @@ function ENT:Think()
 
     return true
 end
-
-local colors = {
-    ["neutral"] = Color(255, 255, 255, 100),
-    ["bloods"] = Color(255, 0, 0, 100),
-    ["crips"] = Color(0, 0, 255, 100)
-}
 
 function ENT:Draw()
     local objectiveType = self:GetObjectiveType()

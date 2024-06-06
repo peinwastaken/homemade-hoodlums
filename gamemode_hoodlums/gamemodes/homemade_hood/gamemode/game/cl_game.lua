@@ -10,17 +10,6 @@
     end
 end)]]
 
-local hide = {
-	["CHudCrosshair"] = true,
-    ["CHUDQuickInfo"] = true
-}
-
-hook.Add( "HUDShouldDraw", "HideHUD", function( name )
-	if ( hide[ name ] ) then
-		return false
-	end
-end)
-
 hook.Add("DrawDeathNotice", "hoodlums_drawdeathnotice", function()
     return false
 end)
