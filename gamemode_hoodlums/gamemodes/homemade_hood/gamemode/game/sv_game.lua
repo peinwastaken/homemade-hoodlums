@@ -63,6 +63,24 @@ function RespawnPlayer(ply, t)
     end)
 end
 
+local doorEnts = {
+    ["prop_door_rotating"] = true,
+    ["func_door_rotating"] = true,
+    ["func_door"] = true
+}
+
+function UnlockAllDoors()
+    for _,ent in ents.Iterator() do
+        if doorEnts[ent:GetClass()] then
+            ent:Fire("Unlock")
+        end
+    end
+end
+
+hook.Add("InitPostEntity", "hoodlum_initpostentity", function()
+    UnlockAllDoors()
+end)
+
 hook.Add("PlayerDeath", "hoodlum_playerdeath", function(ply, inflictor, attacker)
     RespawnPlayer(ply, 5)
 

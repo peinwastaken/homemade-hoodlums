@@ -86,58 +86,61 @@ function SWEP:PrimaryAttack()
 
     ply:LagCompensation(true)
 
-    local size = Vector(4, 4, 4)
-    local trace = util.TraceHull({
-        start = eyepos,
-        endpos = eyepos + aimvector * self.Range,
-        maxs = size,
-        mins = -size,
-        filter = ply,
-    })
-    local ent = trace.Entity
-    local distance = (trace.StartPos - trace.HitPos):Length()
-
-    if distance < self.Range and trace.Hit then
-        if trace.MatType == MAT_FLESH then
-            EmitSound(self.HitSoundEntity, trace.HitPos)
-        else
-            local hitsound = self.HitSounds[math.random(1, #self.HitSounds)]
-
-            EmitSound(hitsound, trace.HitPos)
-        end
-
-        if SERVER then
-            if IsValid(ent) then
-                local damage = DamageInfo()
-                damage:SetDamage(self.Primary.Damage)
-                damage:SetAttacker(ply)
-                damage:SetInflictor(self)
-                damage:SetDamagePosition(pos)
-                damage:SetDamageType(DMG_GENERIC)
+    if IsFirstTimePredicted() then
+        local size = Vector(4, 4, 4)
+        local trace = util.TraceHull({
+            start = eyepos,
+            endpos = eyepos + aimvector * self.Range,
+            maxs = size,
+            mins = -size,
+            filter = ply,
+        })
+        local ent = trace.Entity
+        local distance = (trace.StartPos - trace.HitPos):Length()
     
-                ent:TakeDamageInfo(damage)
-    
-                local physbone = trace.PhysicsBone
-                if physbone then
-                    local physobj = ent:GetPhysicsObjectNum(physbone)
-                    if IsValid(physobj) then
-                        physobj:ApplyForceOffset(aimvector * 2500, trace.HitPos)
+        if distance < self.Range and trace.Hit then
+            if trace.MatType == MAT_FLESH then
+                EmitSound(self.HitSoundEntity, trace.HitPos)
+            else
+                local hitsound = self.HitSounds[math.random(1, #self.HitSounds)]
+            
+                EmitSound(hitsound, trace.HitPos)
+            end
+        
+            if SERVER then
+                if IsValid(ent) then
+                    local damage = DamageInfo()
+                    damage:SetDamage(self.Primary.Damage)
+                    damage:SetAttacker(ply)
+                    damage:SetInflictor(self)
+                    damage:SetDamagePosition(pos)
+                    damage:SetDamageType(DMG_GENERIC)
+                
+                    ent:TakeDamageInfo(damage)
+                
+                    local physbone = trace.PhysicsBone
+                    if physbone then
+                        local physobj = ent:GetPhysicsObjectNum(physbone)
+                        if IsValid(physobj) then
+                            physobj:ApplyForceOffset(aimvector * 2500, trace.HitPos)
+                        end
                     end
-                end
-    
-                local bone = ent:TranslatePhysBoneToBone(physbone)
-                local bonename = ent:GetBoneName(bone)
-                local rand = math.random(0, 100)
-                if ent:IsPlayer() then
-                    if bonename == "ValveBiped.Bip01_Head1" then
-                        ent:ToggleRagdoll(nil, true, "weapon_hands")
-                    elseif rand < self.RagdollChance and ent:IsPlayer() then
-                        ent:ToggleRagdoll()
+                
+                    local bone = ent:TranslatePhysBoneToBone(physbone)
+                    local bonename = ent:GetBoneName(bone)
+                    local rand = math.random(0, 100)
+                    if ent:IsPlayer() then
+                        if bonename == "ValveBiped.Bip01_Head1" then
+                            ent:ToggleRagdoll(nil, true, "weapon_hands")
+                        elseif rand < self.RagdollChance and ent:IsPlayer() then
+                            ent:ToggleRagdoll()
+                        end
                     end
                 end
             end
         end
     end
+    
 
     ply:LagCompensation(false)
 end

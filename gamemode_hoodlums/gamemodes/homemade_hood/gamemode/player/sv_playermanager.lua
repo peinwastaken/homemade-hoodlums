@@ -1,4 +1,5 @@
 local PLAYER = FindMetaTable("Player")
+local specialChance = CreateConVar("hoodlum_special_chance", 2, FCVAR_NONE, "Change special class spawn chance.", 0, 100)
 
 function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
@@ -6,9 +7,8 @@ end
 
 local specialClasses = {"player_demoncompany"}
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
-    local specialChance = 2 -- make a convar
     local rand = math.Rand(0, 100)
-    if rand < specialChance then -- if is special...
+    if rand < specialChance:GetFloat() then -- if is special...
         local specialClass = table.Random(specialClasses)
 
         player_manager.SetPlayerClass(ply, specialClass)
@@ -23,10 +23,6 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
     net.Start("Hoodlum_PlayerRespawn")
     net.WriteString(ply:GetTeam())
     net.Send(ply)
-end)
-
-hook.Add("PlayerInitialSpawn", "hoodlum_intialspawn", function(ply)
-    hook.Run("PlayerRespawn", ply)
 end)
 
 local deathsounds = {

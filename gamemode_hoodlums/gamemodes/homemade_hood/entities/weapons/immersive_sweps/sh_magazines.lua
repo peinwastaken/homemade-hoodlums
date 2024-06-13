@@ -1,5 +1,9 @@
 SWEP.MaxMagazines = 7
 SWEP.StartMagazines = 3
+SWEP.MagazinesPerResupply = 1
+SWEP.MagazineString = "Magazines"
+
+SWEP.BreechLoader = false
 
 local magCheckTimeRequired = 0.3
 
@@ -77,7 +81,7 @@ if CLIENT then
 
         if hudLerp > 0.01 then
             DrawInfoText(ammoText, hudLerp, x, y)
-            DrawInfoText(string.format("Magazines: %s", magsLeft), hudLerp, x, y - 60)
+            DrawInfoText(string.format("%s: %s", wep.MagazineString, magsLeft), hudLerp, x, y - 60)
             DrawInfoText(automaticText, hudLerp, x, y - 120)
         end
     end)
@@ -92,11 +96,21 @@ end
 
 function SWEP:DoReload()
     local magsLeft = self:GetMagazinesRemaining()
+
 	if not self:Reloading() and magsLeft > 0 and self:Clip1() < self.Primary.ClipSize then
 		local ply = self:GetOwner()
 
+        if self.BreechLoader then
+            self:DoBreechLoad()
+            return
+        end
+
 		ply:SetAnimation(PLAYER_RELOAD)
-		self:EmitSound(self.ReloadSound, 60, 100, 1, CHAN_AUTO)
+
+        if IsFirstTimePredicted() then
+            EmitSound(self.ReloadSound, self:GetPos(), self:EntIndex(), CHAN_AUTO, 1, 100, SND_NOFLAGS, 100)
+        end
+		
 		timer.Create("reload" .. self:EntIndex(), self.ReloadTime, 1, function()
 			if not IsValid(self) then return end
 
@@ -107,8 +121,35 @@ function SWEP:DoReload()
 			
 			self:SetClip1(maxclip)
             self:SetMagazinesRemaining(magsLeft - 1)
+            self:SetLastPump(CurTime())
+            self:SetLastReload(CurTime())
 		end)
 	end
+end
+
+function SWEP:DoBreechLoad()
+    local ply = self:GetOwner()
+    local holdType = self:GetHoldType()
+    local magsLeft = self:GetMagazinesRemaining()
+
+    ply:SetAnimation(PLAYER_RELOAD)
+
+    if IsFirstTimePredicted() then
+        EmitSound("weapons/shotgun/shotgun_reload3.wav", self:GetPos(), self:EntIndex(), CHAN_AUTO, 1, 100, SND_NOFLAGS, 100)
+    end
+
+    timer.Create("reload" .. self:EntIndex(), 0.8, 1, function()
+        if not IsValid(self) then return end
+
+        local ammo = self:Ammo1()
+        local clip = self:Clip1()
+        local maxclip = self.Primary.ClipSize
+        
+        self:SetClip1(clip + 1)
+        self:SetMagazinesRemaining(magsLeft - 1)
+        self:SetLastPump(CurTime())
+        self:SetLastReload(CurTime())
+    end)
 end
 
 function SWEP:InitMagazines()
@@ -116,16 +157,20 @@ function SWEP:InitMagazines()
 
     -- dont even know why these are networked if im being honest
     -- originally it was to fix a bug but this should all be clientside local u know
+
+    -- normal shit
     self:NetworkVar("Bool", 2, "CheckingMag")
     self:NetworkVar("Float", 2, "TimeSinceMagCheck")
     self:NetworkVar("Float", 3, "ReloadHeldTime")
     self:NetworkVar("Int", 4, "LastAmmoInMag")
+    self:NetworkVar("Float", 4, "LastReload")
 
     self:SetMagazinesRemaining(self.StartMagazines)
     self:SetCheckingMag(false)
     self:SetTimeSinceMagCheck(0)
     self:SetReloadHeldTime(0)
     self:SetLastAmmoInMag(0)
+    self:SetLastReload(0)
 end
 
 function SWEP:StartCheckingMag()
@@ -175,3 +220,32 @@ function SWEP:MagThink()
         self:SetCheckingMag(false)
     end
 end
+
+-- racism :/
+local blacklist = {
+    ["weapons/ar2/ar2_reload.wav"] = true,
+    ["weapons/357/357_reload1.wav"] = true,
+    ["weapons/357/357_reload2.wav"] = true,
+    ["weapons/357/357_reload3.wav"] = true,
+    ["weapons/357/357_reload4.wav"] = true,
+    ["Weapon_357.OpenLoader"] = true,
+    ["Weapon_357.RemoveLoader"] = true,
+    ["Weapon_357.ReplaceLoader"] = true,
+    ["player/pl_shell2.wav"] = true,
+    ["player/pl_shell3.wav"] = true,
+    ["weapons/crossbow/reload1.wav"] = true,
+    ["weapons/pistol/pistol_reload1.wav"] = true,
+    ["weapons/shotgun/shotgun_reload1.wav"] = true,
+    ["weapons/shotgun/shotgun_reload2.wav"] = true,
+    ["weapons/shotgun/shotgun_reload3.wav"] = true,
+    ["weapons/smg1/smg1_reload.wav"] = true
+}
+
+-- check it out later
+hook.Add("EntityEmitSound", "mags_reloadsound", function(data)
+    if data["Entity"]:IsPlayer() and (blacklist[data["SoundName"]] or blacklist[data["SoundNameOriginal"]]) then
+        return false
+    end
+
+    return true
+end)

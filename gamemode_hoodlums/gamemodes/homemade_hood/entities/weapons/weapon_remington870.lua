@@ -12,12 +12,12 @@ SWEP.Primary.ClipSize       = 8
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
-SWEP.Primary.Delay          = 0.4
+SWEP.Primary.Delay          = 0.2
 SWEP.Primary.Damage         = 10
 SWEP.Primary.Spread         = 0.06
 SWEP.Primary.BulletCount    = 15
 
-SWEP.ReloadTime             = 2
+SWEP.ReloadTime             = 0.3
 
 SWEP.Primary.Sound          = "pein/remington870/remington_close.wav"
 SWEP.Primary.SoundFar		= "pein/remington870/remington_far.wav"
@@ -28,17 +28,26 @@ SWEP.VisualRecoilAngle = Angle(18, 1, 10)
 SWEP.RecoilVertical = 200 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 100 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
-SWEP.AimWeaponTilt = -40
+SWEP.PlayerModelRecoilMult = 3
 
-SWEP.ManualCycle = true 
-SWEP.CycleTime = 0.2
-SWEP.CycleSound = "pein/remington870/pump.wav"
-
+SWEP.AimWeaponTilt = -40 
 SWEP.AimOffsetPos           = Vector(3.9, -12, 0.41)
 SWEP.AimOffsetAng           = Angle(-3, 0, 0)
 SWEP.AimSpeed               = 4
 SWEP.AimSpreadReduction 	= true
 SWEP.AimSpreadReductionMult = 0.3
+
+SWEP.EjectEffect = "EjectBrass_12Gauge"
+
+SWEP.MaxMagazines = 20
+SWEP.StartMagazines = 10
+SWEP.MagazinesPerResupply = 5
+SWEP.MagazineString = "Shells"
+
+SWEP.BreechLoader = true
+SWEP.PumpAction = true
+SWEP.CycleTime = 0.12
+SWEP.CycleSound = "pein/remington870/pump.wav"
 
 SWEP.Weight					= 6
 SWEP.AutoSwitchTo			= false
@@ -61,7 +70,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["AimPosAttachment"] = "ironsights",
-				["AimOffset"] = Vector(-10, -1.5, -0.4)
+				["AimOffset"] = Vector(-7, -1, -0.2)
 			}
 		},
 		["holo"] = {

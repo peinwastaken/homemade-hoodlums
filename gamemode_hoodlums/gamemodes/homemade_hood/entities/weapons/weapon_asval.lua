@@ -61,7 +61,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["AimPosAttachment"] = "ironsights",
-				["AimOffset"] = Vector(-13, -1, 0),
+				["AimOffset"] = Vector(-13, -1.05, 0),
 				["VisualRecoilAdd"] = Vector(0, 0.05, 0),
 			}
 		},
@@ -73,7 +73,7 @@ SWEP.Attachments = {
                 ["AimPosAttachment"] = "att_okp",
                 ["ReticleMaterial"] = Material("reticles/reticle_okp.vmt"),
                 ["ReticleSize"] = 450,
-                ["SightSize"] = {x = 125, y = 90},
+                ["SightRadius"] = 50,
 				["RecoilVertical"] = -10,
 				["VisualRecoilAdd"] = Vector(0, 0.05, 0),
                 ["AimOffset"] = Vector(-6, -0.5, 0)
@@ -143,7 +143,7 @@ SWEP.Attachments = {
 		},
 		["vss"] = {
 			["bodygroup_id"] = 0,
-			["bodygroup_value"] = 1, -- doesnt apply when picking up a dropped vss but automatic works fine?????
+			["bodygroup_value"] = 1,
             ["effects"] = {
 				["Automatic"] = false,
 				["RecoilVertical"] = 30,

@@ -11,24 +11,21 @@ end
 
 if CLIENT then
     local overlayMat = Material("pp/blurx")
-    local gamemodeName = engine.ActiveGamemode()
 
-    if gamemodeName == "homemade_hood" then
-        hook.Add("RenderScreenspaceEffects", "alcoholscreenspace", function()
-            local lply = LocalPlayer()
-            local alcohol = lply:GetAlcohol()
-            if lply:Alive() then
-                local blurmult = math.abs(math.sin(CurTime())) + 0.2
-                overlayMat:SetFloat("$size", 4 * alcohol * blurmult)
-                render.SetMaterial(overlayMat)
-                render.DrawScreenQuad()
+    hook.Add("RenderScreenspaceEffects", "alcoholscreenspace", function()
+        local lply = LocalPlayer()
+        local alcohol = lply:GetAlcohol()
+        if lply:Alive() then
+            local blurmult = math.abs(math.sin(CurTime())) + 0.2
+            overlayMat:SetFloat("$size", 4 * alcohol * blurmult)
+            render.SetMaterial(overlayMat)
+            render.DrawScreenQuad()
 
-                DrawSharpen(2, alcohol)
+            DrawSharpen(2, alcohol)
 
-                DrawMotionBlur(0.3, 2 * alcohol, 0.01)
-            end
-        end)
-    end
+            DrawMotionBlur(0.3, 2 * alcohol, 0.01)
+        end
+    end)
 
     local last = SysTime()
     hook.Add("StartCommand", "alcoholsway", function(ply, cmd)

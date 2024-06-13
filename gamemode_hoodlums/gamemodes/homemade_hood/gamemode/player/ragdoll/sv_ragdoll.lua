@@ -288,20 +288,6 @@ local function getthingstodestroy(bone)
 end
 
 hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
-    if ent:IsPlayer() then
-        net.Start("PlayerDamage")
-        net.Send(ent)
-    end
-
-    if ent:IsPlayer() and dmginfo:GetDamageType() == DMG_BLAST then
-        if dmginfo:GetDamage() > 20 then
-            local dir = dmginfo:GetDamageForce()
-            local dirNormal = dir:GetNormalized()
-            local vel = dirNormal * 300
-            ent:ToggleRagdoll(nil, true, "weapon_hands", vel)
-        end
-    end
-
     if ent:GetClass() == "prop_ragdoll" then
         local attacker = dmginfo:GetAttacker()
 
@@ -412,6 +398,8 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                     end
                 end
             end
+        end
+        --[[
         else -- if not player
             local owner = ent:GetOwner()
             if not IsValid(owner) or not owner:Alive() then return false end
@@ -430,7 +418,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
             if newhealth < 0 then
                 owner:Kill()
             end
-        end
+        end]]
     end
 end)
 

@@ -29,8 +29,16 @@ if CLIENT then
                     local capturing = ent:GetCaptureTeam()
                     local alpha = progress / 100
                     local colorLerp = LerpColor(math.Clamp(alpha * 2, 0, 1), color_white, teams[capturing]["Color"])
+                    local text = string.format("%s", progress.."%")
 
-                    draw.SimpleText(string.format("%s", progress.."%"), "HudDefault", 0, 0, colorLerp, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    --background
+                    surface.SetFont("HudDefault")
+                    local padding = 5
+                    local x, y = surface.GetTextSize(text)
+                    surface.SetDrawColor(0, 0, 0, 50)
+                    surface.DrawRect(0 - (x + padding)/2, 0 - (y + padding)/2, x + padding, y + padding)
+
+                    draw.SimpleText(text, "HudDefault", 0, 0, colorLerp, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                 cam.End3D2D()
             end
         end
@@ -65,7 +73,8 @@ ENT.ObjectiveTypes = {
             "weapon_m4",
             "weapon_m4_new",
             "weapon_remington700",
-            "weapon_mcxspear"
+            "weapon_mcxspear",
+            "weapon_deagle"
         },
         ["CaptureDelay"] = 0.3,
         ["ItemCountMin"] = 2,
@@ -248,10 +257,11 @@ function ENT:Think()
         -- all of this is probably very expensive and im sure there are a bagorillion different ways of doing this kinda stuff
         -- but as long as it works im fine with it :)
 
-        --if self:GetDespawnTime() < CurTime() then
-        --    --print("despawning objective " .. self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
-        --    self:Remove()
-        --end
+        -- if expired
+        if self:GetDespawnTime() < CurTime() then
+            --print("despawning objective " .. self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
+            self:Remove()
+        end
 
         -- get all players in zone
         local playersInZone = {}

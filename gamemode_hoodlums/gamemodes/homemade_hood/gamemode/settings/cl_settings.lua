@@ -33,18 +33,32 @@ local settings = {
         ["ConVars"] = {"cl_sharpen"},
         ["ToolTip"] = "Sharpen filter to mitigate loss of detail caused by TAA."
     },
+    ["SwayMult"] = {
+        ["Name"] = "Sway Amount",
+        ["Type"] = "Float",
+        ["Value"] = false,
+        ["ConVars"] = {"hoodlum_weaponsway_amount"},
+        ["ToolTip"] = "Weapon sway amount."
+    },
+    ["SwaySpeed"] = {
+        ["Name"] = "Sway Speed",
+        ["Type"] = "Float",
+        ["Value"] = false,
+        ["ConVars"] = {"hoodlum_weaponsway_speed"},
+        ["ToolTip"] = "Weapon sway speed."
+    },
     ["LaserColor"] = {
         ["Name"] = "Laser Color",
         ["Type"] = "Color",
         ["Color"] = Color(5, 89, 144),
         ["ConVars"] = {"hoodlum_laser_r", "hoodlum_laser_g", "hoodlum_laser_b", "hoodlum_laser_a"}
-    }
+    },
 }
 
-local settingOrder = {"Fov", "CamSmooth", "InvisHead", "Taa", "Sharpen", "LaserColor"}
+local settingOrder = {"Fov", "CamSmooth", "InvisHead", "Taa", "Sharpen", "SwayMult", "SwaySpeed", "LaserColor"}
 
 function OpenSettingsMenu()
-    local sizeX, sizeY = 300, 350
+    local sizeX, sizeY = 300, 425
 
     local mainFrame = vgui.Create("DFrame")
     mainFrame:SetPos(ScrW()/2 - sizeX/2, ScrH()/2 - sizeY/2)

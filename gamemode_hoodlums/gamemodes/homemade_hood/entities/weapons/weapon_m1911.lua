@@ -30,6 +30,7 @@ SWEP.VisualRecoilAngle = Angle(2, 0, 2)
 SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
+SWEP.PlayerModelRecoilMult = 4
 
 SWEP.AimOffsetPos           = Vector(4.25, -12, 0.05)
 SWEP.AimOffsetAng           = Angle(0, 0, 0)

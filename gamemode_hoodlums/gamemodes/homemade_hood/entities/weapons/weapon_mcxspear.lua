@@ -26,8 +26,9 @@ SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 SWEP.VisualRecoil = Vector(0.5, 0.04, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1.5, 0, 3)
 SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 40 -- HORIZONTAL RECOIL
+SWEP.RecoilHorizontal = 20 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.55 -- CROUCH RECOIL MULTIPLIER
+SWEP.PlayerModelRecoilMult = 1.5
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
 SWEP.AimOffsetAng           = Angle(3, -3, 0)
@@ -99,11 +100,11 @@ SWEP.Attachments = {
 				["AimOffset"] = Vector(-2, 0, 0),
 				["PIPSight"] = true,
 				["PIPRadius"] = 50,
-				["PIPFov"] = 20,
+				["PIPFov"] = 15,
 				["ReticleMaterial"] = Material("reticles/reticle_acog"),
                 ["ReticleSize"] = 4000,
 				["VignetteSize"] = 4000,
-				["VisualRecoilAdd"] = Vector(-0.1, 0.02, 0)
+				["VisualRecoilAdd"] = Vector(-0.1, 0, 0)
             }
 		}
 	},

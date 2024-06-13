@@ -50,7 +50,14 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {}
 		}
-	}
+	},
+    ["skin"] = {
+        ["none"] = {
+            ["bodygroup_id"] = 0,
+			["bodygroup_value"] = 0,
+            ["effects"] = {}
+        }
+    }
 }
 
 SWEP.EquippedAttachments = {
@@ -59,7 +66,8 @@ SWEP.EquippedAttachments = {
     ["barrel"] = "none",
     ["underbarrel"] = "none",
     ["magazine"] = "none",
-    ["extra"] = "none"
+    ["extra"] = "none",
+    ["skin"] = "none"
 }
 
 if SERVER then
@@ -204,8 +212,6 @@ function SWEP:UpdateAttachment(slot)
 
     self:SetBodygroup(id, value)
 
-    --PrintTable(att_effects)
-
     if att_effects["ClipSize"] then
         self.Primary.ClipSize = att_effects["ClipSize"]
         self:SetClip1(self.Primary.ClipSize)
@@ -219,6 +225,10 @@ function SWEP:UpdateAttachment(slot)
 
     if att_effects["WeaponName"] then
         self.PrintName = att_effects["WeaponName"]
+    end
+
+    if att_effects["Skin"] then
+        self:SetSkin(att_effects["Skin"])
     end
 end
 
@@ -252,7 +262,7 @@ hook.Add("PostDrawTranslucentRenderables", "hoodlum_attachments_sights", functio
     local effect = wep.Attachments["sight"][wep.EquippedAttachments["sight"]]["effects"]
 
     if effect and effect["HoloSight"] then
-        local sight_att, reticle_mat, reticle_size, sight_size = effect["AimPosAttachment"], effect["ReticleMaterial"], effect["ReticleSize"], effect["SightSize"]
+        local sight_att, reticle_mat, reticle_size, sight_size, sight_radius = effect["AimPosAttachment"], effect["ReticleMaterial"], effect["ReticleSize"], effect["SightSize"], effect["SightRadius"]
         local att = wep:GetAttachment(wep:LookupAttachment(sight_att))
         local att_pos, att_ang = att.Pos, att.Ang
         att_ang:RotateAroundAxis(att_ang:Right(), 90)
@@ -270,10 +280,16 @@ hook.Add("PostDrawTranslucentRenderables", "hoodlum_attachments_sights", functio
                 render.SetStencilFailOperation(STENCIL_KEEP)
                 render.SetStencilZFailOperation(STENCIL_REPLACE)
 
-                surface.SetDrawColor(0, 0, 0, 1)
-                surface.DrawRect(-sight_size.x/2, -sight_size.y/2, sight_size.x, sight_size.y)
-                draw.NoTexture()
-
+                if sight_size then
+                    surface.SetDrawColor(0, 0, 0, 1)
+                    draw.NoTexture()
+                    surface.DrawRect(-sight_size.x/2, -sight_size.y/2, sight_size.x, sight_size.y)
+                elseif sight_radius then
+                    surface.SetDrawColor(0, 0, 0, 1)
+                    draw.NoTexture()
+                    draw.Circle(0, 0, sight_radius, 32)
+                end
+                
                 -- no fucking clue
                 render.SetStencilCompareFunction(STENCIL_EQUAL)
                 render.SetStencilFailOperation(STENCIL_KEEP)
