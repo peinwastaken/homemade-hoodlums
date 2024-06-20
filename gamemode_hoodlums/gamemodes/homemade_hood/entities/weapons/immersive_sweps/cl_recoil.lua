@@ -1,3 +1,5 @@
+-- retarded
+
 SWEP.eyeoffset = Vector(0, 0, 0)
 SWEP.eyeangleoffset = Angle(0, 0, 0)
 SWEP.rec_vertical = 0

@@ -103,6 +103,12 @@ function SWEP:DrawHUD()
 	local screenpos = (pos + ang * 100):ToScreen()
 
 	draw.RoundedBox(10, screenpos.x, screenpos.y, 7, 7, Color(255, 255, 255))
+
+	local pX, pY = ScrW() - 50, ScrH() - 50
+
+	if self:Ammo1() > 0 then
+		DrawInfoText(self:Ammo1(), 1, pX, pY)
+	end
 end
 
 function SWEP:Initialize()

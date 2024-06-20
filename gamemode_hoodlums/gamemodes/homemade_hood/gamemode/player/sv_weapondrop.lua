@@ -63,6 +63,8 @@ function PLAYER:DropItem(wep, pos, vel, time)
         end
     end
 
+    drop:SetSkin(wep:GetSkin())
+
     if time then
         CleanupItem(drop, time)
     end
@@ -114,6 +116,10 @@ function CreateDroppedWeapon(weaponClass, pos, randomAttachments, time)
 
                     local data = wep.Attachments[slot][drop.EquippedAttachments[slot]]
                     drop:SetBodygroup(data["bodygroup_id"], data["bodygroup_value"])
+
+                    if data["effects"]["ClipSize"] then
+                        drop.Clip = data["effects"]["ClipSize"]
+                    end
                 end
             end
         end

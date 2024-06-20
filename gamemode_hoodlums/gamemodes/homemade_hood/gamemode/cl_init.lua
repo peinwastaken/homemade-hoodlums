@@ -10,6 +10,8 @@ include("player/cl_taa.lua")
 include("player/suppression/cl_suppression.lua")
 include("settings/cl_binds.lua")
 include("settings/cl_settings.lua")
+include("player/health/cl_limbhealth.lua")
+include("player/health/sh_limbhealth.lua")
 
 surface.CreateFont("FancyOldTimey", {
     font = "DS Cloister Black",
@@ -22,3 +24,14 @@ surface.CreateFont("HudMedium", {
     size = ScreenScale(16),
     weight = 500,
 })
+
+surface.CreateFont("HudSmall", {
+    font = "Chopin Light",
+    size = ScreenScale(11),
+    weight = 500,
+})
+
+hook.Add("InitPostEntity", "hoodlum_clientloaded", function()
+    net.Start("ClientLoaded")
+    net.SendToServer()
+end)

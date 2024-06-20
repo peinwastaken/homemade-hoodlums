@@ -109,7 +109,11 @@ function SWEP:Think()
 		if lastuse + self.UseDelay < CurTime() then
 			self:SetLastUse(CurTime())
 			ply:SetHealth(math.Clamp(health + 2, 0, maxhealth))
-		end
+
+            if SERVER then
+                ply:HealAllLimbs(1)
+            end
+        end
     end
 
     self:SetWeaponHoldType(self.HoldType)
@@ -216,6 +220,16 @@ function SWEP:Holster()
 	if IsValid(ply) then
 		ResetBones(ply)
 	end
+
+    self.anglehead = Angle(0, 0, 0)
+
+	self.angleupperR = Angle(0, 0, 0)
+    self.angleforeR = Angle(0, 0, 0)
+    self.anglehandR = Angle(0, 0, 0)
+
+    self.angleupperL = Angle(0, 0, 0)
+    self.angleforeL = Angle(0, 0, 0)
+    self.anglehandL = Angle(0, 0, 0)
 
 	return true
 end

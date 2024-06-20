@@ -65,10 +65,12 @@ function SWEP:IsOnCooldown()
 	return CurTime() < self.cooldown
 end
 
+-- instead of doing this i should just check for a physics object... or something along those lines. do that later? sometime? idk..
 local allowgrab = {
 	["prop_ragdoll"] = true,
 	["prop_physics"] = true,
 	["prop_physics_multiplayer"] = true,
+	["ent_boombox"] = true,
 }
 
 function SWEP:Think()
@@ -104,7 +106,7 @@ function SWEP:Think()
 			else
 				if not IsValid(ent) then
 					self:SetInteract(nil)
-					self:SetCooldown(1)
+					self:SetCooldown(0.2)
 					return
 				end
 				local physobj = ent:GetPhysicsObjectNum(phys)
@@ -139,10 +141,11 @@ function SWEP:Think()
 
 				physobj:Wake()
 				physobj:ApplyForceOffset(force + dampingForce, targetPos)
-				physobj:AddAngleVelocity(-ang_vel * 0.5)
+				physobj:SetDamping(0, 25)
 				
 				if ply:KeyPressed(IN_ATTACK2) then
 					physobj:SetVelocity(eyeang:Forward() * 1000 / mass)
+					physobj:SetDamping(0, 0)
 					self:SetInteract(nil, nil)
 					self:SetCooldown(1)
 				end

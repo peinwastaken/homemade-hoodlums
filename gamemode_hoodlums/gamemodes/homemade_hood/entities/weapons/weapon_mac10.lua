@@ -2,7 +2,7 @@ SWEP.Base = "immersive_sweps"
 
 SWEP.PrintName 				= "MAC-10"
 SWEP.Author 				= "pein"
-SWEP.Instructions			= ""
+SWEP.Instructions			= "Fun-size bullet hose."
 SWEP.Category 				= "Immersive SWEPs"
 
 SWEP.Spawnable 				= true
@@ -30,10 +30,11 @@ SWEP.VisualRecoilAngle = Angle(1.25, 0, 2)
 SWEP.RecoilVertical = 70 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.65 -- CROUCH RECOIL MULTIPLIER
+SWEP.PlayerModelRecoilMult = 3
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
 SWEP.AimOffsetAng           = Angle(-3, 0, 0)
-SWEP.AimSpeed               = 5
+SWEP.AimSpeed               = 8
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
 SWEP.AimWeaponTilt = 30

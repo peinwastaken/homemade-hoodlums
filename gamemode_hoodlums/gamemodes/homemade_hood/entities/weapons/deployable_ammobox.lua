@@ -43,6 +43,7 @@ SWEP.CanDrop = true
 SWEP.PlaceSound = "pein/ammobox/place.wav"
 
 SWEP.PreviewModel = nil
+SWEP.RotationOffset = 0
 
 function SWEP:PrimaryAttack()
 	local ply = self:GetOwner()
@@ -60,6 +61,7 @@ function SWEP:PrimaryAttack()
 
 				local ang = surfaceNormal:Angle()
 				ang:RotateAroundAxis(ang:Right(), -90)
+				ang:RotateAroundAxis(ang:Up(), self.RotationOffset)
 				ammobox:SetAngles(ang)
 
 				ammobox:Spawn()
@@ -82,6 +84,11 @@ end
 
 function SWEP:Think()
 	local ply = self:GetOwner()
+
+	if ply:KeyDown(IN_RELOAD) and IsFirstTimePredicted() then
+		self.RotationOffset = (self.RotationOffset + 1) % 360 
+	end
+	
 	if CLIENT then
 		if IsValid(self.PreviewModel) then
 			local eyepos, eyeang = ply:EyePos(), ply:EyeAngles()
@@ -95,6 +102,7 @@ function SWEP:Think()
 
 				local ang = surfaceNormal:Angle()
 				ang:RotateAroundAxis(ang:Right(), -90)
+				ang:RotateAroundAxis(ang:Up(), self.RotationOffset)
 				self.PreviewModel:SetAngles(ang)
 			else
 				self.PreviewModel:SetColor(Color(255, 0, 0, 50))

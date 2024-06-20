@@ -12,7 +12,7 @@ SWEP.Primary.ClipSize       = 12
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "pistol"
-SWEP.Primary.Delay          = 0.1
+SWEP.Primary.Delay          = 0.09
 SWEP.Primary.Damage         = 60
 SWEP.Primary.Spread         = 0.02
 SWEP.Primary.BulletCount    = 1
@@ -25,12 +25,13 @@ SWEP.Primary.Sound          = "pein/p320/p320_close.wav"
 SWEP.Primary.SoundFar		= "pein/p320/p320_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(2, 0.15, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(2, 0.3, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(2, 0, 1)
 SWEP.RecoilVertical = 80 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 20 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.AimWeaponTilt = 30
+SWEP.PlayerModelRecoilMult = 4
 
 SWEP.AimOffsetPos           = Vector(3.9, -12, 0.41)
 SWEP.AimOffsetAng           = Angle(-3, 0, 0)

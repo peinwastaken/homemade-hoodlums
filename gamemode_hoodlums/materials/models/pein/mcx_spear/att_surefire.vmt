@@ -1,4 +1,5 @@
 "VertexLitGeneric"
 {
 	"$basetexture" "models/pein/mcx_spear/att_surefire"
+	"$nocull" 1
 }

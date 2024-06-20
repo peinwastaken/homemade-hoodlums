@@ -74,8 +74,8 @@ if CLIENT then
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
                         cam.Start2D()
-                            local r, g, b, a = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a")
-                            surface.SetDrawColor(r, g, b, a)
+                            local r, g, b = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b")
+                            surface.SetDrawColor(r, g, b, 255)
                             surface.SetMaterial(glow)
                             surface.DrawTexturedRect(pos.x - size/2, pos.y - size/2, size, size)
                         cam.End2D()
@@ -108,14 +108,6 @@ if CLIENT then
     	net.WriteFloat(new)
     	net.SendToServer()
     end)
-
-    CreateClientConVar("hoodlum_laser_a", 255, true, true, "Hoodlum laser alpha value", 0, 255)
-    cvars.AddChangeCallback("hoodlum_laser_a", function(name, old, new)
-    	net.Start("ColorLaser")
-    	net.WriteString("alpha")
-    	net.WriteFloat(new)
-    	net.SendToServer()
-    end)
 end
 
 if SERVER then
@@ -135,7 +127,6 @@ if SERVER then
         ply:SetNWInt("laser_r", ply:GetInfo("hoodlum_laser_r"))
         ply:SetNWInt("laser_g", ply:GetInfo("hoodlum_laser_g"))
         ply:SetNWInt("laser_b", ply:GetInfo("hoodlum_laser_b"))
-        ply:SetNWInt("laser_a", ply:GetInfo("hoodlum_laser_a"))
     end)
 
     util.AddNetworkString("ColorLaser")
@@ -150,9 +141,6 @@ if SERVER then
         end
         if color == "blue" then
             ply:SetNWInt("laser_b", val)
-        end
-        if color == "alpha" then
-            ply:SetNWInt("laser_a", val)
         end
     end)
 end

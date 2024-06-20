@@ -54,6 +54,26 @@ local function DrawHealth(health, shake)
     draw.SimpleText(health, "HudMedium", posText.x, posText.y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 end
 
+local function DrawLimbText(text, color, posX, posY)
+    surface.SetFont("HudSmall")
+    local textSizeX, textSizeY = surface.GetTextSize(text)
+    
+    local padding = {x = 20, y = 5}
+    local size = {x = textSizeX + padding.x, y = textSizeY + padding.y}
+    local x = posX - size.x
+    local y = posY - size.y/2
+
+    local textPos = {
+        x = x + textSizeX/2 + padding.x/2,
+        y = y + textSizeY/2
+    }
+
+    surface.SetDrawColor(0, 0, 0, 50)
+    surface.DrawRect(x, y, size.x, size.y)
+
+    draw.SimpleText(text, "HudSmall", textPos.x, textPos.y, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+end
+
 local last = SysTime()
 hook.Add("Think", "homemade_doalpha", function()
     local ft = SysTime() - last
@@ -79,27 +99,12 @@ hook.Add("HUDPaint", "homemade_drawhud", function()
     local wep = lply:GetActiveWeapon()
     
     if lply:Alive() and not IsValid(ragdoll) then
-        DrawHealth(math.Clamp(lply:Health(), 0, lply:GetMaxHealth()), 10 * damagelerp)
+        --DrawHealth(math.Clamp(lply:Health(), 0, lply:GetMaxHealth()), 10 * damagelerp)
     end
 end)
 
 hook.Add("HUDDrawPickupHistory", "homemade_drawpickup", function()
     return false
-end)
-
-local hide = {
-	["CHudCrosshair"] = true,
-    ["CHUDQuickInfo"] = true,
-    ["CHudSuitPower"] = true,
-    ["CHudZoom"] = true,
-    ["CHudHealth"] = true,
-    ["CHudAmmo"] = true
-}
-
-hook.Add( "HUDShouldDraw", "HideHUD", function( name )
-	if ( hide[ name ] ) then
-		return false
-	end
 end)
 
 local function DoRespawnScreen(t)
@@ -124,7 +129,121 @@ local function DoRespawnScreen(t)
     end)
 end
 
+local limbHealths = {
+    ["Head"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.6, y = 0}
+    },
+    ["Torso"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.6, y = 0.3}
+    },
+    ["RightArm"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.75, y = 0.4}
+    },
+    ["LeftArm"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.35, y = 0.4}
+    },
+    ["RightLeg"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.75, y = 0.75}
+    },
+    ["LeftLeg"] = {
+        ["Bone"] = "ValveBiped.Bip01_Head1",
+        ["Offset"] = {x = 0.35, y = 0.75}
+    }
+}
+
+-- this Is retarded but i couldnt really figure out any other way to do it...
+--[[
+local frame = nil
+local function StartPlayerHud()
+    if IsValid(frame) then frame:Remove() end
+
+    local lply = LocalPlayer()
+
+    frame = vgui.Create("DFrame")
+    frame:SetTitle("")
+    frame:SetSize(300, 500)
+    frame:SetPos(50, 50)
+    frame:SetDraggable(false)
+    frame:ShowCloseButton(false)
+    frame:SetDeleteOnClose(false)
+    frame:SetVisible(true)
+    function frame:Paint(w, h)
+        draw.RoundedBox(5, 50, 50, w, h, Color(0, 0, 0, 50))
+    end
+
+    local modelPanel = vgui.Create("DModelPanel", frame)
+    modelPanel:Dock(FILL)
+    modelPanel:SetModel(lply:GetModel())
+
+    local min, max = modelPanel:GetEntity():GetRenderBounds()
+    modelPanel:SetCamPos(Vector(100, 0, 32))
+    modelPanel:SetLookAt(Vector(0, 0, 32))
+    modelPanel:SetFOV(45)
+    function modelPanel:LayoutEntity(ent)
+        ent:SetModel(lply:GetModel())
+        ent:SetAngles(Angle(0, 0, 0))
+
+        ent:SetSequence("walk_all")
+
+        ent:FrameAdvance()
+
+        local limbData = lply:GetLimbData()
+        if not limbData then return end
+
+        for limb, health in pairs(limbData) do
+            local data = limbHealths[limb]
+            if not data then continue end
+
+            -- limb text
+        end
+    end
+end]]
+
 net.Receive("Hoodlum_PlayerRespawn", function()
     local t = net.ReadString()
     DoRespawnScreen(t)
+    --StartPlayerHud()
+end)
+
+-- this is here only to hide some retarded rendertarget shit when the game is paused
+local ang = 0
+local logo = Material("gui/logo.png")
+local size = {x = 288, y = 128}
+hook.Add("PostDrawHUD", "pausehud", function()
+    ang = ang + FrameTime() * 20
+    if ang > 360 then
+        ang = 0
+    end
+    if gui.IsGameUIVisible() then
+        surface.SetDrawColor(Color(0, 0, 0, 255))
+        surface.DrawRect(-1, -1, ScrW() + 1, ScrH() + 1)
+
+        surface.SetDrawColor(255, 255, 255, 255)
+        draw.DrawText("unpause the game cuz.. your homies need you", "BudgetLabel", ScrW()/2, ScrH()/2 - 256, color_white, TEXT_ALIGN_CENTER)
+
+        surface.SetDrawColor(255, 255, 255)
+        surface.SetMaterial(logo)
+        surface.DrawTexturedRectRotated(ScrW()/2, ScrH()/2, size.x, size.y, -ang)
+    end
+end)
+
+local hide = {
+	["CHudCrosshair"] = true,
+    ["CHUDQuickInfo"] = true,
+    ["CHudSuitPower"] = true,
+    ["CHudZoom"] = true,
+    ["CHudHealth"] = true,
+    ["CHudAmmo"] = true,
+    ["CHudSecondaryAmmo"] = true,
+}
+
+hook.Add( "HUDShouldDraw", "HideHUD", function( name )
+	if (hide[ name ]) then
+		return false
+	end
 end)

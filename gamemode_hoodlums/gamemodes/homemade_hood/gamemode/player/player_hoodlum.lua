@@ -41,7 +41,9 @@ PLAYER.Items = {
         "weapon_aks74u",
         "weapon_remington870",
         "weapon_uzi",
-        "weapon_mac10"
+        "weapon_mac10",
+        "weapon_akm",
+        "weapon_tec9"
     },
     ["secondary"] = {
         "weapon_m1911",
@@ -107,6 +109,10 @@ function PLAYER:OnRespawn()
     local tbl = self.Models[self.Teams[math.random(1, #self.Teams)]]
     local model = GetRandomItem(tbl)
     ply:SetModel(model)
+
+    ply:SetWalkSpeed(self.WalkSpeed)
+    ply:SetRunSpeed(self.RunSpeed)
+    ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
 end
 
 function PLAYER:SetModel()

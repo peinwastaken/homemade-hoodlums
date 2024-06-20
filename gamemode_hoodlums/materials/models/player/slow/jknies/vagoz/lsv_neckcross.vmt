@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/humangrunt/gtasa/lsv_neckcross"
-	"$bumpmap" "models/humangrunt/gtasa/normalmap_flat"
+	"$basetexture" "models/player/slow/jknies/vagoz/lsv_neckcross"
+	"$bumpmap" "models/player/slow/jknies/vagoz/normalmap_flat"
 	"$surfaceprop" "flesh"
 	"$alphatest" 1
 	"$allowalphatocoverage" "1"

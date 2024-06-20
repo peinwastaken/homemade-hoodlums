@@ -27,7 +27,7 @@ function EFFECT:Init(effectdata)
         local particle = emitter:Add(table.Random(smoke), pos)
         if particle then
             local angle = math.rad(i * (360 / smokeAmount))
-            particle:SetDieTime(3)
+            particle:SetDieTime(8)
 
             particle:SetStartAlpha(math.random(50, 130))
             particle:SetEndAlpha(0)
@@ -53,18 +53,18 @@ function EFFECT:Init(effectdata)
         local particle = emitter:Add(table.Random(smoke), pos)
         if particle then
             local angle = math.rad(i * (360 / smokeAmount))
-            particle:SetDieTime(2)
+            particle:SetDieTime(6)
 
             particle:SetStartAlpha(math.random(50, 130))
             particle:SetEndAlpha(0)
 
-            particle:SetStartSize(math.random(40, 80))
-            particle:SetEndSize(math.random(180, 200))
+            particle:SetStartSize(math.random(80, 200))
+            particle:SetEndSize(math.random(300, 200))
 
             particle:SetRoll(math.random(-180, 180))
             particle:SetRollDelta(-0.1)
             
-            particle:SetVelocity(Vector(0.2, 0.2, 1) * math.random(100, 400) + Vector(math.random(-1, 1), math.random(-1, 1), 0) * math.random(70, 150))
+            particle:SetVelocity(Vector(0, 0, 1) * math.random(50, 400))
 
             particle:SetAirResistance(60)
 

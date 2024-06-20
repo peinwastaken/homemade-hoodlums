@@ -52,8 +52,7 @@ SWEP.VisualRecoilAngle = Angle(-1, 0, 0)
 SWEP.RecoilVertical = 0
 SWEP.RecoilHorizontal = 0
 SWEP.CrouchRecoilMult = 0.5
-SWEP.ManualCycle = false
-SWEP.CycleTime = 0.5
+SWEP.PlayerModelRecoilMult = 1
 
 -- AIMING
 SWEP.AimOffsetPos = Vector(5.1, -7, 0.725)
@@ -65,6 +64,14 @@ SWEP.AimWeaponTilt = 0
 
 SWEP.SuppressionMult = 1
 
+SWEP.MuzzleFlashScale = 1
+SWEP.MuzzleFlashStyle = 1
+
+SWEP.PumpAction = false 
+SWEP.CycleTime = 0.2
+
+SWEP.UseRandomSkin = true
+
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
@@ -74,9 +81,11 @@ SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false
 
-SWEP.HoldType = ""
+SWEP.HoldType = "ar2"
 
 SWEP.CanDrop = true
+
+SWEP.BoltAnimationTime = 0.05
 
 function LerpFT(lerp, from, to)
 	return Lerp(math.min(1, lerp * FrameTime()), from, to)
@@ -127,6 +136,14 @@ end
 
 function SWEP:CanFire()
 	local ply = self:GetOwner()
+	local requiresPump = self:GetRequiresPump()
+	local lastPump = self:GetLastPump()
+	local timeSincePump = CurTime() - lastPump
+
+	if requiresPump then
+		self:DoPump()
+		return false
+	end
 
 	if ply:IsSprinting() then
 		return false
@@ -158,20 +175,7 @@ function SWEP:CancelReload()
 end
 
 function SWEP:Reload()
-	return false
-end
-
-function SWEP:Cycle()
-	self:SetNextPrimaryFire(CurTime() + self.Primary.Delay + self.CycleTime)
-	timer.Create("cycle"..self:EntIndex(), self.CycleTime, 1, function()
-		if not IsValid(self) then return end
-		self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
-		self.cyclerequired = false
-	end)
-end
-
-function SWEP:Cycling()
-	return timer.Exists("cycle"..self:EntIndex())
+	
 end
 
 function SWEP:Initialize()
@@ -184,7 +188,8 @@ function SWEP:Initialize()
 		["barrel"] = "none",
 		["underbarrel"] = "none",
 		["magazine"] = "none",
-		["extra"] = "none"
+		["extra"] = "none",
+		["skin"] = "none"
 	}
 end
 
@@ -196,6 +201,12 @@ function SWEP:SetupDataTables()
 	self:SetAiming(false)
 	self:SetCrouching(false)
 	self:SetFirstEquip(true)
+
+    self:NetworkVar("Float", 5, "LastPump")
+    self:NetworkVar("Bool", 5, "RequiresPump")
+
+    self:SetLastPump(CurTime())
+    self:SetRequiresPump(false)
 
 	self:InitMagazines()
 end
@@ -216,7 +227,6 @@ end)
 
 function SWEP:Think()
 	local ply = self:GetOwner()
-	local timeSinceMagCheck = self:GetTimeSinceMagCheck()
 
 	if ply:KeyDown(IN_ATTACK2) then
 		self:SetAiming(true)
@@ -231,8 +241,6 @@ function SWEP:Think()
 	end
 
 	self:MagThink()
-
-	self:SetWeaponHoldType(self.HoldType)
 end
 
 
@@ -242,7 +250,6 @@ end
 
 if CLIENT then
 	net.Receive("DoShot", function()
-		-- farsound, pos, player
 		local snd = net.ReadString()
 		local pos = net.ReadVector()
 		local ply = net.ReadPlayer()
@@ -296,50 +303,64 @@ function SWEP:CalculateBulletPenetration(trace)
 	end
 	local ang = math.abs(math.deg(math.asin(normal:Dot(hitnormal))))
 
-	if ang > 30 then
-		local penetrated = false
-		local maxdist = self.Primary.Damage * 0.1 / hardness
-		local dist = 5
-		local pos = trace.HitPos
-		while not penetrated and dist < maxdist do
-			pos = hitpos + normal * dist
-			local tr = util.QuickTrace(pos, -normal * dist)
-			if not tr.StartSolid and tr.Hit then
-				penetrated = true
+	-- todo: add ricochets if ang > 20-ish
+	local penetrated = false
+	local maxdist = self.Primary.Damage * 0.1 / hardness
+	local dist = 5
+	local pos = trace.HitPos
+	while not penetrated and dist < maxdist do
+		pos = hitpos + normal * dist
+		local tr = util.QuickTrace(pos, -normal * dist)
+		if not tr.StartSolid and tr.Hit then
+			penetrated = true
 
-				local bullet = {}
-				bullet.Damage = self.Primary.Damage * 0.5
-				bullet.Num = 1
-				bullet.Src = pos + normal
-				bullet.Dir = normal
-				bullet.Spread = 0
-				bullet.AmmoType = self.Primary.Ammo
-				bullet.Attacker = ply
-				bullet.IgnoreEntity = ply:GetVehicle() or nil
-				bullet.TracerName = "nil"
-				bullet.Tracer = 0
-				ply:FireBullets(bullet) -- actual bullet
+			local bullet = {}
+			bullet.Damage = self.Primary.Damage / (dist / 5)
+			bullet.Num = 1
+			bullet.Src = pos + normal
+			bullet.Dir = normal
+			bullet.Spread = 0
+			bullet.AmmoType = self.Primary.Ammo
+			bullet.Attacker = ply
+			bullet.IgnoreEntity = ply:GetVehicle() or nil
+			bullet.TracerName = "nil"
+			bullet.Tracer = 0
+			ply:FireBullets(bullet) -- actual bullet
 
-				local bullet = {}
-				bullet.Damage = 0
-				bullet.Num = 1
-				bullet.Src = pos + normal
-				bullet.Dir = -normal
-				bullet.Spread = 0
-				bullet.AmmoType = self.Primary.Ammo
-				bullet.Attacker = nil
-				bullet.TracerName = "nil"
-				bullet.Tracer = 0
-				ply:FireBullets(bullet) -- retarded
-			else
-				dist = dist + 5
-			end
+			local bullet = {}
+			bullet.Damage = 0
+			bullet.Num = 1
+			bullet.Src = pos + normal
+			bullet.Dir = -normal
+			bullet.Spread = 0
+			bullet.AmmoType = self.Primary.Ammo
+			bullet.Attacker = nil
+			bullet.TracerName = "nil"
+			bullet.Tracer = 0
+			ply:FireBullets(bullet) -- retarded
+		else
+			dist = dist + 5
 		end
 	end
 end
 
 function SWEP:BulletCallback(ply, trace, dmginfo)
 	self:CalculateBulletPenetration(trace)
+end
+
+function SWEP:EjectBrass()
+	local eject = self:GetAttachment(self:LookupAttachment("brasseject"))
+	if eject then
+		local ePos, eAng = eject.Pos, eject.Ang
+		--debugoverlay.Line(ePos, ePos + eAng:Up() * 16, 1, color_white, true)
+
+		eAng:RotateAroundAxis(eAng:Right(), 90)
+		local effectDataBrass = EffectData()
+		effectDataBrass:SetOrigin(ePos)
+		effectDataBrass:SetAngles(eAng)
+		effectDataBrass:SetFlags(150)
+		util.Effect(self.EjectEffect, effectDataBrass, false, ply)
+	end
 end
 
 SWEP.bolt = 0 -- maybe change this?
@@ -355,13 +376,13 @@ function SWEP:PrimaryAttack()
     if not muzzle then return end
     local pos, ang = muzzle.Pos, muzzle.Ang
 
-	ply:LagCompensation(true)
-
 	if att_effects["Suppressed"] then
 		self:EmitSound(att_effects["WeaponSound"], 70, 100, 1)
 	else
 		self:EmitSound(self.Primary.Sound, 80, 100, 1)
 	end
+
+	ply:LagCompensation(true)
 
 	if IsFirstTimePredicted() then
 		local spread = self.Primary.Spread
@@ -378,18 +399,13 @@ function SWEP:PrimaryAttack()
 			self:DoBolt()
 		end
 
-		-- eject brass
-		local eject = self:GetAttachment(self:LookupAttachment("brasseject"))
-		if eject then
-			local ePos, eAng = eject.Pos, eject.Ang
-			--debugoverlay.Line(ePos, ePos + eAng:Up() * 16, 1, color_white, true)
+		if not self.PumpAction then
+			self:EjectBrass()
+		end
 
-			eAng:RotateAroundAxis(eAng:Right(), 90)
-			local effectDataBrass = EffectData()
-			effectDataBrass:SetOrigin(ePos)
-			effectDataBrass:SetAngles(eAng)
-			effectDataBrass:SetFlags(150)
-			util.Effect(self.EjectEffect, effectDataBrass, false, ply)
+		if self.PumpAction then
+			self:SetLastPump(CurTime())
+			self:SetRequiresPump(true)
 		end
 
 		if not att_effects["Suppressed"] then
@@ -398,6 +414,8 @@ function SWEP:PrimaryAttack()
 			effectdata:SetNormal(ang:Forward())
 			effectdata:SetEntity(self)
 			effectdata:SetAttachment(self:LookupAttachment("muzzle"))
+			effectdata:SetScale(self.MuzzleFlashScale)
+			effectdata:SetFlags(self.MuzzleFlashStyle)
 			util.Effect("effect_muzzleflash", effectdata)
 
 			if CLIENT then
@@ -435,10 +453,6 @@ function SWEP:PrimaryAttack()
 		if CLIENT then
 			self:ApplyRecoil(self.VisualRecoil, self.Recoil)
 		end
-
-		if self.ManualCycle then
-			self:Cycle()
-		end
 	end
 
 	if SERVER then
@@ -460,12 +474,22 @@ end
 function SWEP:DoBolt()
 	self.timesincelastshot = 0
 	self.bolt = 1
+end
 
-	--[[
-	--seemingly doesnt fuck with where bullets land but who knows
-	local ply = self:GetOwner()
-	if ply == LocalPlayer() then return end
-	ply:SetAnimation(PLAYER_ATTACK1)]]
+SWEP.pump = 0
+function SWEP:DoPump()
+	local requiresPump = self:GetRequiresPump()
+	local lastPump = self:GetLastPump()
+	local timeSincePump = CurTime() - lastPump
+
+	if requiresPump and timeSincePump > 0.5 then
+		self.pump = 0
+		self:SetRequiresPump(false)
+		self:SetLastPump(CurTime())
+		self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
+
+		self:EjectBrass()
+	end
 end
 
 -- thank you gpt!
@@ -482,25 +506,33 @@ end
 -- this is retarded i know. maybe ill fix it later?? who knows :)
 SWEP.timesincelastshot = 999
 function SWEP:Animate()
+	if SERVER then return end
 	local ply = self:GetOwner()
+	local lastPump = self:GetLastPump()
+	local timeSinceLastPump = CurTime() - lastPump
 
 	-- shouldnt be doing this here but whatever
 	self.timesincelastshot = self.timesincelastshot + FrameTime()
+	self.pump = self.pump + FrameTime()
 
 	-- WEAPON
 	-- bolt
 	local bolt = self:LookupPoseParameter("bolt")
 	local ham = self:LookupPoseParameter("hammer")
 
-	local cycleTime = 0.05
+	local cycleTime = self.BoltAnimationTime
 	local cycle = math.Clamp(self.timesincelastshot / cycleTime, 0, 1)
 	local cycleDelta = 180 * cycle
 	
 	if bolt and CLIENT then
-		if ham then -- for pistols and such
+		if self.PumpAction then -- do pump n allat
+			local cycle = math.Clamp(self.pump / self.CycleTime, 0, 1)
+			self:SetPoseParameter("bolt", linear(cycle)) -- weird
+			self:InvalidateBoneCache()
+		elseif ham then -- for pistols and such
 			self.bolt = math.sin(math.rad(cycleDelta))
 			self:SetPoseParameter("bolt", linear(cycle)) -- weird
-			self:SetPoseParameter("hammer", cycle * 2)
+			self:SetPoseParameter("hammer", 1 - linear(cycle)) -- hammer is jumping around at low framerates, fix it at some point :)
 			self:InvalidateBoneCache()
 		else -- for other weapons
 			self:SetPoseParameter("bolt", self.bolt)
@@ -571,6 +603,18 @@ function SWEP:Animate()
 	end
 
 	self.anglehandR = LerpAngleFT(8, self.anglehandR, Angle(0, 0, -15) + wallcloseangle)
+
+	-- recoil
+	if LocalPlayer() ~= ply then
+		local visRecoil = self.VisualRecoil
+		local recoilPitch, recoilYaw = self.RecoilVertical, self.RecoilHorizontal
+		local lerp = math.Clamp(self.timesincelastshot / 0.1, 0, 1)
+		if self:GetHoldType() == "ar2" then
+			self.angleupperR = self.angleupperR + Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
+			self.angleforeR = self.angleforeR - Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
+		end
+		self.anglehandR = self.anglehandR + Angle(1 - lerp, 0) * (recoilPitch * self.PlayerModelRecoilMult * FrameTime())
+	end
 
 	-- set bone angles
 	ply:ManipulateBoneAngles(head, self.anglehead, false)

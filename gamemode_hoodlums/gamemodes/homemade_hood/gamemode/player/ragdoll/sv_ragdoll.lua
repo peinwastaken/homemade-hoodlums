@@ -120,6 +120,17 @@ local HitgroupDamageMultiplier = {
     [HITGROUP_LEFTLEG] = 0.3
 }
 
+function KillPlayerDamageInfo(ply, dmginfo)
+    ply:KillSilent()
+
+    local attacker = dmginfo:GetAttacker()
+    local inflictor = dmginfo:GetInflictor()
+
+    -- NOTE: It is advised not to trigger default hooks unless you know what you are doing
+    -- i guess i somewhat know what im doing? sounds good enough for me :)
+    hook.Run("PlayerDeath", ply, inflictor, attacker)
+end
+
 concommand.Add("hoodlum_ragdoll", function(ply)
     ply:ToggleRagdoll(nil)
 end, false, "toggle ragdoll", FCVAR_NONE)
@@ -288,20 +299,6 @@ local function getthingstodestroy(bone)
 end
 
 hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
-    if ent:IsPlayer() then
-        net.Start("PlayerDamage")
-        net.Send(ent)
-    end
-
-    if ent:IsPlayer() and dmginfo:GetDamageType() == DMG_BLAST then
-        if dmginfo:GetDamage() > 20 then
-            local dir = dmginfo:GetDamageForce()
-            local dirNormal = dir:GetNormalized()
-            local vel = dirNormal * 300
-            ent:ToggleRagdoll(nil, true, "weapon_hands", vel)
-        end
-    end
-
     if ent:GetClass() == "prop_ragdoll" then
         local attacker = dmginfo:GetAttacker()
 
@@ -310,7 +307,9 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
             local inflictor = dmginfo:GetInflictor()
             local wep = attacker:GetActiveWeapon()
             local dmgtype = dmginfo:GetDamageType()
+            local dmg = dmginfo:GetDamage()
 
+            --[[
             if IsValid(owner) and owner:Alive() and (dmgtype == DMG_GENERIC or dmgtype == DMG_BLAST) then
                 local damage = dmginfo:GetDamage()
                 local health = ent:Health()
@@ -318,9 +317,9 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                 ent:SetHealth(health - damage)
 
                 if ent:Health() < 0 then
-                    owner:Kill()
+                    KillPlayerDamageInfo(owner, dmginfo)
                 end
-            end
+            end]]
 
             if IsValid(wep) and wep.GetMuzzle then
                 local start, ang = wep:GetMuzzle()
@@ -354,6 +353,14 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                     local bonename = ent:GetBoneName(bone)
                     local hitgroup = RagdollHitGroups[bonename]
 
+                    -- do limb damage
+                    if RagdollHitGroups[bonename] then
+                        local hitgroup = RagdollHitGroups[bonename]
+                        if IsValid(owner) and owner:Alive() then
+                            owner:TakeLimbDamage(hitgroup, dmg, false)
+                        end
+                     end
+
                     -- handle ragdoll headshot
                     if RagdollHitGroups[bonename] == HITGROUP_HEAD then
                         local head = ent:LookupBone("ValveBiped.Bip01_Head1")
@@ -366,7 +373,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             local owner = ent:GetOwner()
                             if IsValid(owner) and owner:Alive() then
                                 owner:SetLastHitGroup(HITGROUP_HEAD)
-                                owner:Kill()
+                                KillPlayerDamageInfo(owner, dmginfo)
                             end
 
                             net.Start("DeathEvent")
@@ -395,23 +402,10 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             return
                         end 
                     end
-
-                    local owner = ent:GetOwner()
-                    if IsValid(owner) and owner:Alive() then
-                        if HitgroupDamageMultiplier[hitgroup] then
-                            local damage = dmginfo:GetDamage()
-                            local health = ent:Health()
-                            local mult = HitgroupDamageMultiplier[hitgroup]
-
-                            ent:SetHealth(health - damage)
-
-                            if ent:Health() < 0 then
-                                owner:Kill()
-                            end
-                        end
-                    end
                 end
             end
+        end
+        --[[ ragdoll fall damage shit
         else -- if not player
             local owner = ent:GetOwner()
             if not IsValid(owner) or not owner:Alive() then return false end
@@ -430,7 +424,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
             if newhealth < 0 then
                 owner:Kill()
             end
-        end
+        end]]
     end
 end)
 

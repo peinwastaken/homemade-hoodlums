@@ -19,7 +19,7 @@ local function CreateDeathScreen(headshot)
         end)
 
         hook.Add("RenderScreenspaceEffects", "deathscreen", function()
-            DrawMotionBlur(0.1, 1, 0.01)
+            DrawMotionBlur(0.1, 1, FrameTime())
         end)
 
         LocalPlayer():ScreenFade(2, Color(0, 0, 0, 255), 3, 2.1)

@@ -41,6 +41,8 @@ function LoadBinds()
                 binds[bind] = info
             end
         end
+    else
+        chat.AddText("Binds not found, set them with !binds or through the console")
     end
 end
 

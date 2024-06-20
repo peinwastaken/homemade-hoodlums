@@ -102,6 +102,9 @@ function DoPip(wep, pos, ang)
             render.SetStencilFailOperation(STENCIL_KEEP)
             render.SetStencilZFailOperation(STENCIL_KEEP)
 
+            surface.SetMaterial(black)
+            render.DrawScreenQuad(false)
+
             pipMaterial:SetTexture("$basetexture", pipRenderTarget)
             pipMaterial:SetVector("$color", Vector(1, 1, 1) * math.Clamp(aimlerp * 2, 0, 1))
         cam.End3D2D()

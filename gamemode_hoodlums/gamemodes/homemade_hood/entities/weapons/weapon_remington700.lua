@@ -28,6 +28,7 @@ SWEP.VisualRecoilAngle = Angle(5, 0, 5)
 SWEP.RecoilVertical = 60
 SWEP.RecoilHorizontal = 30
 SWEP.CrouchRecoilMult = 0.65
+SWEP.PlayerModelRecoilMult = 4
 
 SWEP.AimOffsetPos           = Vector(5.5, -2, -0.989)
 SWEP.AimOffsetAng           = Angle(-3, -6, 0)
@@ -35,6 +36,11 @@ SWEP.AimSpeed               = 4
 SWEP.AimSpreadReduction = true
 SWEP.AimSpreadReductionMult = 1
 SWEP.AimWeaponTilt = -3
+
+SWEP.MaxMagazines = 15
+SWEP.StartMagazines = 7
+SWEP.MagazinesPerResupply = 3
+SWEP.MagazineString = "Bullets"
 
 SWEP.SuppressionMult = 5
 

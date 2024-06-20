@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pein/akm_old/akm_diffuse"
+	"$bumpmap" "models/pein/akm_old/akm_normal"
+}

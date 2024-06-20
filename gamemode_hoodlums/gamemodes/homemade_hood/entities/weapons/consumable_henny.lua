@@ -27,7 +27,7 @@ SWEP.WorldModel = "models/pein/henny/w_henny.mdl"
 
 SWEP.StartAmount = 60
 SWEP.MaxAmount = 60
-SWEP.UseDelay = 0.1
+SWEP.UseDelay = 0.2
 SWEP.Alcohol = 0.2
 
 SWEP.CanDrop = true

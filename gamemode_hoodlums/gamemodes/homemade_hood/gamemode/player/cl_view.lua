@@ -1,6 +1,7 @@
 -- hello to whoever is reading this
-
 local PLAYER = FindMetaTable("Player")
+local weaponswayIntensity = CreateClientConVar("hoodlum_weaponsway_amount", 1, true, false, "Changes weapon sway intensity.", 1, 10)
+local weaponswaySpeed = CreateClientConVar("hoodlum_weaponsway_speed", 12, true, false, "Changes weapon sway speed.", 1, 12)
 
 -- should.. this.. be.. in the weapon script...?
 function PLAYER:IsAiming()
@@ -26,8 +27,8 @@ function CalcViewBob(frequency, amplitude)
     local frequency = frequency or 12
     local amplitude = amplitude or 2
 
-    local x = 0 -- :(
-	local y = (math.sin(CurTime() * frequency) * amplitude)
+    local x = (math.sin(CurTime() * frequency) * amplitude)
+	local y = 0
 	local z = (math.sin(CurTime() * frequency * 0.5) * amplitude)
 
 	return Vector(x, y, z)
@@ -76,13 +77,13 @@ hook.Add("OnPlayerHitGround", "onplayerhitground", function(player, inwater, onf
     if not IsFirstTimePredicted() then return end
 
     falloffset_pos:Add(Vector(0, 0, -speed * 0.02))
-    falloffset_ang:Add(Angle(speed * 0.1, 0, 0))
+    falloffset_ang:Add(Angle(speed * 0.15, 0, 0))
 end)
 
 local fall_ang, fall_pos = Angle(0, 0, 0), Vector(0, 0, 0)
 hook.Add("Think", "fallthing", function()
     falloffset_pos = LerpVector(8 * FrameTime(), falloffset_pos, Vector(0, 0, 0))
-    falloffset_ang = LerpAngle(3 * FrameTime(), falloffset_ang, Angle(0, 0, 0))
+    falloffset_ang = LerpAngle(8 * FrameTime(), falloffset_ang, Angle(0, 0, 0))
 
     fall_pos = LerpVector(8 * FrameTime(), fall_pos, falloffset_pos)
     fall_ang = LerpAngle(2 * FrameTime(), fall_ang, falloffset_ang)
@@ -113,6 +114,26 @@ local function GetCameraClipOffset()
     return Vector(0, 0, 0)
 end
 
+local sway = {x = 0, y = 0}
+hook.Add("InputMouseApply", "doSway", function(cmd, x, y, ang)
+    local intensity = weaponswayIntensity:GetFloat()
+    local speed = weaponswaySpeed:GetFloat()
+
+    -- retarded but it works so i mean like is it really retarded? nothing else i tried really worked and caused the sway to fuck up
+    local maxFps = 300
+    
+    local minMult = 0.3
+    local maxMult = 1
+
+    local curFps = 1 / FrameTime()
+
+    local fpsMult = Lerp(curFps / maxFps, minMult, maxMult)
+
+    -- idk why frametime works for speed but intensity n shit have to be multiplied by fpsmult.. its weird :/
+    sway.x = Lerp(speed * FrameTime(), sway.x, x * 0.01 * intensity * 1 * fpsMult)
+    sway.y = Lerp(speed * FrameTime(), sway.y, y * 0.01 * intensity * 1 * fpsMult)
+end)
+
 -- RETARDED!!!!!!!!!!!!!!!!!!
 local camang, eyeangLerp = Angle(0, 0, 0), Angle(0, 0, 0)
 local movelerp = 0
@@ -121,12 +142,20 @@ local recoil_cam_ang = Angle(0, 0, 0)
 local recoil_pos, recoil_ang = Vector(0, 0, 0), Angle(0, 0, 0)
 local suppression_ang_lerp = Angle(0, 0, 0)
 local cliplerp = Vector(0, 0, 0)
+local weaponsway = Vector(0, 0, 0)
 hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)    
     local cam_offset = Vector(2, 1, 0)
     local cam_ang_offset = Angle(10, 5, 0)
     local ply = LocalPlayer()
     local wep = ply:GetActiveWeapon()
     local ragdoll = ply:GetNWEntity("ragdoll")
+    local limbData = ply:GetLimbData()
+
+    if ply:InVehicle() then
+        local veh = ply:GetVehicle()
+        veh:SetThirdPersonMode(false)
+        return
+    end
     
     ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
 
@@ -163,10 +192,17 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     if IsValid(wep) and wep.Base == "immersive_sweps" then
         local att_effects = wep:GetAttachmentEffects()
 
+        local aimSpeedMult = 1
+        if limbData then
+            if ply:LimbBroken("RightArm") or ply:LimbBroken("LeftArm") then
+                aimSpeedMult = 0.5
+            end
+        end
+
         if ply:IsAiming() and not ply:IsSprinting() and ply:IsOnGround() and not wep:Reloading() then
-            aimlerp = LerpFT(wep:GetAimSpeed(), aimlerp, 1)
+            aimlerp = LerpFT(wep:GetAimSpeed() * aimSpeedMult, aimlerp, 1)
         else
-            aimlerp = LerpFT(wep:GetAimSpeed(), aimlerp, 0)
+            aimlerp = LerpFT(wep:GetAimSpeed() * aimSpeedMult, aimlerp, 0)
         end
     
         local aimpos, aimang = wep:GetAimOffset()
@@ -196,14 +232,17 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local velocityang = Angle(0, 0, 7) * strafemult
     local viewbob = CalcViewBob(15, 0.5) * movelerp * 0.25
     suppression_ang_lerp = LerpAngleFT(4, suppression_ang_lerp, GetSuppressionShake())
+
+    weaponsway = Vector(-sway.y, sway.x, 0) * aimlerp
     
     local recoil_offset = muzzle_forward * recoil_pos.x + eye_up * recoil_pos.y + eye_right * recoil_pos.z
-    local viewbob_offset = eye_up * viewbob.y + eye_right * viewbob.z + eye_right * viewbob.x -- axis are all wrong!!!!!!!! im restarted
+    local viewbob_offset = eye_up * viewbob.x + eye_right * viewbob.y + eye_right * viewbob.z
+    local weaponsway_offset = eye_up * weaponsway.x + eye_right * weaponsway.y + eye_right * weaponsway.z
 
     camang = LerpAngle(GetConVar("hoodlum_cam_smooth"):GetFloat() * FrameTime(), camang, eyeang + velocityang * aimlerp)
     eyeangLerp = LerpAngle(8 * FrameTime(), eyeangLerp, eye_ang)
 
-    local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos + cliplerp
+    local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos + cliplerp + weaponsway_offset
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
     
     if IsValid(ragdoll) then

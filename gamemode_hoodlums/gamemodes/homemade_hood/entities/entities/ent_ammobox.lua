@@ -20,6 +20,7 @@ ENT.UseSounds = {
     "pein/ammobox/use5.wav",
 }
 
+--[[
 hook.Add("PostDrawOpaqueRenderables", "ammobox_postdrawopaque", function()
     local lply = LocalPlayer()
     local ammoboxes = ents.FindByClass("ent_ammobox")
@@ -37,7 +38,7 @@ hook.Add("PostDrawOpaqueRenderables", "ammobox_postdrawopaque", function()
             cam.End3D2D()
         end
     end
-end)
+end)]]
 
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "UsesRemaining")
@@ -50,6 +51,7 @@ function ENT:Initialize()
     self:PhysicsInitStatic(SOLID_VPHYSICS)
     self:SetBodyGroups(self.BodygroupString)
     self:SetHealth(self.EntityHealth)
+    self:DrawShadow(false)
 
     if SERVER then
         self:SetUseType(SIMPLE_USE)
@@ -57,14 +59,7 @@ function ENT:Initialize()
 end
 
 function ENT:OnRemove()
-    local useDiv = self:GetUsesRemaining() / self.MaxUses
-    local effectData = EffectData()
-    effectData:SetOrigin(self:GetPos())
-    effectData:SetNormal(Vector(0, 0, 1))
-    effectData:SetMagnitude(3 * useDiv)
-    effectData:SetScale(2)
-    effectData:SetRadius(5)
-    util.Effect("Sparks", effectData, false)
+    
 end
 
 function ENT:OnTakeDamage(dmgInfo)
@@ -73,6 +68,15 @@ function ENT:OnTakeDamage(dmgInfo)
 
     if self:Health() <= 0 then
         self:Remove()
+
+        local useDiv = self:GetUsesRemaining() / self.MaxUses
+        local effectData = EffectData()
+        effectData:SetOrigin(self:GetPos())
+        effectData:SetNormal(Vector(0, 0, 1))
+        effectData:SetMagnitude(3 * useDiv)
+        effectData:SetScale(2)
+        effectData:SetRadius(5)
+        util.Effect("Sparks", effectData, false)
     end
 end
 
@@ -87,11 +91,12 @@ function ENT:Use(activator, caller, useType)
             local magsMax = wep.MaxMagazines
 
             if magsLeft < magsMax then
-                wep:SetMagazinesRemaining(magsLeft + 1)
+                local magsToGive = math.Clamp(magsMax - magsLeft, 0, wep.MagazinesPerResupply)
+                wep:SetMagazinesRemaining(magsLeft + magsToGive)
                 self:SetUsesRemaining(usesLeft - 1)
 
                 local snd = table.Random(self.UseSounds)
-                self:EmitSound(snd, 500)
+                self:EmitSound(snd, 100)
                 
                 local useDiv = self:GetUsesRemaining() / self.MaxUses
                 local value = math.floor(4 * useDiv)

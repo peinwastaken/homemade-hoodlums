@@ -27,7 +27,7 @@ SWEP.WorldModel = "models/pein/bottle/w_bottle.mdl"
 
 SWEP.StartAmount = 100
 SWEP.MaxAmount = 100
-SWEP.UseDelay = 0.2
+SWEP.UseDelay = 0.3
 SWEP.Alcohol = 0.05
 
 SWEP.CanDrop = true

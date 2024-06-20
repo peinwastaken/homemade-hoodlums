@@ -31,6 +31,7 @@ SWEP.RecoilVertical = 150 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 50 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.AimWeaponTilt = -40
+SWEP.PlayerModelRecoilMult = 1.5
 
 SWEP.AimOffsetPos           = Vector(6, -4.3, 1.43)
 SWEP.AimOffsetAng           = Angle(0, 0, 0)
@@ -59,7 +60,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["AimPosAttachment"] = "ironsights",
-				["AimOffset"] = Vector(-19, -1.7, -0.42)
+				["AimOffset"] = Vector(-19, -1.65, -0.42)
 			}
 		},
         ["holo"] = {
