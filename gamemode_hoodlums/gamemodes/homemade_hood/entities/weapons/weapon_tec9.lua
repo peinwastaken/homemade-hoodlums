@@ -107,7 +107,7 @@ SWEP.Attachments = {
 				["Suppressed"] = true,
 				["WeaponSound"] = "pein/vz61/vz61_suppressed.wav",
 				["RecoilVertical"] = 15,
-				["RecoilHorizontal"] = 10
+				["RecoilHorizontal"] = 5
 			}
 		}
     },
@@ -124,8 +124,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["ClipSize"] = 20,
-				["RecoilVertical"] = 7,
-				["RecoilHorizontal"] = 3
+				["RecoilVertical"] = 7
 			}
 		},
 		["extendeded"] = {
@@ -150,7 +149,7 @@ SWEP.Attachments = {
             ["effects"] = {
 				["Automatic"] = true,
 				["RecoilVertical"] = 20,
-				["RecoilHorizontal"] = 30
+				["RecoilHorizontal"] = 10
 			}
 		}
 	}

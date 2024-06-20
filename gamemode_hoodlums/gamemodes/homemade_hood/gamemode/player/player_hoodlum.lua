@@ -42,15 +42,15 @@ PLAYER.Items = {
         "weapon_remington870",
         "weapon_uzi",
         "weapon_mac10",
-        "weapon_akm",
-        "weapon_tec9"
+        "weapon_akm"
     },
     ["secondary"] = {
         "weapon_m1911",
         "weapon_glock",
         "weapon_sawedoff",
         "weapon_p320",
-        "weapon_vz61"
+        "weapon_vz61",
+        "weapon_tec9"
     },
     ["melee"] = {
         "melee_bat"
