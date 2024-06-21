@@ -100,11 +100,11 @@ function SWEP:PrimaryAttack()
     
         if distance < self.Range and trace.Hit then
             if trace.MatType == MAT_FLESH then
-                EmitSound(self.HitSoundEntity, trace.HitPos)
+                EmitSound(self.HitSoundEntity, trace.HitPos, self:EntIndex(), CHAN_AUTO, 1, 50, SND_NOFLAGS, 100, 0, ply)
             else
                 local hitsound = self.HitSounds[math.random(1, #self.HitSounds)]
             
-                EmitSound(hitsound, trace.HitPos)
+                EmitSound(hitsound, trace.HitPos, self:EntIndex(), CHAN_AUTO, 1, 50, SND_NOFLAGS, 100, 0, ply)
             end
         
             if SERVER then

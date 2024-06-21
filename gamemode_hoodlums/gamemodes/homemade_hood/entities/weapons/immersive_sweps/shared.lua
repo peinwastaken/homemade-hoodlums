@@ -145,6 +145,10 @@ function SWEP:CanFire()
 		return false
 	end
 
+	if timeSincePump < self.CycleTime then
+		return false
+	end
+
 	if ply:IsSprinting() then
 		return false
 	end
@@ -349,17 +353,19 @@ function SWEP:BulletCallback(ply, trace, dmginfo)
 end
 
 function SWEP:EjectBrass()
-	local eject = self:GetAttachment(self:LookupAttachment("brasseject"))
-	if eject then
-		local ePos, eAng = eject.Pos, eject.Ang
-		--debugoverlay.Line(ePos, ePos + eAng:Up() * 16, 1, color_white, true)
+	if IsFirstTimePredicted() then
+		local eject = self:GetAttachment(self:LookupAttachment("brasseject"))
+		if eject then
+			local ePos, eAng = eject.Pos, eject.Ang
+			--debugoverlay.Line(ePos, ePos + eAng:Up() * 16, 1, color_white, true)
 
-		eAng:RotateAroundAxis(eAng:Right(), 90)
-		local effectDataBrass = EffectData()
-		effectDataBrass:SetOrigin(ePos)
-		effectDataBrass:SetAngles(eAng)
-		effectDataBrass:SetFlags(150)
-		util.Effect(self.EjectEffect, effectDataBrass, false, ply)
+			eAng:RotateAroundAxis(eAng:Right(), 90)
+			local effectDataBrass = EffectData()
+			effectDataBrass:SetOrigin(ePos)
+			effectDataBrass:SetAngles(eAng)
+			effectDataBrass:SetFlags(150)
+			util.Effect(self.EjectEffect, effectDataBrass, false, ply)
+		end
 	end
 end
 
@@ -382,6 +388,10 @@ function SWEP:PrimaryAttack()
 		self:EmitSound(self.Primary.Sound, 80, 100, 1)
 	end
 
+	if self.PumpAction then
+		self:SetRequiresPump(true)
+	end
+
 	ply:LagCompensation(true)
 
 	if IsFirstTimePredicted() then
@@ -401,11 +411,6 @@ function SWEP:PrimaryAttack()
 
 		if not self.PumpAction then
 			self:EjectBrass()
-		end
-
-		if self.PumpAction then
-			self:SetLastPump(CurTime())
-			self:SetRequiresPump(true)
 		end
 
 		if not att_effects["Suppressed"] then
@@ -480,7 +485,7 @@ SWEP.pump = 0
 function SWEP:DoPump()
 	local requiresPump = self:GetRequiresPump()
 	local lastPump = self:GetLastPump()
-	local timeSincePump = CurTime() - lastPump
+	local timeSincePump = CurTime() - lastPump + self.Primary.Delay
 
 	if requiresPump and timeSincePump > 0.5 then
 		self.pump = 0
@@ -506,7 +511,6 @@ end
 -- this is retarded i know. maybe ill fix it later?? who knows :)
 SWEP.timesincelastshot = 999
 function SWEP:Animate()
-	if SERVER then return end
 	local ply = self:GetOwner()
 	local lastPump = self:GetLastPump()
 	local timeSinceLastPump = CurTime() - lastPump
@@ -532,9 +536,9 @@ function SWEP:Animate()
 		elseif ham then -- for pistols and such
 			self.bolt = math.sin(math.rad(cycleDelta))
 			self:SetPoseParameter("bolt", linear(cycle)) -- weird
-			self:SetPoseParameter("hammer", 1 - linear(cycle)) -- hammer is jumping around at low framerates, fix it at some point :)
+			self:SetPoseParameter("hammer", 1 - linear(cycle)) -- hammer is jumping around. period. fix at some point :)
 			self:InvalidateBoneCache()
-		else -- for other weapons
+		else -- for other, normal weapons
 			self:SetPoseParameter("bolt", self.bolt)
 			self.bolt = math.Clamp(self.bolt - 25 * FrameTime(), 0, 1)
 			self:InvalidateBoneCache()
@@ -605,15 +609,17 @@ function SWEP:Animate()
 	self.anglehandR = LerpAngleFT(8, self.anglehandR, Angle(0, 0, -15) + wallcloseangle)
 
 	-- recoil
-	if LocalPlayer() ~= ply then
-		local visRecoil = self.VisualRecoil
-		local recoilPitch, recoilYaw = self.RecoilVertical, self.RecoilHorizontal
-		local lerp = math.Clamp(self.timesincelastshot / 0.1, 0, 1)
-		if self:GetHoldType() == "ar2" then
-			self.angleupperR = self.angleupperR + Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
-			self.angleforeR = self.angleforeR - Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
+	if CLIENT then
+		if LocalPlayer() ~= ply then
+			local visRecoil = self.VisualRecoil
+			local recoilPitch, recoilYaw = self.RecoilVertical, self.RecoilHorizontal
+			local lerp = math.Clamp(self.timesincelastshot / 0.1, 0, 1)
+			if self:GetHoldType() == "ar2" then
+				self.angleupperR = self.angleupperR + Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
+				self.angleforeR = self.angleforeR - Angle(0, 1 - lerp, 0) * visRecoil.x * 200 * FrameTime()
+			end
+			self.anglehandR = self.anglehandR + Angle(1 - lerp, 0) * (recoilPitch * self.PlayerModelRecoilMult * FrameTime())
 		end
-		self.anglehandR = self.anglehandR + Angle(1 - lerp, 0) * (recoilPitch * self.PlayerModelRecoilMult * FrameTime())
 	end
 
 	-- set bone angles

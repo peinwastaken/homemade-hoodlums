@@ -117,27 +117,27 @@ function SWEP:DoReload()
             return
         end
 
-		ply:SetAnimation(PLAYER_RELOAD)
+        ply:SetAnimation(PLAYER_RELOAD)
 
         if IsFirstTimePredicted() then
-            EmitSound(self.ReloadSound, self:GetPos(), self:EntIndex(), CHAN_AUTO, 1, 50, SND_NOFLAGS, 100)
-        end
+            self:EmitSound(self.ReloadSound, 50, 100, 1, CHAN_AUTO)
 		
-		timer.Create("reload" .. self:EntIndex(), self.ReloadTime, 1, function()
-			if not IsValid(self) then return end
+            timer.Create("reload" .. self:EntIndex(), self.ReloadTime, 1, function()
+              if not IsValid(self) then return end
+            
+              local ammo = self:Ammo1()
+              local clip = self:Clip1()
+              local maxclip = self.Primary.ClipSize
+              local missing = maxclip - clip
 
-			local ammo = self:Ammo1()
-			local clip = self:Clip1()
-			local maxclip = self.Primary.ClipSize
-			local missing = maxclip - clip
-			
-			self:SetClip1(maxclip)
-            self:SetMagazinesRemaining(magsLeft - 1)
-            self:SetLastPump(CurTime())
-            self:SetLastReload(CurTime())
-
-            self:SetWeaponHoldType(self.HoldType)
-		end)
+              self:SetClip1(maxclip)
+                self:SetMagazinesRemaining(magsLeft - 1)
+                self:SetLastPump(CurTime())
+                self:SetLastReload(CurTime())
+            
+                self:SetWeaponHoldType(self.HoldType)
+            end)
+        end
 	end
 end
 
@@ -149,22 +149,22 @@ function SWEP:DoBreechLoad()
     ply:SetAnimation(PLAYER_RELOAD)
 
     if IsFirstTimePredicted() then
-        EmitSound("weapons/shotgun/shotgun_reload3.wav", self:GetPos(), self:EntIndex(), CHAN_AUTO, 1, 100, SND_NOFLAGS, 100)
+        self:EmitSound("weapons/shotgun/shotgun_reload3.wav", 50, 100, 1, CHAN_AUTO)
+
+        timer.Create("reload" .. self:EntIndex(), self.ReloadTime, 1, function()
+            if not IsValid(self) then return end
+
+            local ammo = self:Ammo1()
+            local clip = self:Clip1()
+            local maxclip = self.Primary.ClipSize
+            
+            self:SetClip1(clip + 1)
+            self:SetMagazinesRemaining(magsLeft - 1)
+            self:SetLastReload(CurTime())
+
+            self:SetWeaponHoldType(self.HoldType)
+        end)
     end
-
-    timer.Create("reload" .. self:EntIndex(), 0.8, 1, function()
-        if not IsValid(self) then return end
-
-        local ammo = self:Ammo1()
-        local clip = self:Clip1()
-        local maxclip = self.Primary.ClipSize
-        
-        self:SetClip1(clip + 1)
-        self:SetMagazinesRemaining(magsLeft - 1)
-        self:SetLastReload(CurTime())
-
-        self:SetWeaponHoldType(self.HoldType)
-    end)
 end
 
 function SWEP:InitMagazines()

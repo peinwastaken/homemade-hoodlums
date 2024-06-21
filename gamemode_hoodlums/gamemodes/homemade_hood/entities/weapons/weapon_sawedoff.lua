@@ -12,12 +12,12 @@ SWEP.Primary.ClipSize       = 2
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
-SWEP.Primary.Delay          = 0.1
+SWEP.Primary.Delay          = 0.12
 SWEP.Primary.Damage         = 10
 SWEP.Primary.Spread         = 0.2
 SWEP.Primary.BulletCount    = 15
 
-SWEP.ReloadTime             = 2
+SWEP.ReloadTime             = 0.2
 
 SWEP.Primary.Sound          = "weapons/xm1014/xm1014-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
@@ -35,6 +35,13 @@ SWEP.AimOffsetAng           = Angle(-3, 0, 0)
 SWEP.AimSpeed               = 5
 SWEP.AimSpreadReduction 	= true
 SWEP.AimSpreadReductionMult = 0.3
+
+SWEP.MaxMagazines = 16
+SWEP.StartMagazines = 8
+SWEP.MagazinesPerResupply = 4
+SWEP.MagazineString = "Shells"
+
+SWEP.BreechLoader = true
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false

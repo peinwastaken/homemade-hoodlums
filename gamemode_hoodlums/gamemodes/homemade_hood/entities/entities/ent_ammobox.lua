@@ -96,7 +96,7 @@ function ENT:Use(activator, caller, useType)
                 self:SetUsesRemaining(usesLeft - 1)
 
                 local snd = table.Random(self.UseSounds)
-                self:EmitSound(snd, 100)
+                self:EmitSound(snd, 50)
                 
                 local useDiv = self:GetUsesRemaining() / self.MaxUses
                 local value = math.floor(4 * useDiv)

@@ -12,12 +12,12 @@ SWEP.Primary.ClipSize       = 8
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
-SWEP.Primary.Delay          = 0.2
+SWEP.Primary.Delay          = 0.1
 SWEP.Primary.Damage         = 10
 SWEP.Primary.Spread         = 0.06
 SWEP.Primary.BulletCount    = 15
 
-SWEP.ReloadTime             = 0.3
+SWEP.ReloadTime             = 0.4
 
 SWEP.Primary.Sound          = "pein/remington870/remington_close.wav"
 SWEP.Primary.SoundFar		= "pein/remington870/remington_far.wav"
@@ -46,7 +46,7 @@ SWEP.MagazineString = "Shells"
 
 SWEP.BreechLoader = true
 SWEP.PumpAction = true
-SWEP.CycleTime = 0.12
+SWEP.CycleTime = 0.2
 SWEP.CycleSound = "pein/remington870/pump.wav"
 
 SWEP.Weight					= 6

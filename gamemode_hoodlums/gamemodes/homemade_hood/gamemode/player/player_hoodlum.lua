@@ -113,6 +113,7 @@ function PLAYER:OnRespawn()
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
+    ply:SetJumpPower(165)
 end
 
 function PLAYER:SetModel()
