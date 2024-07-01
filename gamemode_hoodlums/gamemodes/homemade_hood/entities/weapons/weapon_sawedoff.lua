@@ -12,7 +12,7 @@ SWEP.Primary.ClipSize       = 2
 SWEP.Primary.DefaultClip	= 9999 -- 120
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo			= "buckshot"
-SWEP.Primary.Delay          = 0.12
+SWEP.Primary.Delay          = 0.01
 SWEP.Primary.Damage         = 10
 SWEP.Primary.Spread         = 0.2
 SWEP.Primary.BulletCount    = 15
@@ -22,7 +22,7 @@ SWEP.ReloadTime             = 0.2
 SWEP.Primary.Sound          = "weapons/xm1014/xm1014-1.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(10, 1, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(6, 3, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(10, 1, 10)
 SWEP.RecoilVertical = 300 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 100 -- HORIZONTAL RECOIL

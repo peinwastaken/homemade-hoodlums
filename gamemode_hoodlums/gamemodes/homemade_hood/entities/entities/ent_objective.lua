@@ -75,7 +75,8 @@ ENT.ObjectiveTypes = {
             "weapon_remington700",
             "weapon_mcxspear",
             "weapon_deagle",
-            "weapon_akm"
+            "weapon_akm",
+            "weapon_g3"
         },
         ["CaptureDelay"] = 0.3,
         ["ItemCountMin"] = 2,

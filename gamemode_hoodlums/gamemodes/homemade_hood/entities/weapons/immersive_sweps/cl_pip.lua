@@ -1,10 +1,37 @@
+SWEP.PipFovSetting = 1
+SWEP.PipFovLerp = 45
+
+concommand.Add("hoodlum_scope_zoom", function(ply) 
+    local wep = ply:GetActiveWeapon()
+    if not IsValid(wep) or wep.Base ~= "immersive_sweps" then return end
+
+    wep:TogglePipFov()
+end, nil, "Toggle scope zoom", FCVAR_NONE)
+
+function SWEP:TogglePipFov()
+    local ply = self:GetOwner()
+    local att_effects = self:GetAttachmentEffects()
+    local pipFovSettings = att_effects["FovSettings"]
+    if not pipFovSettings then return end
+
+    local settingAmount = #pipFovSettings
+
+    if self.PipFovSetting < settingAmount then
+        self.PipFovSetting = self.PipFovSetting + 1
+    else
+        self.PipFovSetting = 1
+    end
+
+    self:EmitSound("pein/attachments/click.wav", 35, 100, 1, CHAN_AUTO)
+end
+
 pip_size = 512
 local pipRenderTarget = GetRenderTarget("PIPScope" .. pip_size, math.Clamp(pip_size, 0, ScrW()), math.Clamp(pip_size, 0, ScrH()))
 local pipMaterial = CreateMaterial("PIPScope" .. pip_size, "UnlitGeneric",{
     ["$ignorez"] = 1
 })
 
--- liked it until it started causing issues, maybe ill like it once more when i fix it
+-- liked it until it started causing issues, maybe ill like it once more if i fix it
 --CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
 --CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
 
@@ -45,17 +72,29 @@ function DoScope()
     local muzzle_pos, muzzle_ang = att_muzzle.Pos, att_muzzle.Ang
     muzzle_ang:RotateAroundAxis(muzzle_ang:Forward(), -90)
 
+    local sway = {x = 0, y = 0}
+    sway = GetSway()
+
+    local movelerp = GetMoveLerp()
+    local bob = CalcViewBob(15, 0.5) * movelerp * 0.25
+
     if not rendering then
         rendering = true
 
         local tr = util.QuickTrace(scope_pos, scope_ang:Forward() * 24, {lply})
+        local pipFov = effect["PIPFov"] or wep.PipFovLerp or 45
+        local recoilPos, recoilAng = wep:GetRecoil()
+
+        local swayOffset = scope_ang:Forward() * 12 + scope_ang:Right() * sway.x + scope_ang:Up() * -sway.y
+        local bobOffset = scope_ang:Right() * bob.z * 1 + scope_ang:Up() * bob.x * 1
+        local recoilOffset = scope_ang:Forward() * recoilPos.x * 1 + scope_ang:Right() * 1 * recoilPos.z + scope_ang:Up() * recoilPos.y * 1
 
         render.PushRenderTarget(pipRenderTarget)
 
         if tr.Hit then
             render.Clear(0, 0, 0, 255)
         else
-            render.RenderView({origin = scope_pos + scope_ang:Forward() * 12, angles = scope_ang, fov = effect["PIPFov"], znear = 5, drawviewer = false})
+            render.RenderView({origin = scope_pos + swayOffset + bobOffset + recoilOffset, angles = scope_ang, fov = pipFov, znear = 5, drawviewer = false})
         end
         
         --[[
@@ -79,8 +118,16 @@ function DoPip(wep, pos, ang)
     local reticlemat, reticlesize, pipradius = effect["ReticleMaterial"], effect["ReticleSize"], effect["PIPRadius"]
     local vignettesize = effect["VignetteSize"] or reticlesize
     local aimlerp = GetAimLerp()
+
+    if effect["FovSettings"] then
+        --wep.PipFovLerp = LerpFT(6, wep.PipFovLerp, effect["FovSettings"][wep.PipFovSetting])
+
+        wep.PipFovLerp = math.Approach(wep.PipFovLerp, effect["FovSettings"][wep.PipFovSetting], 250 * FrameTime())
+    else
+        wep.PipFovLerp = effect["PIPFov"]
+    end
     
-    cam.Start3D2D(pos + ang:Up() * -64, ang, 0.01)
+    cam.Start3D2D(pos + ang:Up() * -64, ang, 1)
         cam.Start3D2D(pos, ang, 0.01)
             -- no fucking clue
             render.ClearStencil()
@@ -111,7 +158,7 @@ function DoPip(wep, pos, ang)
 
         local size = 99999 -- weird
 
-        -- its black
+        -- draw fully black here
         surface.SetDrawColor(0, 0, 0, 255)
         surface.SetMaterial(black)
         surface.DrawTexturedRect(-size/2, -size/2, size, size)

@@ -225,6 +225,8 @@ hook.Add("Think", "client_immersive_sweps", function()
 
 		if IsValid(wep) and wep.Base == "immersive_sweps" then
 			wep:Animate()
+
+			wep:SetWeaponHoldType(wep.HoldType)
 		end
 	end
 end)
@@ -469,11 +471,9 @@ function SWEP:PrimaryAttack()
 		net.SendOmit(self:GetOwner())
 	end
 
-	ply:LagCompensation(false)
+	self:TakePrimaryAmmo(1)
 
-	if SERVER then
-		self:TakePrimaryAmmo(1)
-	end
+	ply:LagCompensation(false)
 end
 
 function SWEP:DoBolt()
@@ -487,13 +487,15 @@ function SWEP:DoPump()
 	local lastPump = self:GetLastPump()
 	local timeSincePump = CurTime() - lastPump + self.Primary.Delay
 
-	if requiresPump and timeSincePump > 0.5 then
-		self.pump = 0
-		self:SetRequiresPump(false)
-		self:SetLastPump(CurTime())
-		self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
-
-		self:EjectBrass()
+	if IsFirstTimePredicted() then
+		if requiresPump and timeSincePump > 0.5 then
+			self.pump = 0
+			self:SetRequiresPump(false)
+			self:SetLastPump(CurTime())
+			self:EmitSound(self.CycleSound, 60, 100, 1, CHAN_AUTO)
+	
+			self:EjectBrass()
+		end
 	end
 end
 
@@ -528,15 +530,16 @@ function SWEP:Animate()
 	local cycle = math.Clamp(self.timesincelastshot / cycleTime, 0, 1)
 	local cycleDelta = 180 * cycle
 	
+	-- all of these are buggin for some reason
 	if bolt and CLIENT then
 		if self.PumpAction then -- do pump n allat
-			local cycle = math.Clamp(self.pump / self.CycleTime, 0, 1)
-			self:SetPoseParameter("bolt", linear(cycle)) -- weird
+			local cycle = math.Clamp(timeSinceLastPump / self.CycleTime, 0, 1)
+			self:SetPoseParameter("bolt", linear(cycle))
 			self:InvalidateBoneCache()
 		elseif ham then -- for pistols and such
 			self.bolt = math.sin(math.rad(cycleDelta))
-			self:SetPoseParameter("bolt", linear(cycle)) -- weird
-			self:SetPoseParameter("hammer", 1 - linear(cycle)) -- hammer is jumping around. period. fix at some point :)
+			self:SetPoseParameter("bolt", linear(cycle))
+			self:SetPoseParameter("hammer", 1 - linear(cycle))
 			self:InvalidateBoneCache()
 		else -- for other, normal weapons
 			self:SetPoseParameter("bolt", self.bolt)
@@ -566,9 +569,9 @@ function SWEP:Animate()
     self.angleforeR = self.angleforeR or Angle(0, 0, 0)
     self.anglehandR = self.anglehandR or Angle(0, 0, 0)
 
-    self.angleupperL = self.angleupperL or Angle(0, 0, 0)
-    self.angleforeL = self.angleforeL or Angle(0, 0, 0)
-    self.anglehandL = self.anglehandL or Angle(0, 0, 0)
+    --self.angleupperL = self.angleupperL or Angle(0, 0, 0)
+    --self.angleforeL = self.angleforeL or Angle(0, 0, 0)
+    --self.anglehandL = self.anglehandL or Angle(0, 0, 0)
 
 	-- head distance from wall
 	local maxdist = 30
@@ -622,6 +625,15 @@ function SWEP:Animate()
 		end
 	end
 
+	-- pumping
+	if self.PumpAction then
+		local cycle = math.Clamp(timeSinceLastPump * 2 / self.CycleTime, 0, 1)
+		
+		self.angleupperR = self.angleupperR + Angle(0, 4, 0) * 100 * FrameTime() * linear(cycle)
+		self.angleforeR = self.angleforeR - Angle(0, 4, 0) * 100 * FrameTime() * linear(cycle)
+		self.anglehandR = self.anglehandR + Angle(0.4, -2, 2) * 100 * FrameTime() * linear(cycle)
+	end
+
 	-- set bone angles
 	ply:ManipulateBoneAngles(head, self.anglehead, false)
 
@@ -629,9 +641,9 @@ function SWEP:Animate()
 	ply:ManipulateBoneAngles(lowerR, self.angleforeR, false)
 	ply:ManipulateBoneAngles(handR, self.anglehandR, false)
 
-	ply:ManipulateBoneAngles(upperL, self.angleupperL, false)
-	ply:ManipulateBoneAngles(lowerL, self.angleforeL, false)
-	ply:ManipulateBoneAngles(handL, self.anglehandL, false)
+	ply:ManipulateBoneAngles(upperL, Angle(0, 0, 0), false)
+	ply:ManipulateBoneAngles(lowerL, Angle(0, 0, 0), false)
+	ply:ManipulateBoneAngles(handL, Angle(0, 0, 0), false)
 end
 
 function SWEP:OnRemove()

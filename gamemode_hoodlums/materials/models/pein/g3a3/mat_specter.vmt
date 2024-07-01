@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pein/g3a3/mat_specter"
+	"$nocull" 1
+}

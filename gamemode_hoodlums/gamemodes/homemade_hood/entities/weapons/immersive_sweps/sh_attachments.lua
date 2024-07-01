@@ -232,6 +232,10 @@ function SWEP:UpdateAttachment(slot)
     if att_effects["Skin"] then
         self:SetSkin(att_effects["Skin"])
     end
+
+    if att_effects["FovSettings"] then
+        self.PipFovLerp = att_effects["FovSettings"][1]
+    end
 end
 
 function SWEP:GetAttachmentEffects()

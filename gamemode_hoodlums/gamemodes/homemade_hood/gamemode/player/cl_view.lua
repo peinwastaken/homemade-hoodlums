@@ -143,6 +143,7 @@ local recoil_pos, recoil_ang = Vector(0, 0, 0), Angle(0, 0, 0)
 local suppression_ang_lerp = Angle(0, 0, 0)
 local cliplerp = Vector(0, 0, 0)
 local weaponsway = Vector(0, 0, 0)
+local strafelerp = 0
 hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)    
     local cam_offset = Vector(2, 1, 0)
     local cam_ang_offset = Angle(10, 5, 0)
@@ -229,6 +230,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     
     local strafespeed = GetStrafeSpeed(velocity, ply:EyeAngles():Forward())
     local strafemult = math.Clamp(strafespeed / ply:GetRunSpeed(), -1, 1)
+
     local velocityang = Angle(0, 0, 7) * strafemult
     local viewbob = CalcViewBob(15, 0.5) * movelerp * 0.25
     suppression_ang_lerp = LerpAngleFT(4, suppression_ang_lerp, GetSuppressionShake())
@@ -274,28 +276,14 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     return view
 end)
 
+function GetSway()
+    return sway
+end
+
+function GetMoveLerp()
+    return movelerp
+end
+
 function GetAimLerp()
     return aimlerp
 end
-
--- this is here only to hide some retarded rendertarget shit when the game is paused
-local ang = 0
-local logo = Material("gui/logo.png")
-local size = {x = 288, y = 128}
-hook.Add("PostDrawHUD", "pausehud", function()
-    ang = ang + FrameTime() * 20
-    if ang > 360 then
-        ang = 0
-    end
-    if gui.IsGameUIVisible() then
-        surface.SetDrawColor(Color(0, 0, 0, 255))
-        surface.DrawRect(-1, -1, ScrW() + 1, ScrH() + 1)
-
-        surface.SetDrawColor(255, 255, 255, 255)
-        draw.DrawText("unpause the game cuh.. your homies need you", "BudgetLabel", ScrW()/2, ScrH()/2 - 256, color_white, TEXT_ALIGN_CENTER)
-
-        surface.SetDrawColor(255, 255, 255)
-        surface.SetMaterial(logo)
-        surface.DrawTexturedRectRotated(ScrW()/2, ScrH()/2, size.x, size.y, -ang)
-    end 
-end)

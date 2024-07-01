@@ -19,8 +19,13 @@ local binds = {
         ["Command"] = "drop",
         ["Key"] = 0
     },
+    ["Zoom"] = {
+        ["Name"] = "Scope Zoom",
+        ["Command"] = "hoodlum_scope_zoom",
+        ["Key"] = 0
+    },
 }
-local bindOrder = {"Ragdoll", "Laser", "Flashlight", "Drop"}
+local bindOrder = {"Ragdoll", "Laser", "Flashlight", "Drop", "Zoom"}
 
 function SaveBinds()
     local bindTable = util.TableToJSON(binds)
@@ -49,7 +54,7 @@ end
 LoadBinds()
 
 function OpenBindMenu()
-    local sizeX, sizeY = 200, 250
+    local sizeX, sizeY = 200, 275
 
     local mainFrame = vgui.Create("DFrame")
     mainFrame:SetPos(ScrW()/2 - sizeX/2, ScrH()/2 - sizeY/2)

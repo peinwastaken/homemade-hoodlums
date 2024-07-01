@@ -39,6 +39,8 @@ SWEP.AimWeaponTilt = 7
 
 SWEP.SuppressionMult = 2
 
+SWEP.MuzzleFlashScale = 2
+
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false
@@ -102,8 +104,8 @@ SWEP.Attachments = {
 				["PIPRadius"] = 50,
 				["PIPFov"] = 15,
 				["ReticleMaterial"] = Material("reticles/reticle_acog"),
-                ["ReticleSize"] = 4000,
-				["VignetteSize"] = 4000,
+                ["ReticleSize"] = 40,
+				["VignetteSize"] = 40,
 				["VisualRecoilAdd"] = Vector(-0.1, 0, 0)
             }
 		}

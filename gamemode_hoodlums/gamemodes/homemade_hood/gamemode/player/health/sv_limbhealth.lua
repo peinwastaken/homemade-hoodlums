@@ -59,7 +59,7 @@ function PLAYER:TakeLimbDamage(hitgroup, damage, propagated)
         self.LimbData[hitLimb] = newHealthFloor
 
         if self.LimbData["Head"] <= 0 or self.LimbData["Torso"] <= 0 then
-            self:Kill()
+            self:Kill() -- no damage info = suicide :/
         end
 
         self:SyncLimbData()
@@ -121,8 +121,8 @@ hook.Add("OnPlayerHitGround", "hoodlum_hitground", function(ply, inWater, onFloa
     local rightLeg, leftLeg = limbData["RightLeg"], limbData["LeftLeg"]
     local damage = speed/12
 
-    local minSpeed = 400
-    local maxSpeed = 700
+    local minSpeed = 500
+    local maxSpeed = 900
     local mult = 0
     if speed > minSpeed then
         mult = math.Clamp(speed / maxSpeed, 0, 1)

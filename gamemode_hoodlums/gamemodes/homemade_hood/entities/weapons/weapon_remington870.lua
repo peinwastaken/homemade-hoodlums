@@ -23,9 +23,9 @@ SWEP.Primary.Sound          = "pein/remington870/remington_close.wav"
 SWEP.Primary.SoundFar		= "pein/remington870/remington_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(4, 0.7, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(18, 1, 10)
-SWEP.RecoilVertical = 200 -- VERTICAL RECOIL
+SWEP.VisualRecoil = Vector(2, 1, 0) -- CAMERA RECOIL
+SWEP.VisualRecoilAngle = Angle(10, 1, 10)
+SWEP.RecoilVertical = 300 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 100 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.PlayerModelRecoilMult = 3
@@ -40,8 +40,8 @@ SWEP.AimSpreadReductionMult = 0.3
 SWEP.EjectEffect = "EjectBrass_12Gauge"
 
 SWEP.MaxMagazines = 20
-SWEP.StartMagazines = 9
-SWEP.MagazinesPerResupply = 3
+SWEP.StartMagazines = 10
+SWEP.MagazinesPerResupply = 5
 SWEP.MagazineString = "Shells"
 
 SWEP.BreechLoader = true

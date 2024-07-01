@@ -138,6 +138,13 @@ end, false, "toggle ragdoll", FCVAR_NONE)
 function PLAYER:ClearRagdoll(time)
     local ragdoll = self:GetNWEntity("ragdoll")
 
+    if time <= 0 then
+        self:SetNWEntity("ragdoll", NULL)
+        ragdoll:SetOwner(nil)
+        RagdollCleanup[ragdoll] = CurTime() + time
+        ragdoll:Remove()
+    end
+
     if IsValid(ragdoll) then
         self:SetNWEntity("ragdoll", NULL)
         ragdoll:SetOwner(nil)
@@ -448,5 +455,14 @@ hook.Add("Think", "sv_hoodlum_ragdoll_cleanup", function()
             ragdoll:Remove()
             RagdollCleanup[ragdoll] = nil
         end
+    end
+end)
+
+hook.Add("OnPlayerJump", "ragdoll_onplayerjump", function(ply, jumpSpeed)
+    local ragdoll = ply:GetNWEntity("ragdoll")
+    local limbData = ply:GetLimbData()
+
+    if not IsValid(ragdoll) and (ply:LimbBroken("RightLeg") or ply:LimbBroken("LeftLeg")) then
+        ply:ToggleRagdoll()
     end
 end)

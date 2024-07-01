@@ -78,8 +78,8 @@ SWEP.Attachments = {
 				["PIPRadius"] = 90,
 				["PIPFov"] = 18,
 				["ReticleMaterial"] = Material("reticles/reticle_remington"),
-                ["ReticleSize"] = 6000,
-				["VignetteSize"] = 5000
+                ["ReticleSize"] = 60,
+				["VignetteSize"] = 50
 			}
 		}
 	},

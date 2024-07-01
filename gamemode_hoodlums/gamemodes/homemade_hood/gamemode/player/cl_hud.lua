@@ -90,6 +90,7 @@ end)
 hook.Add("HUDPaint", "homemade_drawhud", function()
     -- respawn thingy
     local name, color = _G.Teams[alliance]["Name"], _G.Teams[alliance]["RespawnColor"]
+    draw.NoTexture()
     surface.SetDrawColor(color.r, color.g, color.b, alpha)
 
     surface.DrawTexturedRect(-1, -1, ScrW() + 1, ScrH() + 1)
@@ -220,6 +221,7 @@ hook.Add("PostDrawHUD", "pausehud", function()
         ang = 0
     end
     if gui.IsGameUIVisible() then
+        draw.NoTexture()
         surface.SetDrawColor(Color(0, 0, 0, 255))
         surface.DrawRect(-1, -1, ScrW() + 1, ScrH() + 1)
 
