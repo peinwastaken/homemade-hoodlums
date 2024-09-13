@@ -1,4 +1,5 @@
 local PLAYER = FindMetaTable("Player")
+local ENTITY = FindMetaTable("Entity")
 
 local cleanuptable = {}
 function CleanupItem(ent, time)
@@ -19,6 +20,17 @@ hook.Add("Think", "cleanupitems", function()
         end
     end
 end)
+
+function PLAYER:DropCurrentWeapon()
+    local wep = ply:GetActiveWeapon()
+    if not wep.CanDrop then return end
+    
+    local pos, ang = ply:EyePos(), ply:EyeAngles()
+
+    local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
+
+    ply:DropItem(wep, pos, vel, time)
+end
 
 function PLAYER:DropItem(wep, pos, vel, time)
     if wep == NULL or not IsValid(wep) then return end
@@ -143,101 +155,101 @@ function CreateDroppedWeapon(weaponClass, pos, randomAttachments, time)
 end
 
 hook.Add("PlayerUse", "weapondrop_pickup", function(ply, ent)
-    if ent:GetClass() == "prop_physics" and ent.Type == "weapon" then
-        if not ply:KeyPressed(IN_USE) then return end
-        local weaponId = ent.WeaponId
-        local wep = ply:GetWeapon(weaponId)
-
-        if IsValid(wep) then return false end
-
-        ply:Give(weaponId)
-        local wepgive = ply:GetWeapon(weaponId)
-        
-        -- for guns
-        local attachments = ent.EquippedAttachments
-        if attachments then
-            for slot, att in pairs(attachments) do
-                wepgive:SetAttachmentSlot(slot, att)
-            end
-        end
-
-        -- just for some retarded vss issue lol
-        -- tbf the attachment system is all a bit restarted but its fine since the player will never see this code anyway
-        -- and all that matters is that it plays well :)
-        local count = ent:GetNumBodyGroups()
-        for id = 0, count - 1 do
-            local value = ent:GetBodygroup(id)
-            wepgive:SetBodygroup(id, value)
-        end
-
-        -- for drinks
-        local remaining = ent.Remaining
-        if remaining then
-            wepgive:SetRemaining(remaining)
-        end
-
-        local mags = ent.Magazines
-        if mags then
-            wepgive:SetMagazinesRemaining(ent.Magazines)
-        end
-
-        wepgive:SetClip1(ent.Clip)
-
-        RemoveItemFromCleanup(ent)
-        ent:Remove()
-        return false
-    elseif ent:GetClass() == "prop_physics" and ent.Type == "grenade" then
-        if not ply:KeyPressed(IN_USE) then return end
-
-        local weaponId = ent.WeaponId
-        local wep = ply:GetWeapon(weaponId)
-        local wepClass = weapons.Get(weaponId)
-
-        -- temp hardcoded grenade ammo until i add more ammotypes and more nades :thumbsup:
-        if IsValid(wep) then
-            local plyAmmo = ply:GetAmmoCount("grenade")
-            if plyAmmo < wepClass.MaxAmmo then
-                ply:GiveAmmo(1, "grenade")
-            end
-        else
+    if ent:GetClass() == "prop_physics" and ply:KeyPressed(IN_USE) then
+        if ent.Type == "weapon" then
+            if not ply:KeyPressed(IN_USE) then return end
+            local weaponId = ent.WeaponId
+            local wep = ply:GetWeapon(weaponId)
+    
+            if IsValid(wep) then return false end
+    
             ply:Give(weaponId)
-            ply:SetAmmo(1, "grenade")
-        end
+            local wepgive = ply:GetWeapon(weaponId)
+            
+            -- for guns
+            local attachments = ent.EquippedAttachments
+            if attachments then
+                for slot, att in pairs(attachments) do
+                    wepgive:SetAttachmentSlot(slot, att)
+                end
+            end
+    
+            -- just for some retarded vss issue lol
+            -- tbf the attachment system is all a bit restarted but its fine since the player will never see this code anyway
+            -- and all that matters is that it plays well :)
+            local count = ent:GetNumBodyGroups()
+            for id = 0, count - 1 do
+                local value = ent:GetBodygroup(id)
+                wepgive:SetBodygroup(id, value)
+            end
+    
+            -- for drinks
+            local remaining = ent.Remaining
+            if remaining then
+                wepgive:SetRemaining(remaining)
+            end
+    
+            local mags = ent.Magazines
+            if mags then
+                wepgive:SetMagazinesRemaining(ent.Magazines)
+            end
+    
+            wepgive:SetClip1(ent.Clip)
+    
+            RemoveItemFromCleanup(ent)
+            ent:Remove()
+            return false
+        elseif ent.Type == "grenade" then
+            if not ply:KeyPressed(IN_USE) then return end
+    
+            local weaponId = ent.WeaponId
+            local wep = ply:GetWeapon(weaponId)
+            local wepClass = weapons.Get(weaponId)
+    
+            -- temp hardcoded grenade ammo until i add more ammotypes and more nades :thumbsup:
+            -- yeah..... temp......... right buddy............
+            if IsValid(wep) then
+                local plyAmmo = ply:GetAmmoCount("grenade")
+                if plyAmmo < wepClass.MaxAmmo then
+                    ply:GiveAmmo(1, "grenade")
+                end
+            else
+                ply:Give(weaponId)
+                ply:SetAmmo(1, "grenade")
+            end
+    
+            ent:Remove()
+            return false
+        elseif ent.Type == "armor" then
+            ply:GiveArmor(ent.Id, ent.Durability)
 
-        ent:Remove()
-        return false
+            print(ent.Durability)
+
+            ent:Remove()
+            return false
+        elseif ent.Type == "helmet" then
+            ply:GiveHelmet(ent.Id, ent.Durability)
+
+            ent:Remove()
+            return false
+        end
     end
 
     return true
 end)
 
 local le_drinks = {"consumable_liquor", "consumable_henny"}
-hook.Add("DoPlayerDeath", "dropweaponondeath", function(ply, attacker, dmginfo)
+hook.Add("PlayerDeath", "dropweaponondeath", function(ply, inflictor, attacker)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
+
+    print("hi")
 
     local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
 
     if wep.CanDrop then
         ply:DropItem(wep, pos, vel, time)
     end
-    
-    --[[
-    local rand = math.random(0, 100)
-    if rand < 30 then
-        local drink = le_drinks[math.random(1, #le_drinks)]
-        local item = ply:GetWeapon(drink)
-
-        if IsValid(item) then
-            --print("drink valid")
-            ply:DropItem(drink, pos, vel, time)
-        else
-            --print("give drink and drop")
-            local item = ply:Give(drink)
-
-            ply:DropItem(item, pos, vel, time)
-        end
-    end]]
 end)
 
 concommand.Add("drop", function(ply)

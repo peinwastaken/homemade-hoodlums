@@ -434,7 +434,7 @@ function SWEP:PrimaryAttack()
     			   light.b = 50
     			   light.brightness = 2
     			   light.decay = 5000
-    			   light.size = 170
+    			   light.size = 200
     			   light.dietime = CurTime() + 0.1
     			end
 			end

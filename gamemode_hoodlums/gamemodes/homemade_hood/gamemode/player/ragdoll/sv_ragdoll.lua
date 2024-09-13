@@ -121,6 +121,15 @@ local HitgroupDamageMultiplier = {
 }
 
 function KillPlayerDamageInfo(ply, dmginfo)
+    local wep = ply:GetActiveWeapon()
+    local pos, ang = ply:EyePos(), ply:EyeAngles()
+
+    local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
+
+    if wep.CanDrop then
+        ply:DropItem(wep, pos, vel, time)
+    end
+
     ply:KillSilent()
 
     local attacker = dmginfo:GetAttacker()
@@ -184,7 +193,7 @@ function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon, velocity)
                 
                 obj:SetPos(pos)
                 obj:SetAngles(ang)
-                obj:SetMass(obj:GetMass() * 10)
+                obj:SetMass(15)
                 obj:SetVelocity(velocity or self:GetVelocity())
                 obj:SetBuoyancyRatio(5)
             end

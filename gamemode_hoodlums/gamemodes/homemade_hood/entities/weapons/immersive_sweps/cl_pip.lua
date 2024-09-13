@@ -84,6 +84,7 @@ function DoScope()
         local tr = util.QuickTrace(scope_pos, scope_ang:Forward() * 24, {lply})
         local pipFov = effect["PIPFov"] or wep.PipFovLerp or 45
         local recoilPos, recoilAng = wep:GetRecoil()
+        local aimlerp = GetAimLerp()
 
         local swayOffset = scope_ang:Forward() * 12 + scope_ang:Right() * sway.x + scope_ang:Up() * -sway.y
         local bobOffset = scope_ang:Right() * bob.z * 1 + scope_ang:Up() * bob.x * 1
@@ -94,7 +95,7 @@ function DoScope()
         if tr.Hit then
             render.Clear(0, 0, 0, 255)
         else
-            render.RenderView({origin = scope_pos + swayOffset + bobOffset + recoilOffset, angles = scope_ang, fov = pipFov, znear = 5, drawviewer = false})
+            render.RenderView({origin = scope_pos + swayOffset + bobOffset + recoilOffset, angles = scope_ang, fov = pipFov, znear = 7, drawviewer = false})
         end
         
         --[[
@@ -185,6 +186,7 @@ end
 hook.Add("PreDrawEffects", "predraweffects", function()
     local lply = LocalPlayer()
     local wep = lply:GetActiveWeapon()
+    local aimlerp = GetAimLerp()
     if wep.Base == "immersive_sweps" and lply:KeyDown(IN_ATTACK2) then
         local effect = wep:GetAttachmentEffects()
         if effect["PIPSight"] then

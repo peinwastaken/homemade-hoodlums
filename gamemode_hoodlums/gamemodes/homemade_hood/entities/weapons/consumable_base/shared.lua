@@ -108,10 +108,10 @@ function SWEP:Think()
 
 		if lastuse + self.UseDelay < CurTime() then
 			self:SetLastUse(CurTime())
-			ply:SetHealth(math.Clamp(health + 2, 0, maxhealth))
+			--ply:SetHealth(math.Clamp(health + 2, 0, maxhealth))
 
             if SERVER then
-                ply:HealAllLimbs(1)
+                ply:HealAllLimbs(2)
             end
         end
     end

@@ -18,7 +18,7 @@ end
 function PLAYER:PropagateDamage(limb, damage)
     for limb, mult in pairs(PropagationTable[limb]) do
         if self.LimbData[limb] <= 0 then continue end
-        local newLimbHealth = math.floor(self.LimbData[limb] - damage * mult)
+        local newLimbHealth = math.Clamp(self.LimbData[limb] - damage * mult, 0, defaultLimbHealth[limb])
         self:SetLimbHealth(limb, newLimbHealth)
     end
 end
@@ -26,7 +26,24 @@ end
 function PLAYER:TakeLimbDamageInfo(hitgroup, dmginfo, propagated)
     local hitLimb = HitGroupToLimb[hitgroup] or hitgroup
     local limbHealth = self.LimbData[hitLimb]
+    local origDamage = dmginfo:GetDamage()
+    local damagedArmor = false
+    local helmet, armor = self:GetNWEntity("helmet"), self:GetNWEntity("armor")
+
+    if IsValid(helmet) and hitLimb == "Head" then
+        dmginfo:ScaleDamage(0.1)
+        self:TakeArmorDamage("helmet", origDamage)
+    end
+    
+    if IsValid(armor) and hitLimb == "Torso" then
+        dmginfo:ScaleDamage(0.1)
+        self:TakeArmorDamage("armor", origDamage)
+    end
+
     local damage = dmginfo:GetDamage()
+
+    --print(origDamage)
+    --print(damage)
 
     if self.LimbData and limbHealth then
         if self.LimbData[hitLimb] <= 0 and not propagated then
@@ -34,8 +51,7 @@ function PLAYER:TakeLimbDamageInfo(hitgroup, dmginfo, propagated)
         end
 
         local newHealth = math.Clamp(self.LimbData[hitLimb] - damage, 0, defaultLimbHealth[hitLimb])
-        local newHealthFloor = math.floor(newHealth)
-        self.LimbData[hitLimb] = newHealthFloor
+        self.LimbData[hitLimb] = newHealth
 
         if self.LimbData["Head"] <= 0 or self.LimbData["Torso"] <= 0 then
             KillPlayerDamageInfo(self, dmginfo)
@@ -55,8 +71,7 @@ function PLAYER:TakeLimbDamage(hitgroup, damage, propagated)
         end
 
         local newHealth = math.Clamp(self.LimbData[hitLimb] - damage, 0, defaultLimbHealth[hitLimb])
-        local newHealthFloor = math.floor(newHealth)
-        self.LimbData[hitLimb] = newHealthFloor
+        self.LimbData[hitLimb] = newHealth
 
         if self.LimbData["Head"] <= 0 or self.LimbData["Torso"] <= 0 then
             self:Kill() -- no damage info = suicide :/
@@ -121,8 +136,8 @@ hook.Add("OnPlayerHitGround", "hoodlum_hitground", function(ply, inWater, onFloa
     local rightLeg, leftLeg = limbData["RightLeg"], limbData["LeftLeg"]
     local damage = speed/12
 
-    local minSpeed = 500
-    local maxSpeed = 900
+    local minSpeed = 450
+    local maxSpeed = 1500
     local mult = 0
     if speed > minSpeed then
         mult = math.Clamp(speed / maxSpeed, 0, 1)

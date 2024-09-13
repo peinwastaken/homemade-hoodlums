@@ -1,5 +1,6 @@
 include("player/player_hoodlum.lua")
 include("player/player_demoncompany.lua")
+include("player/player_cops.lua")
 include("player/ragdoll/sh_ragdoll.lua")
 include("sh_globals.lua")
 include("game/cl_game.lua")
@@ -12,6 +13,9 @@ include("settings/cl_binds.lua")
 include("settings/cl_settings.lua")
 include("player/health/cl_limbhealth.lua")
 include("player/health/sh_limbhealth.lua")
+include("player/armor/cl_armor.lua")
+include("player/armor/sh_armor.lua")
+include("player/cl_bodycam.lua")
 
 surface.CreateFont("FancyOldTimey", {
     font = "DS Cloister Black",

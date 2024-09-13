@@ -87,16 +87,16 @@ function OpenBindMenu()
 
     for i,bind in ipairs(bindOrder) do
         local y = 35 + (i - 1) * 40
-        local bindName = bind
+        local bindName = binds[bind]["Name"]
 
         local name = vgui.Create("DLabel")
         name:SetText(bindName)
-        name:SetPos(25, y)
+        name:SetPos(15, y)
         name:SetParent(mainFrame)
 
         local button = vgui.Create("DBinder")
         button:SetSize(100, 25)
-        button:SetPos(75, y)
+        button:SetPos(85, y)
         button:SetParent(mainFrame)
         if binds[bind] then
             button:SetSelectedNumber(binds[bind]["Key"])

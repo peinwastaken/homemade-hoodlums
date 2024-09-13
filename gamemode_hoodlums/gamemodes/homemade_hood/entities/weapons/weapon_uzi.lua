@@ -24,9 +24,9 @@ SWEP.Primary.SoundFar		= "pein/uzi/uzi_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(1.5, 0.04, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(1, 0, 3)
+SWEP.VisualRecoilAngle = Angle(1, 0, 1.5)
 SWEP.RecoilVertical = 70 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
+SWEP.RecoilHorizontal = 35 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.65 -- CROUCH RECOIL MULTIPLIER
 SWEP.PlayerModelRecoilMult = 4
 
@@ -81,7 +81,7 @@ SWEP.Attachments = {
                 ["HoloSight"] = true,
                 ["AimPosAttachment"] = "pos_mro",
                 ["ReticleMaterial"] = Material("reticles/reticle_aimpoint.vmt"),
-                ["ReticleSize"] = 200,
+                ["ReticleSize"] = 175,
                 ["SightSize"] = {x = 50, y = 50},
 				["RecoilVertical"] = -10,
                 ["AimOffset"] = Vector(-7, 0, 0)
@@ -124,7 +124,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["RecoilVertical"] = -15,
-				["RecoilHorizontal"] = -5,
+				["RecoilHorizontal"] = -15,
 				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
 			}
 		},
@@ -133,7 +133,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 2,
             ["effects"] = {
 				["RecoilVertical"] = -30,
-				["RecoilHorizontal"] = -5,
+				["RecoilHorizontal"] = -15,
 				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
 			}
 		},

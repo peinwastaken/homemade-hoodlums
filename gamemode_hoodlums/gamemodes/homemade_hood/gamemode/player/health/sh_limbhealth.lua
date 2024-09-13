@@ -116,7 +116,7 @@ hook.Add("SetupMove", "limbhealth_setupmove", function(ply, mv, cmd)
 
     if not limbData then return end
 
-    if (limbData.RightLeg < LimbBrokenHealth["RightLeg"] or limbData.LeftLeg < LimbBrokenHealth["LeftLeg"]) and alcohol < 0.3 then
+    if (ply:LimbBroken("RightLeg") or ply:LimbBroken("LeftLeg")) and alcohol < 0.3 then
         local maxSpeed = ply:GetMaxSpeed()
         mv:SetMaxClientSpeed(maxSpeed * 0.5)
     end

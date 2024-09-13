@@ -1,7 +1,7 @@
 local PLAYER = FindMetaTable("Player")
 
 util.AddNetworkString("SuppressPlayer")
-function PLAYER:Suppress(amount, pos)
+function PLAYER:Suppress(amount)
     net.Start("SuppressPlayer")
     net.WriteFloat(amount)
     net.Send(self)

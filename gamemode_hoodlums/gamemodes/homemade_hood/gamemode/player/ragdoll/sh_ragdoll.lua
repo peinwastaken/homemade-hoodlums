@@ -1,3 +1,5 @@
 local PLAYER = FindMetaTable("Player")
 
--- idk
+function PLAYER:GetRagdoll()
+    return self:GetNWEntity("ragdoll")
+end

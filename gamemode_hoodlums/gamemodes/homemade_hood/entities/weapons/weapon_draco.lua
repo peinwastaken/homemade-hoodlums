@@ -26,7 +26,7 @@ SWEP.Primary.SoundFar		= "pein/ak74/ak_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.2, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(3, 0, 3)
+SWEP.VisualRecoilAngle = Angle(1, 0, 3)
 SWEP.RecoilVertical = 150 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 50 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER

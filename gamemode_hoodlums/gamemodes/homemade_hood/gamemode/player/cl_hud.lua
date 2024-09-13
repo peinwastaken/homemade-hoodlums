@@ -130,85 +130,9 @@ local function DoRespawnScreen(t)
     end)
 end
 
-local limbHealths = {
-    ["Head"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.6, y = 0}
-    },
-    ["Torso"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.6, y = 0.3}
-    },
-    ["RightArm"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.75, y = 0.4}
-    },
-    ["LeftArm"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.35, y = 0.4}
-    },
-    ["RightLeg"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.75, y = 0.75}
-    },
-    ["LeftLeg"] = {
-        ["Bone"] = "ValveBiped.Bip01_Head1",
-        ["Offset"] = {x = 0.35, y = 0.75}
-    }
-}
-
--- this Is retarded but i couldnt really figure out any other way to do it...
---[[
-local frame = nil
-local function StartPlayerHud()
-    if IsValid(frame) then frame:Remove() end
-
-    local lply = LocalPlayer()
-
-    frame = vgui.Create("DFrame")
-    frame:SetTitle("")
-    frame:SetSize(300, 500)
-    frame:SetPos(50, 50)
-    frame:SetDraggable(false)
-    frame:ShowCloseButton(false)
-    frame:SetDeleteOnClose(false)
-    frame:SetVisible(true)
-    function frame:Paint(w, h)
-        draw.RoundedBox(5, 50, 50, w, h, Color(0, 0, 0, 50))
-    end
-
-    local modelPanel = vgui.Create("DModelPanel", frame)
-    modelPanel:Dock(FILL)
-    modelPanel:SetModel(lply:GetModel())
-
-    local min, max = modelPanel:GetEntity():GetRenderBounds()
-    modelPanel:SetCamPos(Vector(100, 0, 32))
-    modelPanel:SetLookAt(Vector(0, 0, 32))
-    modelPanel:SetFOV(45)
-    function modelPanel:LayoutEntity(ent)
-        ent:SetModel(lply:GetModel())
-        ent:SetAngles(Angle(0, 0, 0))
-
-        ent:SetSequence("walk_all")
-
-        ent:FrameAdvance()
-
-        local limbData = lply:GetLimbData()
-        if not limbData then return end
-
-        for limb, health in pairs(limbData) do
-            local data = limbHealths[limb]
-            if not data then continue end
-
-            -- limb text
-        end
-    end
-end]]
-
 net.Receive("Hoodlum_PlayerRespawn", function()
     local t = net.ReadString()
     DoRespawnScreen(t)
-    --StartPlayerHud()
 end)
 
 -- this is here only to hide some retarded rendertarget shit when the game is paused

@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pein/armor/helmet/weldingmask/glass"
+	"$translucent" 1
+	"$nocull" 1
+}

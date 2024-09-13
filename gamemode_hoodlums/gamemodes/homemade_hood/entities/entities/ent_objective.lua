@@ -8,8 +8,12 @@ if CLIENT then
     net.Receive("CaptureMessage", function()
         local t = net.ReadString()
         local obj = net.ReadString()
-
         local color = _G.Teams[t]["ChatColor"]
+
+        if t == "cops" then
+            chat.AddText(color, string.format("%s seized the %s!", _G.Teams[t]["Name"], obj))
+            return
+        end
         chat.AddText(color, string.format("%s captured the %s!", _G.Teams[t]["Name"], obj))
     end)
 
@@ -78,7 +82,7 @@ ENT.ObjectiveTypes = {
             "weapon_akm",
             "weapon_g3"
         },
-        ["CaptureDelay"] = 0.3,
+        ["CaptureDelay"] = 0.07,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 6,
         ["Flare"] = true,
@@ -90,7 +94,7 @@ ENT.ObjectiveTypes = {
             "consumable_liquor",
             "consumable_henny"
         },
-        ["CaptureDelay"] = 0.1,
+        ["CaptureDelay"] = 0.07,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 3,
         ["Flare"] = true,
@@ -102,7 +106,12 @@ ENT.ObjectiveTypes = {
             "weapon_pipebomb",
             "deployable_ammobox"
         },
-        ["CaptureDelay"] = 0.1,
+        --[[
+        ["Armors"] = {
+            "armor_6b23",
+            "helmet_welding"
+        },]]
+        ["CaptureDelay"] = 0.07,
         ["ItemCountMin"] = 2,
         ["ItemCountMax"] = 5,
         ["Flare"] = true,
@@ -177,7 +186,6 @@ function ENT:SetupDataTables()
     self:NetworkVar("String", 1, "ObjectiveType")
     self:NetworkVar("Float", 2, "NextCapture")
     self:NetworkVar("Float", 3, "DespawnTime")
-    
 
     self:SetStartCaptureTime(CurTime())
     self:SetCaptureProgress(0)
@@ -213,6 +221,32 @@ function ENT:OnRemove()
             self.Emitter:Finish()
         end
     end
+end
+
+function ENT:OnCaptured()
+    local pos, ang = self:GetPos()
+
+    local objType = self:GetObjectiveType()
+    local objTable = self.ObjectiveTypes[objType]
+
+    local min, max = objTable["ItemCountMin"], objTable["ItemCountMax"]
+    for i = 1, math.random(min, max) do
+        local rand = math.random()
+        if rand > 0.5 and objTable["Armors"] then
+            local items = objTable["Armors"]
+            CreateDroppedArmor(items[math.random(1, #items)], pos + Vector(0, 0, 8 + i * 12), 60)
+        else
+            local items = objTable["Items"]
+            CreateDroppedWeapon(items[math.random(1, #items)], pos + Vector(0, 0, 8 + i * 12), true, 60)
+        end
+    end
+
+    net.Start("CaptureMessage")
+    net.WriteString(self:GetCaptureTeam())
+    net.WriteString(self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
+    net.Broadcast()
+
+    self:Remove()
 end
 
 function ENT:Think()
@@ -312,6 +346,7 @@ function ENT:Think()
             end
 
             -- maybe decay faster when someone else is capturing it?
+            -- or maybe capture faster with multiple people?
             if leadingTeam ~= captureTeam then
                 captureProgress = captureProgress - 1
             else
@@ -336,18 +371,7 @@ function ENT:Think()
 
         -- if 100% captured
         if self:GetCaptureProgress() == 100 then
-            net.Start("CaptureMessage")
-            net.WriteString(self:GetCaptureTeam())
-            net.WriteString(self.ObjectiveTypes[self:GetObjectiveType()]["Name"])
-            net.Broadcast()
-
-            local min, max = self.ObjectiveTypes[objType]["ItemCountMin"], self.ObjectiveTypes[objType]["ItemCountMax"]
-            for i = 1, math.random(min, max) do
-                local items = self.ObjectiveTypes[objType]["Items"]
-                CreateDroppedWeapon(items[math.random(1, #items)], pos + Vector(0, 0, 8 + i * 12), true, 60)
-            end
-
-            self:Remove()
+            self:OnCaptured()
         end
     end
 

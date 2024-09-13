@@ -6,6 +6,8 @@ include("game/sv_objectives.lua")
 include("player/suppression/sv_suppression.lua")
 include("player/sv_weapondrop.lua")
 include("player/health/sv_limbhealth.lua")
+include("player/armor/sv_armor.lua")
+include("game/sv_chaos.lua")
 
 -- client
 AddCSLuaFile("cl_init.lua")
@@ -18,6 +20,8 @@ AddCSLuaFile("player/suppression/cl_suppression.lua")
 AddCSLuaFile("settings/cl_binds.lua")
 AddCSLuaFile("settings/cl_settings.lua")
 AddCSLuaFile("player/health/cl_limbhealth.lua")
+AddCSLuaFile("player/armor/cl_armor.lua")
+AddCSLuaFile("player/cl_bodycam.lua")
 
 -- shared
 AddCSLuaFile("sh_init.lua")
@@ -32,11 +36,17 @@ include("player/player_hoodlum.lua")
 AddCSLuaFile("player/player_demoncompany.lua")
 include("player/player_demoncompany.lua")
 
+AddCSLuaFile("player/player_cops.lua")
+include("player/player_cops.lua")
+
 AddCSLuaFile("player/ragdoll/sh_ragdoll.lua")
 include("player/ragdoll/sh_ragdoll.lua")
 
 AddCSLuaFile("player/health/sh_limbhealth.lua")
 include("player/health/sh_limbhealth.lua")
+
+AddCSLuaFile("player/armor/sh_armor.lua")
+include("player/armor/sh_armor.lua")
 
 local loaded = {}
 

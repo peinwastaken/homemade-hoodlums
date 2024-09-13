@@ -76,7 +76,7 @@ SWEP.Attachments = {
 				["AimOffset"] = Vector(-7, -0.62, -0.16),
 				["HoloSight"] = true,
 				["ReticleMaterial"] = Material("reticles/reticle_aimpoint.vmt"),
-                ["ReticleSize"] = 300,
+                ["ReticleSize"] = 200,
                 ["SightSize"] = {x = 100, y = 90},
 				["RecoilVertical"] = -10,
 			}

@@ -7,6 +7,17 @@ local limbMats = {
     ["LeftLeg"] = Material("gui/limbs/leftleg.png", "smooth"),
 }
 
+local armorMats = {
+    ["Helmet"] = Material("gui/armor/helmet.png", "smooth"),
+    ["Vest"] = Material("gui/armor/vest.png", "smooth"),
+}
+
+local colors = {
+    ["High"] = Color(255, 255, 255),
+    ["Low"] = Color(255, 24, 24),
+    ["None"] = Color(25, 25, 25)
+}
+
 net.Receive("SyncLimbData", function()
     local data = net.ReadTable()
     local lply = LocalPlayer()
@@ -19,7 +30,7 @@ hook.Add("HUDPaint", "limbhealth_hud", function()
     local lply = LocalPlayer()
     local limbData = lply:GetLimbData()
 
-    if not limbData or not lply:Alive() then return end
+    if not limbData or not lply:Alive() or BodycamEnabled() then return end
 
     local pos = {x = 50, y = 50}
     local size = {x = 100, y = 220}
@@ -36,12 +47,10 @@ hook.Add("HUDPaint", "limbhealth_hud", function()
 
         if health > LimbBrokenHealth[limb] then
             local lerp = health / defaultLimbHealth[limb]
-            color = LerpColor(1 - lerp, color_white, Color(255, 24, 24))
+            color = LerpColor(1 - lerp, colors["High"], colors["Low"])
         else
-            color = Color(25, 25, 25)
+            color = colors["None"]
         end
-
-        
 
         surface.SetMaterial(limbMats[limb])
         surface.SetDrawColor(color)
@@ -62,5 +71,33 @@ hook.Add("HUDPaint", "limbhealth_hud", function()
 
         draw.SimpleText(text, "HudSmall", 50, 25 + gap * times, color, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
         times = times + 1]]
+    end
+
+    local helmet, armor = lply:GetHelmet(), lply:GetArmor()
+
+    if IsValid(helmet) then
+        local dur = helmet:Health()
+        local maxDur = helmet.Durability
+        local lerp = dur / maxDur
+        local color = LerpColor(1 - lerp, colors["High"], colors["Low"])
+        local mat = helmet.HudMaterial or armorMats["Helmet"]
+
+        surface.SetMaterial(mat)
+        surface.SetDrawColor(color)
+        surface.DrawTexturedRect(pos.x, pos.y, size.x, size.y)
+    end
+
+    if IsValid(armor) then
+        local dur = armor:Health()
+        local maxDur = armor.Durability
+        local lerp = dur / maxDur
+        local color = LerpColor(1 - lerp, colors["High"], colors["Low"])
+        local mat = armor.HudMaterial or armorMats["Vest"]
+
+        if lerp ~= 0 then
+            surface.SetMaterial(mat)
+            surface.SetDrawColor(color)
+            surface.DrawTexturedRect(pos.x, pos.y, size.x, size.y)
+        end
     end
 end)

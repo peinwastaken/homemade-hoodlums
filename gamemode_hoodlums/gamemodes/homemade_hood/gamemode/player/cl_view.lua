@@ -151,6 +151,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local wep = ply:GetActiveWeapon()
     local ragdoll = ply:GetNWEntity("ragdoll")
     local limbData = ply:GetLimbData()
+    local helmet, armor = ply:GetNWEntity("helmet"), ply:GetNWEntity("armor")
 
     if ply:InVehicle() then
         local veh = ply:GetVehicle()
@@ -196,8 +197,11 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         local aimSpeedMult = 1
         if limbData then
             if ply:LimbBroken("RightArm") or ply:LimbBroken("LeftArm") then
-                aimSpeedMult = 0.5
+                aimSpeedMult = 0.35
             end
+        end
+        if IsValid(helmet) then
+            aimSpeedMult = aimSpeedMult * helmet.AimSpeedMult
         end
 
         if ply:IsAiming() and not ply:IsSprinting() and ply:IsOnGround() and not wep:Reloading() then
@@ -231,7 +235,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local strafespeed = GetStrafeSpeed(velocity, ply:EyeAngles():Forward())
     local strafemult = math.Clamp(strafespeed / ply:GetRunSpeed(), -1, 1)
 
-    local velocityang = Angle(0, 0, 7) * strafemult
+    local velocityang = Angle(0, 0, 7) * math.Clamp(strafemult, -0.5, 0.5)
     local viewbob = CalcViewBob(15, 0.5) * movelerp * 0.25
     suppression_ang_lerp = LerpAngleFT(4, suppression_ang_lerp, GetSuppressionShake())
 
@@ -241,12 +245,31 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local viewbob_offset = eye_up * viewbob.x + eye_right * viewbob.y + eye_right * viewbob.z
     local weaponsway_offset = eye_up * weaponsway.x + eye_right * weaponsway.y + eye_right * weaponsway.z
 
-    camang = LerpAngle(GetConVar("hoodlum_cam_smooth"):GetFloat() * FrameTime(), camang, eyeang + velocityang * aimlerp)
+    camang = LerpAngle(GetConVar("hoodlum_cam_smooth"):GetFloat() * FrameTime(), camang, eyeang + velocityang)
     eyeangLerp = LerpAngle(8 * FrameTime(), eyeangLerp, eye_ang)
 
     local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos + cliplerp + weaponsway_offset
     local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
     
+    ply:SetEyeAngles(Angle(math.Clamp(eyeang.x, -85, 85), eyeang.y, eyeang.z))
+
+    if BodycamEnabled() then
+        -- what the fuck am i looking at lmao
+        local spine = ply:GetAttachment(ply:LookupAttachment("eyes"))
+        local pos, ang = spine.Pos, spine.Ang
+        --local off = Vector(17, -6, 5)
+        local off = Vector(4, 0, -6)
+        pos = pos + ang:Forward() * off.x + ang:Right() * off.y + ang:Up() * off.z
+        local pitch = math.Clamp(eyeang.x, -55, 48)
+        ply:SetEyeAngles(Angle(pitch, eyeang.y, eyeang.z))
+        local lerp = aimlerp * 0.2
+        local bodycambob = CalcViewBob(17, 0.1) * math.Clamp(movelerp * 5, 0, 1)
+        local walk_pos_offset = eye_up * bodycambob.x + eye_right * bodycambob.y + eye_right * bodycambob.z
+
+        finalpos = LerpVector(lerp, pos, eyetarget_pos) + walk_pos_offset * 2 + fall_pos * 3 + weaponsway_offset + recoil_offset
+        finalang = Angle(pitch, eyeang.y, eyeang.z) + cam_ang_offset + fall_ang + suppression_ang_lerp * 0.2
+    end
+
     if IsValid(ragdoll) then
         local att = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
 
@@ -262,8 +285,6 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
 
         return view
     end
-
-    ply:SetEyeAngles(Angle(math.Clamp(eyeang.x, -85, 85), eyeang.y, eyeang.z))
 
     local view = {
 		origin = finalpos,

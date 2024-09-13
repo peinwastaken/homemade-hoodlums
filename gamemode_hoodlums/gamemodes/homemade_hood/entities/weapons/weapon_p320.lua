@@ -25,9 +25,9 @@ SWEP.Primary.Sound          = "pein/p320/p320_close.wav"
 SWEP.Primary.SoundFar		= "pein/p320/p320_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(2, 0.3, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(1.5, 0.1, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(2, 0, 1)
-SWEP.RecoilVertical = 80 -- VERTICAL RECOIL
+SWEP.RecoilVertical = 70 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 20 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.75 -- CROUCH RECOIL MULTIPLIER
 SWEP.AimWeaponTilt = 30
@@ -70,7 +70,7 @@ SWEP.Attachments = {
 				["HoloSight"] = true,
                 ["AimPosAttachment"] = "pos_romeo",
                 ["ReticleMaterial"] = Material("reticles/reticle_aimpoint.vmt"),
-                ["ReticleSize"] = 200,
+                ["ReticleSize"] = 150,
                 ["SightSize"] = {x = 100, y = 50},
 				["RecoilVertical"] = -10,
                 ["AimOffset"] = Vector(-12, 0, 0)

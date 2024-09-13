@@ -5,17 +5,63 @@ function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
 end
 
+local allItems = {
+    ["primary"] = {
+        "weapon_m4",
+        "weapon_m4_new",
+        "weapon_draco",
+        "weapon_mpx",
+        "weapon_aks74u",
+        "weapon_remington870",
+        "weapon_uzi",
+        "weapon_mac10",
+        "weapon_akm",
+        "weapon_remington700",
+        "weapon_mcxspear",
+        "weapon_g3"
+    },
+    ["secondary"] = {
+        "weapon_m1911",
+        "weapon_glock",
+        "weapon_sawedoff",
+        "weapon_p320",
+        "weapon_vz61",
+        "weapon_tec9",
+        "weapon_deagle"
+    },
+    ["melee"] = {
+        "melee_bat"
+    },
+    ["throwable"] = {
+        "weapon_pipebomb"
+    },
+    ["utility"] = {
+        "deployable_ammobox",
+    }
+}
+
 local specialClasses = {"player_demoncompany"}
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
     local rand = math.Rand(0, 100)
-    if rand < specialChance:GetFloat() then -- if is special...
+    if rand < specialChance:GetFloat() then
         local specialClass = table.Random(specialClasses)
 
         player_manager.SetPlayerClass(ply, specialClass)
         player_manager.RunClass(ply, "OnRespawn")
-    else -- if not :/
-        player_manager.SetPlayerClass(ply, "player_hoodlum")
-        player_manager.RunClass(ply, "OnRespawn")
+    else
+        local copChance = GetCopSpawnChance()
+        local rnd = math.Rand(0, 100)
+        if rnd < copChance then
+            player_manager.SetPlayerClass(ply, "player_cops")
+        else
+            player_manager.SetPlayerClass(ply, "player_hoodlum")
+        end
+        
+        if navmesh.IsLoaded() then
+            player_manager.RunClass(ply, "OnRespawn")
+        else
+            player_manager.RunClass(ply, "OnRespawn", allItems)
+        end
     end
 
     ply:AddEFlags(EFL_NO_DAMAGE_FORCES)

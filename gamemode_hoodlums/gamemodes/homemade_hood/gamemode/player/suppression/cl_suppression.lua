@@ -1,10 +1,12 @@
-local vignetteMat = Material("suppression/suppression.png")
+local vignetteMat = Material("suppression/suppression.vmt")
 local bokeh = Material("pp/blurx")
 
 local suppressionAmount = 0
 local suppressionSharpen = 0
 local suppressionShake = Angle(0, 0, 0)
 local suppressionVignette = 0
+
+local timeSinceLastSuppress = 0
 
 net.Receive("SuppressPlayer", function()
     local amount = net.ReadFloat()
@@ -15,6 +17,8 @@ net.Receive("SuppressPlayer", function()
     suppressionVignette = math.Clamp(suppressionVignette + amount * 0.2, 0, 1)
 
     EmitSound(GetSuppressionSound(), LocalPlayer():EyePos(), LocalPlayer():EntIndex(), CHAN_AUTO, 1, 140, SND_NOFLAGS, math.random(80, 140), 1)
+
+    timeSinceLastSuppress = 0
 end)
 
 function GetSuppressionShake()
@@ -67,15 +71,22 @@ hook.Add("RenderScreenspaceEffects", "cl_suppression_screenspace", function()
         render.DrawScreenQuad()
     end
 
-    suppressionAmount = LerpFT(1, suppressionAmount, 0)
     suppressionShake = LerpAngleFT(1, suppressionShake, Angle(0, 0, 0))
     suppressionSharpen = LerpFT(0.1, suppressionAmount, 0)
-    suppressionVignette = LerpFT(0.1, suppressionVignette, 0)
+
+    if timeSinceLastSuppress > 0.5 then
+        suppressionAmount = LerpFT(1, suppressionAmount, 0)
+        suppressionVignette = LerpFT(0.1, suppressionVignette, 0)
+    end
 end)
 
-hook.Add("ClientDeath", "cl_suppression_clientdeath", function()
+net.Receive("Hoodlum_PlayerRespawn", function()
     suppressionAmount = 0
     suppressionSharpen = 0
     suppressionShake = Angle(0, 0, 0)
     suppressionVignette = 0
+end)
+
+hook.Add("Think", "suppresstime", function()
+    timeSinceLastSuppress = timeSinceLastSuppress + FrameTime()
 end)

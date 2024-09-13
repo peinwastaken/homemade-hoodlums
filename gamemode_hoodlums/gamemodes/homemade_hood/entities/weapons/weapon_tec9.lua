@@ -25,7 +25,7 @@ SWEP.Primary.Sound          = "pein/tec9/tec9_close.wav"
 SWEP.Primary.SoundFar		= "pein/tec9/tec9_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(0.7, 0.2, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(1, 0.1, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1.25, 0, 2)
 SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 30 -- HORIZONTAL RECOIL
@@ -106,7 +106,7 @@ SWEP.Attachments = {
             ["effects"] = {
 				["Suppressed"] = true,
 				["WeaponSound"] = "pein/vz61/vz61_suppressed.wav",
-				["RecoilVertical"] = 15,
+				["RecoilVertical"] = 10,
 				["RecoilHorizontal"] = 5
 			}
 		}
@@ -124,7 +124,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 1,
             ["effects"] = {
 				["ClipSize"] = 20,
-				["RecoilVertical"] = 7
+				["RecoilVertical"] = 5
 			}
 		},
 		["extendeded"] = {
@@ -132,8 +132,8 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 2,
             ["effects"] = {
 				["ClipSize"] = 30,
-				["RecoilVertical"] = 15,
-				["RecoilHorizontal"] = 5
+				["RecoilVertical"] = 10,
+				["RecoilHorizontal"] = 4
 			}
 		},
 	},
@@ -148,7 +148,7 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 0,
             ["effects"] = {
 				["Automatic"] = true,
-				["RecoilVertical"] = 20,
+				["RecoilVertical"] = 10,
 				["RecoilHorizontal"] = 10
 			}
 		}

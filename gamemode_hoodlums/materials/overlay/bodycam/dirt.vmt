@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "overlay/bodycam/dirt"
+	"$translucent" 1
+	"$additive" 1
+}

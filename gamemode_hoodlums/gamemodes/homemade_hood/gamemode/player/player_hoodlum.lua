@@ -88,16 +88,28 @@ function PLAYER:GetAlliance()
     return nil
 end
 
-function PLAYER:OnRespawn()
+function PLAYER:OnRespawn(itemTbl)
     local ply = self.Player
 
     ply:SetSuppressPickupNotices(true)
 
     ply:RemoveAllAmmo()
-    ply:SetAmmo(9999, "pistol") -- temporary
-    ply:Give(GetRandomItem(self.Items["primary"])):SetRandomAttachments()
-    ply:Give(GetRandomItem(self.Items["secondary"])):SetRandomAttachments()
-    ply:Give(GetRandomItem(self.Items["melee"]))
+    ply:SetAmmo(9999, "pistol")
+
+    if itemTbl then
+        ply:Give(GetRandomItem(itemTbl["primary"])):SetRandomAttachments()
+        ply:Give(GetRandomItem(itemTbl["secondary"])):SetRandomAttachments()
+        ply:Give(GetRandomItem(itemTbl["melee"]))
+
+        if itemTbl["utility"] then
+            ply:Give(GetRandomItem(itemTbl["utility"]))
+        end
+    else
+        ply:Give(GetRandomItem(self.Items["primary"])):SetRandomAttachments()
+        ply:Give(GetRandomItem(self.Items["secondary"])):SetRandomAttachments()
+        ply:Give(GetRandomItem(self.Items["melee"]))
+    end
+
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
 
@@ -117,7 +129,7 @@ function PLAYER:OnRespawn()
 end
 
 function PLAYER:SetModel()
-
+    
 end
 
 player_manager.RegisterClass("player_hoodlum", PLAYER, "player_default")

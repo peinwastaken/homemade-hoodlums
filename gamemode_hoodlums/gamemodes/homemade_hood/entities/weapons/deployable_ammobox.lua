@@ -66,7 +66,7 @@ function SWEP:PrimaryAttack()
 
 				ammobox:Spawn()
 
-				ammobox:EmitSound(self.PlaceSound, 500)
+				ammobox:EmitSound(self.PlaceSound, 70)
 
 				self:Remove()
 			end

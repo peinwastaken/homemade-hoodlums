@@ -104,7 +104,7 @@ SWEP.Attachments = {
 				["PIPRadius"] = 50,
 				["PIPFov"] = 15,
 				["ReticleMaterial"] = Material("reticles/reticle_acog"),
-                ["ReticleSize"] = 40,
+                ["ReticleSize"] = 30,
 				["VignetteSize"] = 40,
 				["VisualRecoilAdd"] = Vector(-0.1, 0, 0)
             }
