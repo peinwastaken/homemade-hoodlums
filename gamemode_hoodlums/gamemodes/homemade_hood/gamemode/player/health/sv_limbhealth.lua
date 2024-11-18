@@ -1,5 +1,6 @@
 local PLAYER = FindMetaTable("Player")
 util.AddNetworkString("SyncLimbData")
+local friendlyFire = GetConVar("hoodlum_friendlyfire")
 
 function PLAYER:SetupLimbs()
     self.LimbData = {}
@@ -159,6 +160,18 @@ end)
 hook.Add("PostEntityTakeDamage", "hoodlum_limbdamage", function(ent, dmgInfo, tookDamage)
     if not ent:IsPlayer() then return end
 
+    local attacker = dmgInfo:GetAttacker()
+    
+    if IsValid(attacker) and attacker:IsPlayer() and not friendlyFire:GetBool() then
+        local victimTeam = ent:GetTeam()
+        local attackerTeam = attacker:GetTeam()
+        
+        if victimTeam and attackerTeam and victimTeam == attackerTeam then
+            dmgInfo:SetDamage(0)
+            return
+        end
+    end
+    
     local limbData = ent:GetLimbData()
     local dmgType = dmgInfo:GetDamageType()
     local dmg = dmgInfo:GetDamage()
