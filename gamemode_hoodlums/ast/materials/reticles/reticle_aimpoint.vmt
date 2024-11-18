@@ -1,6 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "reticles/reticle_aimpoint"
-	"$additive" 1
-	"$ignorez" 1
-}

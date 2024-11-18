@@ -1,6 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "effects/muzzleflash_deagle/muzzleflash1"	
-	"$additive" 1
-	"$nocull" 1
-}

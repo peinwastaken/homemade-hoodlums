@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models/pein/henny/Glass"
-	"$translucent" 1
-	"$nocull" 1
-}

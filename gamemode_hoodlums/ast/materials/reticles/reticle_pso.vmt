@@ -1,6 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "reticles/reticle_pso"
-	"$translucent" 1
-	"$ignorez" 1
-}

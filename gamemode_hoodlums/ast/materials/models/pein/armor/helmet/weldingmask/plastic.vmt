@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "reticles/white"
-	"$color2" "[0.25 0.25 0.25]"
-	"$nocull" 1
-}

@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models/pein/m1911/m1911_diffuse.vtf"
-	"$bumpmap" "models/pein/m1911/m1911_bump.vtf"
-	"$ambientocclusion" "models/pein/m1911/m1911_ao.vtf"
-}

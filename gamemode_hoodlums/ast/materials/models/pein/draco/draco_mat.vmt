@@ -1,5 +1,0 @@
-VertexlitGeneric
-{
-	$basetexture "models/pein/draco/draco_diffuse.vtf"
-	$bumpmap "models/pein/draco/draco_normal.vtf"
-}
