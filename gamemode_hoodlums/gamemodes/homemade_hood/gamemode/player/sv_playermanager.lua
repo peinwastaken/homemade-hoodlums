@@ -1,5 +1,6 @@
 local PLAYER = FindMetaTable("Player")
 local specialChance = CreateConVar("hoodlum_special_chance", 2, FCVAR_NONE, "Change special class spawn chance.", 0, 100)
+local friendlyFire = CreateConVar("hoodlum_friendlyfire", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Enable or disable friendly fire.", 0, 1)
 
 function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
