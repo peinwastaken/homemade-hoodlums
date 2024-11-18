@@ -1,0 +1,30 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "munch/demon02/usmc_ir_patch"
+	"$bumpmap"     "munch/demon02/usmc_ir_patch_n"
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "1" 	//< Change as needed
+//	"$PhongExponent"            "15" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0.3 1 4]"
+	"$PhongAlbedoTint"          "0"
+	"$PhongDisableHalfLambert"  "1"
+	"$NormalmapAlphaPhongMask"  "1"
+
+//Rimlight
+	"$Rimlight" 			    "0"
+
+//Other
+	"$Model"                    "1"
+	"$HalfLambert" 			    "0"
+	"$NoDecal" 				    "0"
+	"$AmbientOcclusion" 	    "1"
+	"$NoCull" 				    "0"
+	"$SurfaceProp" 			    "flesh"
+//	"$BlendTintByBaseAlpha"     "1"
+//	"$Color2"					"{ 187 187 187 }"	//< RGB colors
+	"$CloakPassEnabled" 		"1" 	//< For SFM and TF2
+//	"$CloakColorTint" 			"[0.4 0.5 1]" // BLU
+//	"$CloakColorTint" 			"[1 0.5 0.4]" // RED
+}

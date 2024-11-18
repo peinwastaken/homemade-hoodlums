@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "overlay/bodycam/border"
+	"$translucent" 1
+}

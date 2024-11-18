@@ -1,0 +1,20 @@
+Vertexlitgeneric
+{
+$basetexture "pwb2/models/weapons/v_m4a1/m4_rails_col"
+$bumpmap "pwb2/models/weapons/v_m4a1/m4_rails_norm"
+$phongexponenttexture "pwb2/models/weapons/v_m4a1/m4_rails_spec"
+$color 			"[1 1 1]"
+
+	$phong 			"1"
+	$phongboost 		"1.0"
+	$phongexponent 		"40"
+	$phongfresnelranges 	"[2 4 6]"
+	$phongtint 		"[0.6 0.8 1]"
+	$phongalbedotint 		"1"
+
+	$normalmapalphaenvmapmask "1"
+	$envmap 		"env_cubemap"
+	$envmaptint 	"[0.1 0.1 0.1]"
+
+	$nocull 	"1"
+}

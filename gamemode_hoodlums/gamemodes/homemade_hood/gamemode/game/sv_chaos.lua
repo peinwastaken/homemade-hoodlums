@@ -1,4 +1,4 @@
-local chaos = 1
+local chaos = 0
 local chaosDecayTime = 3
 local chaosDecayAmount = 0.02
 local chaosOnKill = 0.02

@@ -23,10 +23,10 @@ SWEP.Primary.Sound          = "pein/remington700/remington700_near.wav"
 SWEP.Primary.SoundFar		= "pein/remington700/remington700_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(1.45, 0.2, -0.1)
+SWEP.VisualRecoil = Vector(1.45, 1, -0.1)
 SWEP.VisualRecoilAngle = Angle(5, 0, 5)
-SWEP.RecoilVertical = 60
-SWEP.RecoilHorizontal = 30
+SWEP.RecoilVertical = 250
+SWEP.RecoilHorizontal = 120
 SWEP.CrouchRecoilMult = 0.65
 SWEP.PlayerModelRecoilMult = 4
 

@@ -73,12 +73,12 @@ SWEP.Attachments = {
                 ["PIPSight"] = true,
 				["PIPRadius"] = 80,
 				["FovSettings"] = {
-					[1] = 48, -- 1x-ish
+					[1] = 30, -- 1x-ish
 					[2] = 10 -- "4x" except not since im restarted
 				},
 				["ReticleMaterial"] = Material("reticles/reticle_specter"),
                 ["ReticleSize"] = 50,
-				["VignetteSize"] = 60,
+				["VignetteSize"] = 40,
 				["VisualRecoilAdd"] = Vector(-0.2, 0, 0),
 				["AimOffset"] = Vector(-3, -0.1, 0),
 			}

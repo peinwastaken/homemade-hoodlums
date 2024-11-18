@@ -1,0 +1,26 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/notart/Demon 0-1/opforce_juggernaut_visor_n"
+	"$translucent" 1
+	"$bumpmap" "models/notart/Demon 0-1/opforce_juggernaut_visor_n"
+	
+	"$normalmapalphaenvmapmask" "1"
+	// "$envmap" "models\jq\CODMW2019\Operators\Rodion\Arbitrator\glass_envmap"
+	"$envmaptint"	"[1 1 1]"
+	"$envmapfresnel"	"1"
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "15"
+	"$PhongExponent"            "100" 
+	"$PhongFresnelRanges"	    "[0.3 1 4]"
+	"$PhongAlbedoTint"          "0"
+	"$PhongDisableHalfLambert"  "1"
+	"$NormalmapAlphaPhongMask"  "1"
+
+//Other
+	"$Model"                    "1"
+	"$AmbientOcclusion" 	    "1"
+	"$SurfaceProp" 			    "flesh"
+}
+

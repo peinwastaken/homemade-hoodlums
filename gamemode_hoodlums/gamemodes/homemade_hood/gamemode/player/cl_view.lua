@@ -144,6 +144,8 @@ local suppression_ang_lerp = Angle(0, 0, 0)
 local cliplerp = Vector(0, 0, 0)
 local weaponsway = Vector(0, 0, 0)
 local strafelerp = 0
+local recoil_shake_ang, recoil_shake_pos, recoil_intensity = Angle(0, 0, 0), Vector(0, 0, 0), 0
+
 hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)    
     local cam_offset = Vector(2, 1, 0)
     local cam_ang_offset = Angle(10, 5, 0)
@@ -221,7 +223,9 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
         recoil_pos, recoil_ang = wep:GetRecoil()
     end
 
-    recoil_cam_ang = LerpAngleFT(24, recoil_cam_ang, (wep.eyeangleoffset or Angle(0, 0, 0))) -- still weird
+    recoil_cam_ang = LerpAngleFT(40, recoil_cam_ang, (wep.eyeangleoffset or Angle(0, 0, 0))) -- still weird
+    recoil_shake_ang = Angle(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-5, 5)) * recoil_intensity
+    recoil_intensity = Lerp(12 * FrameTime(), recoil_intensity, 0)
 
     local max = speed / ply:GetRunSpeed()
     if speed > 1 then
@@ -249,7 +253,7 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     eyeangLerp = LerpAngle(8 * FrameTime(), eyeangLerp, eye_ang)
 
     local finalpos = LerpVector(aimlerp, campos, eyetarget_pos) + recoil_offset + viewbob_offset + fall_pos + cliplerp + weaponsway_offset
-    local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp
+    local finalang = LerpAngle(aimlerp, camang, eyetarget_ang) + Angle(0, 0, recoil_lerp_roll) + cam_ang_offset + fall_ang + recoil_cam_ang + suppression_ang_lerp + recoil_shake_ang
     
     ply:SetEyeAngles(Angle(math.Clamp(eyeang.x, -85, 85), eyeang.y, eyeang.z))
 
@@ -307,4 +311,8 @@ end
 
 function GetAimLerp()
     return aimlerp
+end
+
+function SetRecoilShakeIntensity(value)
+    recoil_intensity = value
 end

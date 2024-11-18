@@ -31,9 +31,8 @@ local pipMaterial = CreateMaterial("PIPScope" .. pip_size, "UnlitGeneric",{
     ["$ignorez"] = 1
 })
 
--- liked it until it started causing issues, maybe ill like it once more if i fix it
---CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
---CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
+CreateClientConVar("hoodlum_pip_fisheye", 0, true, false, "PIP Scope fisheye effect", 0, 1)
+CreateClientConVar("hoodlum_pip_fisheye_amount", 0.1, true, false, "PIP Scope fisheye effect", 0, 1)
 
 function draw.Circle( x, y, radius, seg )
 	local cir = {}

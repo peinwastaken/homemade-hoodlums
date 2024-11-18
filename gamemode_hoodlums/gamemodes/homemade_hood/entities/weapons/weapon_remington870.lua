@@ -49,6 +49,8 @@ SWEP.PumpAction = true
 SWEP.CycleTime = 0.2
 SWEP.CycleSound = "pein/remington870/pump.wav"
 
+SWEP.MuzzleFlashScale = 10
+
 SWEP.Weight					= 6
 SWEP.AutoSwitchTo			= false
 SWEP.AutoSwitchFrom			= false

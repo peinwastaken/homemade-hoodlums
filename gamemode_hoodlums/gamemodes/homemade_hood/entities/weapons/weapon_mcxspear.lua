@@ -23,7 +23,7 @@ SWEP.Primary.Sound          = "pein/mcx/mcx_close.wav"
 SWEP.Primary.SoundFar		= "pein/mcx/mcx_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(0.5, 0.04, 0) -- CAMERA RECOIL
+SWEP.VisualRecoil = Vector(0.7, 0.15, 0) -- CAMERA RECOIL
 SWEP.VisualRecoilAngle = Angle(1.5, 0, 3)
 SWEP.RecoilVertical = 90 -- VERTICAL RECOIL
 SWEP.RecoilHorizontal = 20 -- HORIZONTAL RECOIL
@@ -106,7 +106,7 @@ SWEP.Attachments = {
 				["ReticleMaterial"] = Material("reticles/reticle_acog"),
                 ["ReticleSize"] = 30,
 				["VignetteSize"] = 40,
-				["VisualRecoilAdd"] = Vector(-0.1, 0, 0)
+				["VisualRecoilAdd"] = Vector(-0.4, 0, 0)
             }
 		}
 	},

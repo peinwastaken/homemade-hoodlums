@@ -26,8 +26,8 @@ hook.Add("StartCommand", "recoil setupmove", function(ply, cmd)
 
         cmd:SetViewAngles(viewangles + Angle(wep.rec_vertical, wep.rec_horizontal, 0) * ft)
 
-        wep.rec_vertical = Lerp(20 * ft, wep.rec_vertical, 0)
-        wep.rec_horizontal = Lerp(20 * ft, wep.rec_horizontal, 0)
+        wep.rec_vertical = Lerp(30 * ft, wep.rec_vertical, 0)
+        wep.rec_horizontal = Lerp(30 * ft, wep.rec_horizontal, 0)
     end
 
     last = SysTime()
@@ -78,11 +78,14 @@ function SWEP:ApplyRecoil()
 
     self.eyeoffset = self.eyeoffset + (self.VisualRecoil + recoil_vis_add) * (att_effects["VisualRecoilMult"] or 1)
     self.eyeangleoffset = self.eyeangleoffset + Angle(self.VisualRecoilAngle.x, self.VisualRecoilAngle.y, math.random(-self.VisualRecoilAngle.z, self.VisualRecoilAngle.z))
+    
+    -- cl view
+    SetRecoilShakeIntensity(self.RecoilVertical / 100) -- divide the fucker by 100 to get normal recoil intensity
 end
 
 function SWEP:UpdateRecoil()
     local ply = self:GetOwner()
 
-    self.eyeoffset = LerpVectorFT(7, self.eyeoffset, Vector(0, 0, 0))
+    self.eyeoffset = LerpVectorFT(8, self.eyeoffset, Vector(0, 0, 0))
     self.eyeangleoffset = LerpAngleFT(2, self.eyeangleoffset, Angle(0, 0, 0))
 end
