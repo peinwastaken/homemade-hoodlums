@@ -11,6 +11,7 @@ end
 local suppressionMaxDist = 100
 
 hook.Add("EntityFireBullets", "hoodlum_suppression_entityfirebullets", function(attacker, bullet)
+    if not IsValid(attacker) or not attacker:IsPlayer() then return end
     local wep = attacker:GetActiveWeapon()
     if wep.Category ~= "Immersive SWEPs" then return end -- now you can shoot other weapons or something :thumbsup:
     local supp = wep:GetAttachmentEffects()["Suppressed"]
