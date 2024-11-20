@@ -372,7 +372,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                     -- do limb damage
                     if RagdollHitGroups[bonename] then
                         local hitgroup = RagdollHitGroups[bonename]
-                        if IsValid(owner) and owner:Alive() then
+                        if IsValid(owner) and owner:IsPlayer() and owner:Alive() then
                             owner:TakeLimbDamage(hitgroup, dmg, false)
                         end
                      end
@@ -387,14 +387,14 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             ent.headshot = true
 
                             local owner = ent:GetOwner()
-                            if IsValid(owner) and owner:Alive() then
+                            if IsValid(owner) and owner:IsPlayer() and owner:Alive() then
                                 owner:SetLastHitGroup(HITGROUP_HEAD)
                                 KillPlayerDamageInfo(owner, dmginfo)
+                                
+                                net.Start("DeathEvent")
+                                net.WriteBool(true)
+                                net.Send(owner)
                             end
-
-                            net.Start("DeathEvent")
-                            net.WriteBool(true)
-                            net.Send(owner)
 
                             timer.Create("bleed"..ent:EntIndex(), 0.1, 50, function()
                                 local bonepos = ent:GetBonePosition(head)
