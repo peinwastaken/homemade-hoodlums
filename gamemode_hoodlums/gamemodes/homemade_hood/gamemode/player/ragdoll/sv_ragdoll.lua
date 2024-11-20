@@ -390,11 +390,11 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             if IsValid(owner) and owner:IsPlayer() and owner:Alive() then
                                 owner:SetLastHitGroup(HITGROUP_HEAD)
                                 KillPlayerDamageInfo(owner, dmginfo)
+                                
+                                net.Start("DeathEvent")
+                                net.WriteBool(true)
+                                net.Send(owner)
                             end
-
-                            net.Start("DeathEvent")
-                            net.WriteBool(true)
-                            net.Send(owner)
 
                             timer.Create("bleed"..ent:EntIndex(), 0.1, 50, function()
                                 local bonepos = ent:GetBonePosition(head)
