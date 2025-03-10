@@ -20,7 +20,7 @@ hook.Add("Think", "chaosthink", function()
     if nextChaosDecay > CurTime() then return end
     nextChaosDecay = CurTime() + chaosDecayTime
     chaos = math.Clamp(chaos - chaosDecayAmount, 0, 1)
-    print(chaos)
+    -- print(chaos)
 end)
 
 hook.Add("DoPlayerDeath", "chaosdeath", function(ply, inflictor, damageInfo)

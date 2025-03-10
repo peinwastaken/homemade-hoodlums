@@ -34,6 +34,8 @@ SWEP.CanDrop = true
 
 SWEP.Emitter = nil
 
+SWEP.TimeUsed = 0
+
 function SWEP:Reload()
     if IsFirstTimePredicted() then
         if SERVER then
@@ -54,10 +56,27 @@ function SWEP:Think()
         self:SetUsing(false)
     end
 
-    if using then
+    if using and remaining > 0 then 
         self:SetRemaining(remaining - 5 * engine.TickInterval())
+        self.TimeUsed = self.TimeUsed + 1 * engine.TickInterval()
+        if SERVER then
+            ply:TakeLimbDamage(HITGROUP_CHEST, 0.8, false)
+        end
+    else
+        self.TimeUsed = math.Clamp(self.TimeUsed - 1 * engine.TickInterval(), 0, 10)
+        if SERVER and self.TimeUsed > 0 then
+            ply:HealAllLimbs(0.40)
+            ply:HealLimb("Torso", 0.41)
+        end
     end
-
+        local head = ply:LookupBone("ValveBiped.Bip01_Head1")
+        local headpos, headang = ply:GetBonePosition(head)
+        local effectdatasmoke = EffectData()
+		effectdatasmoke:SetOrigin(headpos + ply:EyeAngles():Forward() * 15 - ply:EyeAngles():Up() * 10)
+    	effectdatasmoke:SetNormal(ply:EyeAngles():Forward())
+        if not using and self.TimeUsed > 0 then
+            util.Effect("effect_muzzlesmoke", effectdatasmoke)
+        end
     self:SetWeaponHoldType(self.HoldType)
 end
 

@@ -70,7 +70,7 @@ function PLAYER:OnRespawn()
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(165)
+    ply:SetJumpPower(200)
 end
 
 player_manager.RegisterClass("player_cops", PLAYER, "player_hoodlum")

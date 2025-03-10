@@ -17,6 +17,7 @@ PLAYER.Teams = {"demoncompany"}
 PLAYER.Items = {
     ["primary"] = {
         "weapon_asval",
+        "weapon_mcxspear"
     },
     ["secondary"] = {
         "weapon_p320", -- cant believe i forgot this..
@@ -50,7 +51,7 @@ function PLAYER:OnRespawn()
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(165)
+    ply:SetJumpPower(200)
 end
 
 player_manager.RegisterClass("player_demoncompany", PLAYER, "player_hoodlum")

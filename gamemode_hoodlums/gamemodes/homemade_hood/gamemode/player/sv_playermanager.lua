@@ -19,7 +19,8 @@ local allItems = {
         "weapon_akm",
         "weapon_remington700",
         "weapon_mcxspear",
-        "weapon_g3"
+        "weapon_g3",
+        "weapon_asval"
     },
     ["secondary"] = {
         "weapon_m1911",

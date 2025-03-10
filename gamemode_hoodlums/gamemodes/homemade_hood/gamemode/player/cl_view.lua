@@ -155,11 +155,11 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local limbData = ply:GetLimbData()
     local helmet, armor = ply:GetNWEntity("helmet"), ply:GetNWEntity("armor")
 
-    if ply:InVehicle() then
+    --[[ if ply:InVehicle() then
         local veh = ply:GetVehicle()
         veh:SetThirdPersonMode(false)
         return
-    end
+    end ]]
     
     ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
 

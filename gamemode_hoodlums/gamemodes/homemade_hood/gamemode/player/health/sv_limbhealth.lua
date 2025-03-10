@@ -107,6 +107,17 @@ function PLAYER:HealAllLimbs(amount)
     self:SyncLimbData()
 end
 
+function PLAYER:DamageAllLimbs(amount)
+    if not self.LimbData then return end
+
+    for limb,_ in pairs(defaultLimbHealth) do
+        local newHealth = math.Clamp(self.LimbData[limb] - amount, 0, defaultLimbHealth[limb])
+        self:SetLimbHealth(limb, newHealth)
+    end
+
+    self:SyncLimbData()
+end
+
 function ResetPlayersLimbs()
     for _,ply in player.Iterator() do
         ply:SetupLimbs()
