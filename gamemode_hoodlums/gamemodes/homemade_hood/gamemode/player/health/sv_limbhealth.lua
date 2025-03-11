@@ -141,6 +141,7 @@ local fallsounds = {
     "player/pl_fallpain1.wav"
 }
 hook.Add("OnPlayerHitGround", "hoodlum_hitground", function(ply, inWater, onFloater, speed)
+    if ply:HasGodMode() then return end
     local limbData = ply:GetLimbData()
 
     if not limbData then return true end
@@ -170,6 +171,7 @@ end)
 
 hook.Add("PostEntityTakeDamage", "hoodlum_limbdamage", function(ent, dmgInfo, tookDamage)
     if not ent:IsPlayer() then return end
+    if ent:HasGodMode() then return end
 
     local attacker = dmgInfo:GetAttacker()
     

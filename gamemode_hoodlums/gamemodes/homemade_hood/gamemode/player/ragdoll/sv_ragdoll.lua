@@ -141,6 +141,7 @@ function KillPlayerDamageInfo(ply, dmginfo)
 end
 
 concommand.Add("hoodlum_ragdoll", function(ply)
+    if ply:InVehicle() then return end
     ply:ToggleRagdoll(nil)
 end, false, "toggle ragdoll", FCVAR_NONE)
 
