@@ -5,6 +5,7 @@ local PLAYER = {}
 PLAYER.WalkSpeed = 100
 PLAYER.RunSpeed = 200
 PLAYER.SlowWalkSpeed = 75
+PLAYER.JumpPower = 201
 
 PLAYER.Models = {
     ["bloods"] = {
@@ -126,7 +127,7 @@ function PLAYER:OnRespawn(itemTbl)
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(200)
+    ply:SetJumpPower(self.JumpPower)
 end
 
 function PLAYER:SetModel()

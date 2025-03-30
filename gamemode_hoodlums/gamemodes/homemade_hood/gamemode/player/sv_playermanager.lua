@@ -51,9 +51,11 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
         player_manager.SetPlayerClass(ply, specialClass)
         player_manager.RunClass(ply, "OnRespawn")
     else
+        local maxCops = GetMaxCops()
+        local currentCops = GetCopCount()
         local copChance = GetCopSpawnChance()
         local rnd = math.Rand(0, 100)
-        if rnd < copChance then
+        if rnd < copChance && currentCops <= maxCops then
             player_manager.SetPlayerClass(ply, "player_cops")
         else
             player_manager.SetPlayerClass(ply, "player_hoodlum")

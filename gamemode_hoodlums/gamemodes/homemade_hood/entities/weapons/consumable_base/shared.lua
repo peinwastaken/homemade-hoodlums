@@ -111,7 +111,7 @@ function SWEP:Think()
 			--ply:SetHealth(math.Clamp(health + 2, 0, maxhealth))
 
             if SERVER then
-                ply:HealAllLimbs(2)
+                ply:HealAllLimbs(10)
             end
         end
     end

@@ -5,6 +5,7 @@ local PLAYER = {}
 PLAYER.WalkSpeed = 100
 PLAYER.RunSpeed = 200
 PLAYER.SlowWalkSpeed = 75
+PLAYER.JumpPower = 201
 
 PLAYER.Models = {
     ["cops"] = {
@@ -32,7 +33,8 @@ local weaponAtts = {
     },
     ["weapon_p320"] = {
         ["underbarrel"] = "flashlight"
-    }
+    },
+    ["weapon_m1911"] = {},
 }
 
 local function GetRandomItem(tbl)
@@ -50,11 +52,11 @@ function PLAYER:OnRespawn()
     local secondary = GetRandomItem(self.Items["secondary"])
 
     ply:RemoveAllAmmo()
-    ply:SetAmmo(9999, "pistol") -- temporary
     ply:Give(GetRandomItem(self.Items["primary"]))
     ply:Give(secondary)
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
+    ply:Give("consumable_cigarettes")
 
     local wep = ply:GetWeapon(secondary)
     if IsValid(wep) then
@@ -70,7 +72,7 @@ function PLAYER:OnRespawn()
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(200)
+    ply:SetJumpPower(self.JumpPower)
 end
 
 player_manager.RegisterClass("player_cops", PLAYER, "player_hoodlum")

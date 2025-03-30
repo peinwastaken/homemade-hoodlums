@@ -37,7 +37,7 @@ local black = Material("vgui/black")
 function BodycamEnabled()
     local lply = LocalPlayer()
     local t = player_manager.RunClass(lply, "GetAlliance")
-    if t == "cops" or bodycam:GetBool() then
+    if bodycam:GetBool() then
         return true
     end
 end

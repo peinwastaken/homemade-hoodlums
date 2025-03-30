@@ -455,6 +455,13 @@ function SWEP:PrimaryAttack()
 			self:BulletCallback(ply, trace, dmginfo)
 		end
 		
+		if SERVER then
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(0,0,255))
+		end
+		if CLIENT then
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(255,0,0))
+		end
+
 		ply:FireBullets(bullet, true)
 
 		if CLIENT then

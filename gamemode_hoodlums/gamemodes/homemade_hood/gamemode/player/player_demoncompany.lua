@@ -5,6 +5,7 @@ local PLAYER = {}
 PLAYER.WalkSpeed = 100
 PLAYER.RunSpeed = 200
 PLAYER.SlowWalkSpeed = 75
+PLAYER.JumpPower = 201
 
 PLAYER.Models = {
     ["demoncompany"] = {
@@ -43,6 +44,7 @@ function PLAYER:OnRespawn()
     ply:Give(GetRandomItem(self.Items["secondary"])):SetRandomAttachments()
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
+    ply:Give("consumable_cigarettes")
 
     local tbl = self.Models[self.Teams[math.random(1, #self.Teams)]]
     local model = GetRandomItem(tbl)
@@ -51,7 +53,7 @@ function PLAYER:OnRespawn()
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(200)
+    ply:SetJumpPower(self.JumpPower)
 end
 
 player_manager.RegisterClass("player_demoncompany", PLAYER, "player_hoodlum")
