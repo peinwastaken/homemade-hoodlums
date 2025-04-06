@@ -243,7 +243,9 @@ hook.Add("PlayerDeath", "dropweaponondeath", function(ply, inflictor, attacker)
     local wep = ply:GetActiveWeapon()
     local pos, ang = ply:EyePos(), ply:EyeAngles()
 
-    print("hi")
+    --[[ print("hi")
+    I actually really like this print... I can always count on a friendly greeting when checking the console.. I can't bring myself to delete it so I'll just comment it out.
+    ]]
 
     local pos, vel, time = pos + ang:Forward() * 20 - Vector(0, 0, 10), ang:Forward() * 200, 60
 

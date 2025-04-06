@@ -155,13 +155,12 @@ hook.Add("CalcView", "calc view", function(ply, pos, ang, fov)
     local limbData = ply:GetLimbData()
     local helmet, armor = ply:GetNWEntity("helmet"), ply:GetNWEntity("armor")
 
+    ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
+        
     if ply:InVehicle() then
-        local veh = ply:GetVehicle()
-        veh:SetThirdPersonMode(false)
+        ply:MakeHeadDisappearAndAllThat(false)
         return
     end
-    
-    ply:MakeHeadDisappearAndAllThat(GetConVar("hoodlum_invishead"):GetBool())
 
     -- active slop alert
     local eyeang = ply:EyeAngles()

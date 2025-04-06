@@ -130,6 +130,7 @@ function KillPlayerDamageInfo(ply, dmginfo)
         ply:DropItem(wep, pos, vel, time)
     end
 
+    -- wait why am i doing it like this...? probably a good reason to do so but i forgot
     ply:KillSilent()
 
     local attacker = dmginfo:GetAttacker()
@@ -137,10 +138,13 @@ function KillPlayerDamageInfo(ply, dmginfo)
 
     -- NOTE: It is advised not to trigger default hooks unless you know what you are doing
     -- i guess i somewhat know what im doing? sounds good enough for me :)
+    hook.Run("DoPlayerDeath", ply, attacker, dmginfo)
     hook.Run("PlayerDeath", ply, inflictor, attacker)
+    hook.Run("PostPlayerDeath", ply)
 end
 
 concommand.Add("hoodlum_ragdoll", function(ply)
+    if ply:InVehicle() then return end
     ply:ToggleRagdoll(nil)
 end, false, "toggle ragdoll", FCVAR_NONE)
 
@@ -372,7 +376,7 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                     -- do limb damage
                     if RagdollHitGroups[bonename] then
                         local hitgroup = RagdollHitGroups[bonename]
-                        if IsValid(owner) and owner:Alive() then
+                        if IsValid(owner) and owner:IsPlayer() and owner:Alive() then
                             owner:TakeLimbDamage(hitgroup, dmg, false)
                         end
                      end
@@ -387,14 +391,14 @@ hook.Add("PostEntityTakeDamage", "aassadassa", function(ent, dmginfo, what)
                             ent.headshot = true
 
                             local owner = ent:GetOwner()
-                            if IsValid(owner) and owner:Alive() then
+                            if IsValid(owner) and owner:IsPlayer() and owner:Alive() then
                                 owner:SetLastHitGroup(HITGROUP_HEAD)
                                 KillPlayerDamageInfo(owner, dmginfo)
+                                
+                                net.Start("DeathEvent")
+                                net.WriteBool(true)
+                                net.Send(owner)
                             end
-
-                            net.Start("DeathEvent")
-                            net.WriteBool(true)
-                            net.Send(owner)
 
                             timer.Create("bleed"..ent:EntIndex(), 0.1, 50, function()
                                 local bonepos = ent:GetBonePosition(head)

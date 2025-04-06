@@ -16,6 +16,7 @@ include("player/health/sh_limbhealth.lua")
 include("player/armor/cl_armor.lua")
 include("player/armor/sh_armor.lua")
 include("player/cl_bodycam.lua")
+include("player/data/cl_data.lua")
 
 surface.CreateFont("FancyOldTimey", {
     font = "DS Cloister Black",

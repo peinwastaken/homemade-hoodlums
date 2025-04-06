@@ -12,6 +12,9 @@ if SERVER then
 
 	AddCSLuaFile("sh_magazines.lua")
 	include("sh_magazines.lua")
+	
+	AddCSLuaFile("sh_horror.lua")
+	include("sh_horror.lua")
 end
 if CLIENT then
 	include("cl_recoil.lua")
@@ -19,6 +22,7 @@ if CLIENT then
 	include("sh_laser.lua")
 	include("sh_impacteffects.lua")
 	include("sh_magazines.lua")
+	include("sh_horror.lua")
 end
 
 SWEP.Base = "weapon_base"
@@ -42,6 +46,7 @@ SWEP.Primary.Delay = 0.12
 SWEP.Primary.BulletCount = 1
 
 SWEP.EjectEffect = "EjectBrass_57"
+SWEP.MuzzleEffect = "effect_muzzleflash"
 
 SWEP.ReloadTime = 2
 SWEP.ReloadSound = ""
@@ -423,21 +428,7 @@ function SWEP:PrimaryAttack()
 			effectdata:SetAttachment(self:LookupAttachment("muzzle"))
 			effectdata:SetScale(self.MuzzleFlashScale)
 			effectdata:SetFlags(self.MuzzleFlashStyle)
-			util.Effect("effect_muzzleflash", effectdata)
-
-			if CLIENT then
-				local light = DynamicLight(self:EntIndex(), false)
-    			if light then
-    			   light.pos = pos
-    			   light.r = 255
-    			   light.g = 100
-    			   light.b = 50
-    			   light.brightness = 2
-    			   light.decay = 5000
-    			   light.size = 200
-    			   light.dietime = CurTime() + 0.1
-    			end
-			end
+			util.Effect(self.MuzzleEffect, effectdata)
 		end
 		
 		local bullet = {}
@@ -455,6 +446,13 @@ function SWEP:PrimaryAttack()
 			self:BulletCallback(ply, trace, dmginfo)
 		end
 		
+		if SERVER then
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(0,0,255))
+		end
+		if CLIENT then
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(255,0,0))
+		end
+
 		ply:FireBullets(bullet, true)
 
 		if CLIENT then

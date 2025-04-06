@@ -1,5 +1,6 @@
 local PLAYER = FindMetaTable("Player")
 local specialChance = CreateConVar("hoodlum_special_chance", 2, FCVAR_NONE, "Change special class spawn chance.", 0, 100)
+local friendlyFire = CreateConVar("hoodlum_friendlyfire", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Enable or disable friendly fire.", 0, 1)
 
 function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
@@ -18,7 +19,8 @@ local allItems = {
         "weapon_akm",
         "weapon_remington700",
         "weapon_mcxspear",
-        "weapon_g3"
+        "weapon_g3",
+        "weapon_asval"
     },
     ["secondary"] = {
         "weapon_m1911",
@@ -49,9 +51,11 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
         player_manager.SetPlayerClass(ply, specialClass)
         player_manager.RunClass(ply, "OnRespawn")
     else
+        local maxCops = GetMaxCops()
+        local currentCops = GetCopCount()
         local copChance = GetCopSpawnChance()
         local rnd = math.Rand(0, 100)
-        if rnd < copChance then
+        if rnd < copChance && currentCops <= maxCops then
             player_manager.SetPlayerClass(ply, "player_cops")
         else
             player_manager.SetPlayerClass(ply, "player_hoodlum")
@@ -92,6 +96,16 @@ hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, a
         hook.Run("HoodlumDeath", ply, true)
     else
         hook.Run("HoodlumDeath", ply, false)
+    end
+
+    -- drop money on death
+    for i = 1, math.random(1, 4), 1 do
+        local money = ents.Create("ent_money")
+        money:SetPos(ply:GetPos() + Vector(0, 0, 1) * 32)
+        money:Spawn()
+
+        local phys = money:GetPhysicsObject()
+        phys:SetVelocity(Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(0.5, 5)) * 25)
     end
 end)
 

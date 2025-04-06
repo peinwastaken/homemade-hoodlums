@@ -34,6 +34,8 @@ SWEP.CanDrop = true
 
 SWEP.Emitter = nil
 
+SWEP.TimeUsed = 0
+
 function SWEP:Reload()
     if IsFirstTimePredicted() then
         if SERVER then
@@ -54,13 +56,45 @@ function SWEP:Think()
         self:SetUsing(false)
     end
 
-    if using then
-        self:SetRemaining(remaining - 5 * engine.TickInterval())
+    --TODO: move this shit to a separate file so exhaling can be done when the cigarette isn't equipped
+    if using and remaining > 0 then 
+        self:SetRemaining(remaining - 6 * engine.TickInterval())
+        self.TimeUsed = self.TimeUsed + 1 * engine.TickInterval()
+        if SERVER then
+            ply:TakeLimbDamage(HITGROUP_CHEST, 0.5, false)
+        end
     end
-
+    if not using then
+        self.TimeUsed = math.Clamp(self.TimeUsed - 1 * engine.TickInterval(), 0, 10)
+        if SERVER and self.TimeUsed > 0 then
+            ply:HealAllLimbs(0.20)
+            ply:HealLimb("Torso", 0.30)
+        end
+    end
+    local head = ply:LookupBone("ValveBiped.Bip01_Head1")
+    local headpos, headang = ply:GetBonePosition(head)
+    local effectdatasmoke = EffectData()
+    if CLIENT then
+        effectdatasmoke:SetOrigin(headpos + ply:EyeAngles():Forward() * 15 - ply:EyeAngles():Up() * 10)
+        effectdatasmoke:SetNormal(ply:EyeAngles():Forward())
+    end
+    if SERVER then
+        effectdatasmoke:SetOrigin(headpos + ply:EyeAngles():Forward() * 10)
+        effectdatasmoke:SetNormal(ply:EyeAngles():Forward())
+    end
+    if not using and self.TimeUsed > 0 then
+        util.Effect("effect_muzzlesmoke", effectdatasmoke)
+    end
     self:SetWeaponHoldType(self.HoldType)
+    if IsFirstTimePredicted() then
+        if SERVER then
+            if remaining <= 0 and self.TimeUsed <= 0 and not using then
+                ply:SelectWeapon("weapon_hands")
+                ply:StripWeapon("consumable_cigarettes")
+            end
+        end
+    end
 end
-
 
 function SWEP:DrawHUD()
     local remaining = self:GetRemaining()

@@ -18,6 +18,8 @@ ENT.Songs = {
     "pein/boombox/songs/nightmares.mp3",
     "pein/boombox/songs/struggle.mp3",
     "pein/boombox/songs/survivaltactics.mp3",
+    "pein/boombox/songs/deadeyedevil.mp3",
+    "pein/boombox/songs/deadeyedevilskibidi.mp3",
 }
 
 ENT.SelectedSong = 1
@@ -76,7 +78,7 @@ function ENT:Use(activator, caller, useType)
             self:EmitSound("buttons/lightswitch2.wav", 50, 80)
             curSong:Stop()
             
-            self.SelectedSong = self.SelectedSong + 1
+            self.SelectedSong = math.random(1, 8)
 
             if self.SelectedSong > #self.Songs then
                 self.SelectedSong = 1

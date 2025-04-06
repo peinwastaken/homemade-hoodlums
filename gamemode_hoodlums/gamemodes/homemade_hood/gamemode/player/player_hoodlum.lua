@@ -5,6 +5,7 @@ local PLAYER = {}
 PLAYER.WalkSpeed = 100
 PLAYER.RunSpeed = 200
 PLAYER.SlowWalkSpeed = 75
+PLAYER.JumpPower = 201
 
 PLAYER.Models = {
     ["bloods"] = {
@@ -112,6 +113,7 @@ function PLAYER:OnRespawn(itemTbl)
 
     ply:Give("weapon_hands")
     ply:Give("weapon_flashlight")
+    ply:Give("consumable_cigarettes")
 
     local randThrowable = math.random(0, 100)
     if randThrowable < 50 then
@@ -125,7 +127,7 @@ function PLAYER:OnRespawn(itemTbl)
     ply:SetWalkSpeed(self.WalkSpeed)
     ply:SetRunSpeed(self.RunSpeed)
     ply:SetSlowWalkSpeed(self.SlowWalkSpeed)
-    ply:SetJumpPower(165)
+    ply:SetJumpPower(self.JumpPower)
 end
 
 function PLAYER:SetModel()

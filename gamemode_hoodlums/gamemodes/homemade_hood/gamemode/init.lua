@@ -8,6 +8,7 @@ include("player/sv_weapondrop.lua")
 include("player/health/sv_limbhealth.lua")
 include("player/armor/sv_armor.lua")
 include("game/sv_chaos.lua")
+include("player/data/sv_data.lua")
 
 -- client
 AddCSLuaFile("cl_init.lua")
@@ -22,6 +23,7 @@ AddCSLuaFile("settings/cl_settings.lua")
 AddCSLuaFile("player/health/cl_limbhealth.lua")
 AddCSLuaFile("player/armor/cl_armor.lua")
 AddCSLuaFile("player/cl_bodycam.lua")
+AddCSLuaFile("player/data/cl_data.lua")
 
 -- shared
 AddCSLuaFile("sh_init.lua")
@@ -48,6 +50,9 @@ include("player/health/sh_limbhealth.lua")
 AddCSLuaFile("player/armor/sh_armor.lua")
 include("player/armor/sh_armor.lua")
 
+include("player/data/sh_data.lua")
+AddCSLuaFile("player/data/sh_data.lua")
+
 local loaded = {}
 
 function IsPlayerLoaded(ply)
@@ -59,5 +64,6 @@ net.Receive("ClientLoaded", function(len, ply)
     if not loaded[ply] then
         loaded[ply] = true
         hook.Run("PlayerRespawn", ply)
+        ply:SyncHoodlumData()
     end
 end)

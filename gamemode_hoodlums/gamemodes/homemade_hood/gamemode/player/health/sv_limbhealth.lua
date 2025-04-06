@@ -1,5 +1,6 @@
 local PLAYER = FindMetaTable("Player")
 util.AddNetworkString("SyncLimbData")
+local friendlyFire = GetConVar("hoodlum_friendlyfire")
 
 function PLAYER:SetupLimbs()
     self.LimbData = {}
@@ -106,6 +107,17 @@ function PLAYER:HealAllLimbs(amount)
     self:SyncLimbData()
 end
 
+function PLAYER:DamageAllLimbs(amount)
+    if not self.LimbData then return end
+
+    for limb,_ in pairs(defaultLimbHealth) do
+        local newHealth = math.Clamp(self.LimbData[limb] - amount, 0, defaultLimbHealth[limb])
+        self:SetLimbHealth(limb, newHealth)
+    end
+
+    self:SyncLimbData()
+end
+
 function ResetPlayersLimbs()
     for _,ply in player.Iterator() do
         ply:SetupLimbs()
@@ -129,6 +141,7 @@ local fallsounds = {
     "player/pl_fallpain1.wav"
 }
 hook.Add("OnPlayerHitGround", "hoodlum_hitground", function(ply, inWater, onFloater, speed)
+    if ply:HasGodMode() then return end
     local limbData = ply:GetLimbData()
 
     if not limbData then return true end
@@ -158,7 +171,20 @@ end)
 
 hook.Add("PostEntityTakeDamage", "hoodlum_limbdamage", function(ent, dmgInfo, tookDamage)
     if not ent:IsPlayer() then return end
+    if ent:HasGodMode() then return end
 
+    local attacker = dmgInfo:GetAttacker()
+    
+    if IsValid(attacker) and attacker:IsPlayer() and not friendlyFire:GetBool() then
+        local victimTeam = ent:GetTeam()
+        local attackerTeam = attacker:GetTeam()
+        
+        if victimTeam and attackerTeam and victimTeam == attackerTeam then
+            dmgInfo:SetDamage(0)
+            return
+        end
+    end
+    
     local limbData = ent:GetLimbData()
     local dmgType = dmgInfo:GetDamageType()
     local dmg = dmgInfo:GetDamage()

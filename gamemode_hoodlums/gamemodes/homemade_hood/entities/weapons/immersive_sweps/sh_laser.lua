@@ -7,30 +7,44 @@ if CLIENT then
     local glowmat = Material("sprites/laserdot/glow")
     hook.Add("PostDrawTranslucentRenderables", "laser_posttranslucent", function()
         local lply = LocalPlayer()
+        local ragdoll = lply:GetNWEntity("ragdoll")
         for _,ply in player.Iterator() do
             local wep = ply:GetActiveWeapon()
-            local enabled = ply:GetNWBool("laser")
+            if !IsValid(wep) then return end
 
-            if IsValid(wep) and wep.Base == "immersive_sweps" and ply:Alive() then
+            local enabled = ply:GetNWBool("laser")
+            local effect = {}
+            if wep.GetAttachmentEffects then
+                effect = wep:GetAttachmentEffects()
+                if effect["ForceLaser"] then enabled = true end
+            end
+
+            if wep.Base == "immersive_sweps" and ply:Alive() then
                 if not enabled then continue end
 
-                local effect = wep:GetAttachmentEffects()
                 local att_name = effect["LaserAttachment"]
                 if not att_name then continue end
                 local att = wep:GetAttachment(wep:LookupAttachment(att_name))
                 local tracelol = util.QuickTrace(att.Pos, att.Ang:Up() * -1024)
+
+                local laserColor
+
+                if effect["ForceLaserColor"] then
+                    laserColor = effect["ForceLaserColor"]
+                else
+                    laserColor = Color(ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a"))
+                end
 
                 -- laser beam
                 att.Ang:RotateAroundAxis(att.Ang:Right(), 90)
                 cam.Start3D()
                     local size = math.Rand(2, 4)
                     local trace = util.QuickTrace(att.Pos, att.Ang:Up() * -9999)
-                    local r, g, b, a = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"), ply:GetNWInt("laser_a")
                     render.SetMaterial(lasermat)
-                    render.DrawBeam(trace.StartPos, trace.HitPos, 0.25, 0, 12.5, Color(r, g, b, a))
+                    render.DrawBeam(trace.StartPos, trace.HitPos, 0.25, 0, 12.5, laserColor)
 
                     render.SetMaterial(glowmat)
-                    render.DrawQuadEasy(trace.HitPos, trace.HitNormal, size, size, Color(r, g, b), 0)
+                    render.DrawQuadEasy(trace.HitPos, trace.HitNormal, size, size, laserColor, 0)
                 cam.End3D()
             end
         end
@@ -41,9 +55,16 @@ if CLIENT then
         local ragdoll = lply:GetNWEntity("ragdoll")
         for _,ply in player.Iterator() do
             local wep = ply:GetActiveWeapon()
-            local enabled = ply:GetNWBool("laser")
+            if !IsValid(wep) then return end
 
-            if IsValid(wep) and wep.Base == "immersive_sweps" and ply:Alive() then
+            local enabled = ply:GetNWBool("laser")
+            local effect = {}
+            if wep.GetAttachmentEffects then
+                effect = wep:GetAttachmentEffects()
+                if effect["ForceLaser"] then enabled = true end
+            end
+
+            if wep.Base == "immersive_sweps" and ply:Alive() then
                 if not enabled then continue end
 
                 local effect = wep:GetAttachmentEffects()
@@ -67,6 +88,14 @@ if CLIENT then
                 local scale = dist / maxdist
                 local dotLimit = 0.975
 
+                local laserColor
+
+                if effect["ForceLaserColor"] then
+                    laserColor = effect["ForceLaserColor"]
+                else
+                    laserColor = Color(ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b"))
+                end
+
                 if dot > dotLimit then
                     local tr = util.QuickTrace(att.Pos, -eyedir, {lply, ply})
                     local mult = (dot - dotLimit) / (1 - dotLimit)
@@ -74,8 +103,7 @@ if CLIENT then
                     local pos = att.Pos:ToScreen()
                     if not tr.Hit then
                         cam.Start2D()
-                            local r, g, b = ply:GetNWInt("laser_r"), ply:GetNWInt("laser_g"), ply:GetNWInt("laser_b")
-                            surface.SetDrawColor(r, g, b, 255)
+                            surface.SetDrawColor(laserColor.r, laserColor.g, laserColor.b, 255)
                             surface.SetMaterial(glow)
                             surface.DrawTexturedRect(pos.x - size/2, pos.y - size/2, size, size)
                         cam.End2D()

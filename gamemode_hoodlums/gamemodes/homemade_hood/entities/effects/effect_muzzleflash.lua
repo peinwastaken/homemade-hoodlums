@@ -48,6 +48,20 @@ function EFFECT:Init(effectdata)
     end)
 
     emitter:Finish()
+
+    if CLIENT then
+        local light = DynamicLight(self:EntIndex(), false)
+        if light then
+           light.pos = pos
+           light.r = 255
+           light.g = 100
+           light.b = 50
+           light.brightness = 2
+           light.decay = 5000
+           light.size = 200
+           light.dietime = CurTime() + 0.1
+        end
+    end
 end
 
 function EFFECT:Think()
