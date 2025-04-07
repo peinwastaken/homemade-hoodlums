@@ -12,6 +12,8 @@ local armorMats = {
     ["Vest"] = Material("gui/armor/vest.png", "smooth"),
 }
 
+local batteryIcon = Material("gui/armor/BatteryIcon.png", "smooth")
+
 local colors = {
     ["High"] = Color(255, 255, 255),
     ["Low"] = Color(255, 24, 24),
@@ -100,4 +102,18 @@ hook.Add("HUDPaint", "limbhealth_hud", function()
             surface.DrawTexturedRect(pos.x, pos.y, size.x, size.y)
         end
     end
+
+    local currentBattery = lply:Armor()
+
+    if currentBattery > 0 then
+        local mat = batteryIcon
+        local iconSize = {x = 25, y = 25}
+        local text = string.format(currentBattery)
+
+        surface.SetMaterial(mat)
+        surface.SetDrawColor(255,255,255)
+        surface.DrawTexturedRect(pos.x, pos.y + size.y * 1.05, iconSize.x, iconSize.y)
+        draw.SimpleTextOutlined(text, "GTAsmall", pos.x + (iconSize.x * 1.25), pos.y + size.y * 1.09, Color(124,140,95), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color(0,0,0))
+    end
+    
 end)

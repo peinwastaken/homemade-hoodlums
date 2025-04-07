@@ -166,6 +166,7 @@ local hide = {
     ["CHudHealth"] = true,
     ["CHudAmmo"] = true,
     ["CHudSecondaryAmmo"] = true,
+    ["CHudBattery"] = true,
 }
 
 hook.Add( "HUDShouldDraw", "HideHUD", function( name )

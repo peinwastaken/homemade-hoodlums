@@ -98,13 +98,18 @@ hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, a
         hook.Run("HoodlumDeath", ply, false)
     end
 
-    -- drop money on death
+    -- drop money on death unless the person dying suicided or was killed by a teammate
+    if ply == attacker then return end
+    local victimTeam = ply:GetTeam()
+    local attackerTeam = attacker:GetTeam()
+    if victimTeam and attackerTeam and victimTeam == attackerTeam then return end
+
     for i = 1, math.random(1, 4), 1 do
         SpawnDroppedMoney(
             ply:GetPos() + vector_up * 32,
             Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(0.5, 5)),
             32,
-            nil
+            10
         )
     end
 end)

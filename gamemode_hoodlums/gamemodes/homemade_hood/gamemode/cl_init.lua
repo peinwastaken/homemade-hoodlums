@@ -42,6 +42,11 @@ surface.CreateFont("GrandTheftAuto", {
     size = ScreenScale(24)
 })
 
+surface.CreateFont("GTAsmall", {
+    font = "Pricedown Bl",
+    size = ScreenScale(12)
+})
+
 hook.Add("InitPostEntity", "hoodlum_clientloaded", function()
     net.Start("ClientLoaded")
     net.SendToServer()

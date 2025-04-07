@@ -71,6 +71,7 @@ local allowgrab = {
 	["prop_physics"] = true,
 	["prop_physics_multiplayer"] = true,
 	["ent_boombox"] = true,
+	["ent_money"] = true,
 }
 
 function SWEP:Think()

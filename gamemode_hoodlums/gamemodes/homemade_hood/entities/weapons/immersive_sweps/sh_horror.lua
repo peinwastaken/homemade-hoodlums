@@ -88,6 +88,14 @@ if CLIENT then
         surface.SetDrawColor(255, 255, 255, 255 * scaryAlpha)
         surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
     end)
+
+    hook.Add("ClientDeath", "horror_resethorror", function()
+        horrorScale = 0
+        if IsValid(scaryStation) then
+            scaryStation:Stop()
+            scaryStation = nil
+        end
+    end)
 end
 
 if SERVER then
@@ -95,6 +103,8 @@ if SERVER then
 
     hook.Add("DoPlayerDeath", "horror_doplayerdeath", function(ply, attacker, dmginfo)
         if attacker:IsPlayer() and ply != attacker and attacker:GetActiveWeapon().ClassName == "weapon_pm9" then
+            local attackerBattery = attacker:Armor()
+            attacker:SetArmor(math.Clamp(attackerBattery + 20, 0, 150))
             net.Start("DoHorror")
             net.Send(attacker)
         end
