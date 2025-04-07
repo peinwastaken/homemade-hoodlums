@@ -23,10 +23,10 @@ SWEP.Primary.Sound          = "pein/g3/g3_close.wav"
 SWEP.Primary.SoundFar		= "pein/g3/g3_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
-SWEP.VisualRecoil = Vector(1, 0.2, 0) -- CAMERA RECOIL
-SWEP.VisualRecoilAngle = Angle(1.5, 0, 3)
+SWEP.VisualRecoil = Vector(1, 0.1, 0) -- CAMERA RECOIL
+SWEP.VisualRecoilAngle = Angle(0.2, 0, 3)
 SWEP.RecoilVertical = 85 -- VERTICAL RECOIL
-SWEP.RecoilHorizontal = 45 -- HORIZONTAL RECOIL
+SWEP.RecoilHorizontal = 25 -- HORIZONTAL RECOIL
 SWEP.CrouchRecoilMult = 0.8 -- CROUCH RECOIL MULTIPLIER
 SWEP.PlayerModelRecoilMult = 1.5
 
@@ -150,8 +150,8 @@ SWEP.Attachments = {
 			["bodygroup_value"] = 2,
             ["effects"] = {
 				["ClipSize"] = 100,
-				["RecoilVertical"] = 75,
-				["RecoilHorizontal"] = 40
+				["RecoilVertical"] = 35,
+				["RecoilHorizontal"] = 35
 			}
 		}
 	}

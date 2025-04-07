@@ -173,6 +173,12 @@ hook.Add("PostEntityTakeDamage", "hoodlum_limbdamage", function(ent, dmgInfo, to
     if not ent:IsPlayer() then return end
     if ent:HasGodMode() then return end
 
+    if ent:Armor() > 0 then
+        local newArmor = math.max(0, ent:Armor() - dmgInfo:GetDamage() / 2)
+        ent:SetArmor(newArmor)
+        return
+    end
+
     local attacker = dmgInfo:GetAttacker()
     
     if IsValid(attacker) and attacker:IsPlayer() and not friendlyFire:GetBool() then

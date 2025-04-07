@@ -23,8 +23,8 @@ SWEP.MuzzleEffect = "effect_muzzleflash_evil"
 
 SWEP.ReloadTime             = 1.5
 
-SWEP.Primary.Sound          = "pein/pm9/pew.wav"
-SWEP.Primary.SoundFar		= "pein/pm9/pew_far.wav"
+SWEP.Primary.Sound          = "pein/pm9/pm9.wav"
+SWEP.Primary.SoundFar		= "pein/pm9/pm9_far.wav"
 SWEP.ReloadSound            = "weapons/ar2/ar2_reload.wav"
 
 SWEP.VisualRecoil = Vector(2, 0.25, 0) -- CAMERA RECOIL
@@ -43,7 +43,7 @@ SWEP.AimWeaponTilt = 30
 
 SWEP.BoltAnimationTime = 0.05
 SWEP.MuzzleFlashScale = 2
-SWEP.SuppressionMult = 0.1
+SWEP.SuppressionMult = 4
 
 SWEP.Weight					= 5
 SWEP.AutoSwitchTo			= false

@@ -24,6 +24,7 @@ AddCSLuaFile("player/health/cl_limbhealth.lua")
 AddCSLuaFile("player/armor/cl_armor.lua")
 AddCSLuaFile("player/cl_bodycam.lua")
 AddCSLuaFile("player/data/cl_data.lua")
+AddCSLuaFile("player/ragdoll/cl_ragdoll.lua")
 
 -- shared
 AddCSLuaFile("sh_init.lua")

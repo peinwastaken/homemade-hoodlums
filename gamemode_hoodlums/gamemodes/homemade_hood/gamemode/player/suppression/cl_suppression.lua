@@ -8,6 +8,14 @@ local suppressionVignette = 0
 
 local timeSinceLastSuppress = 0
 
+function SuppressLocalPlayer(amount, shake, sharpen, vignette)
+    suppressionAmount = amount
+    suppressionShake = Angle(math.random(-8, 8), math.random(-8, 8), math.random(-8, 8)) * shake
+    suppressionSharpen = sharpen
+    suppressionVignette = vignette
+    timeSinceLastSuppress = 0
+end
+
 net.Receive("SuppressPlayer", function()
     local amount = net.ReadFloat()
 

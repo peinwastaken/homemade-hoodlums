@@ -100,7 +100,7 @@ function DoScope()
         --[[
         if GetConVar("hoodlum_pip_fisheye"):GetBool() then
             local amount = GetConVar("hoodlum_pip_fisheye_amount"):GetFloat()
-            DrawRefract(amount)
+            
         end]]
 
         render.PopRenderTarget()

@@ -17,6 +17,7 @@ include("player/armor/cl_armor.lua")
 include("player/armor/sh_armor.lua")
 include("player/cl_bodycam.lua")
 include("player/data/cl_data.lua")
+include("player/ragdoll/cl_ragdoll.lua")
 
 surface.CreateFont("FancyOldTimey", {
     font = "DS Cloister Black",
@@ -34,6 +35,11 @@ surface.CreateFont("HudSmall", {
     font = "Chopin Light",
     size = ScreenScale(11),
     weight = 500,
+})
+
+surface.CreateFont("GrandTheftAuto", {
+    font = "Pricedown Bl",
+    size = ScreenScale(24)
 })
 
 hook.Add("InitPostEntity", "hoodlum_clientloaded", function()

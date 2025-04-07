@@ -1,4 +1,5 @@
 -- retardation incoming
+util.AddNetworkString("RagdollTimer")
 local PLAYER = FindMetaTable("Player")
 
 local RagdollCleanup = {}
@@ -253,13 +254,19 @@ function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon, velocity)
         self:SetNWEntity("ragdoll", new)
         self:Spectate(OBS_MODE_CHASE)
         self:SpectateEntity(new)
-        self:Lock()
+        self:Freeze(true)
+        self:GodEnable()
+
+        net.Start("RagdollTimer")
+        net.WriteFloat(2)
+        net.Send(self)
     else
         if not self:Alive() then print("not alive") return end
 
         self:UnSpectate()
         self:Spawn()
-        self:UnLock()
+        self:Freeze(false)
+        self:GodDisable()
 
         self:SetPos(ragdoll:GetPos())
         self:SetModel(ragdoll:GetModel())
@@ -273,6 +280,12 @@ function PLAYER:ToggleRagdoll(hitgroup, dropweapon, lastweapon, velocity)
         self:ClearRagdoll(0)
     end
 end
+
+hook.Add("PlayerButtonDown", "ragdoll_keypress", function(ply, key)
+    if key == 65 and IsValid(ply:GetRagdoll()) then
+        ply:ToggleRagdoll()
+    end
+end)
 
 hook.Add("PlayerRespawn", "sv_hoodlum_ragdoll_playerrespawn", function(ply)
     ply:ClearRagdoll(60)

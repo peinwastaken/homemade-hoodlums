@@ -100,12 +100,12 @@ hook.Add("DoPlayerDeath", "hoodlum_doplayerdeath_playermanager", function(ply, a
 
     -- drop money on death
     for i = 1, math.random(1, 4), 1 do
-        local money = ents.Create("ent_money")
-        money:SetPos(ply:GetPos() + Vector(0, 0, 1) * 32)
-        money:Spawn()
-
-        local phys = money:GetPhysicsObject()
-        phys:SetVelocity(Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(0.5, 5)) * 25)
+        SpawnDroppedMoney(
+            ply:GetPos() + vector_up * 32,
+            Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(0.5, 5)),
+            32,
+            nil
+        )
     end
 end)
 

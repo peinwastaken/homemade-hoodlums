@@ -33,7 +33,6 @@ function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "DespawnTime")
 
     self:SetDespawnTime(CurTime() + 120) // 2 min
-
     self:SetWorth(moneyAmounts[math.random(1, #moneyAmounts)])
 end
 
@@ -41,7 +40,7 @@ function ENT:Initialize()
     self:SetModel("models/pein/money/w_money.mdl")
     self:SetModelScale(1)
     self:PhysicsInit(SOLID_VPHYSICS)
-    self:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE)
+    self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
     self:Activate()
 end
 
@@ -52,7 +51,7 @@ function ENT:Use(ent)
     if IsFirstTimePredicted() then
         local pos = self:GetPos()
         EmitSound(string.format("pein/money/pickup1.wav", math.random(1, 4)), pos, 0, CHAN_AUTO, 1, 350, SND_NOFLAGS, 100, 0, player.GetAll())
-        ent:AddMoney(100)
+        ent:AddMoney(self:GetAmount())
         self:Remove()
     end
 end
