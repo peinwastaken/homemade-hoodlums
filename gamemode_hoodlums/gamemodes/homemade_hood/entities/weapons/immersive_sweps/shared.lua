@@ -215,10 +215,12 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 0, "Aiming")
 	self:NetworkVar("Bool", 1, "Crouching")
 	self:NetworkVar("Bool", 3, "FirstEquip")
+	self:NetworkVar("Bool", 4, "SidewaysAim")
 
 	self:SetAiming(false)
 	self:SetCrouching(false)
 	self:SetFirstEquip(true)
+	self:SetSidewaysAim(false)
 
     self:NetworkVar("Float", 5, "LastPump")
     self:NetworkVar("Bool", 5, "RequiresPump")
