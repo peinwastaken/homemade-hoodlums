@@ -69,7 +69,7 @@ function OpenBindMenu()
     end
 
     local clearLabel = vgui.Create("DLabel")
-    clearLabel:SetText("press 'Delete' to clear bind.\n[temp.] set hoodlum_sideways_toggle\n(gangsta aim) thru console\ncause pein is silly :)")
+    clearLabel:SetText("press 'Delete' to clear bind.")
     clearLabel:SetSize(sizeX, 60)
     
     local x, y = clearLabel:GetTextSize()
