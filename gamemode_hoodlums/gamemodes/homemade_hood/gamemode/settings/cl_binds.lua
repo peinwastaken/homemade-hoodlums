@@ -19,13 +19,13 @@ local binds = {
         ["Command"] = "drop",
         ["Key"] = 0
     },
-    ["Zoom"] = {
-        ["Name"] = "Scope Zoom",
+    ["Scope"] = {
+        ["Name"] = "Scope",
         ["Command"] = "hoodlum_scope_zoom",
         ["Key"] = 0
-    },
+    }
 }
-local bindOrder = {"Ragdoll", "Laser", "Flashlight", "Drop", "Zoom"}
+local bindOrder = {"Ragdoll", "Laser", "Flashlight", "Drop", "Scope"}
 
 function SaveBinds()
     local bindTable = util.TableToJSON(binds)
@@ -69,10 +69,11 @@ function OpenBindMenu()
     end
 
     local clearLabel = vgui.Create("DLabel")
-    clearLabel:SetText("press 'Delete' to clear bind")
-    clearLabel:SetSize(sizeX, 15)
+    clearLabel:SetText("press 'Delete' to clear bind.")
+    clearLabel:SetSize(sizeX, 60)
+    
     local x, y = clearLabel:GetTextSize()
-    clearLabel:SetPos(sizeX/2 - x/2, sizeY - 30)
+    clearLabel:SetPos(sizeX/2 - x/2, sizeY - 60)
     clearLabel:SetParent(mainFrame)
 
     --[[ ill figure it out later. yeah... later...

@@ -92,6 +92,13 @@ SWEP.CanDrop = true
 
 SWEP.BoltAnimationTime = 0.05
 
+concommand.Add("hoodlum_sideways_toggle", function(ply)
+	local wep = ply:GetActiveWeapon()
+	if IsValid(wep) and wep.Base == "immersive_sweps" then
+		wep:ToggleSidewaysAim()
+	end
+end)
+
 function LerpFT(lerp, from, to)
 	return Lerp(math.min(1, lerp * FrameTime()), from, to)
 end
@@ -184,7 +191,9 @@ function SWEP:CancelReload()
 end
 
 function SWEP:Reload()
-	
+	if self:GetSidewaysAim() then -- dumb fix but it worked for a single issue i think
+		self:SetHoldType("pistol")
+	end
 end
 
 function SWEP:Initialize()
@@ -231,7 +240,11 @@ hook.Add("Think", "client_immersive_sweps", function()
 		if IsValid(wep) and wep.Base == "immersive_sweps" then
 			wep:Animate()
 
-			wep:SetWeaponHoldType(wep.HoldType)
+			if not wep:GetSidewaysAim() then
+				wep:SetWeaponHoldType(wep.HoldType)
+			else
+				wep:SetWeaponHoldType("pistol")
+			end
 		end
 	end
 end)
@@ -607,6 +620,11 @@ function SWEP:Animate()
 		self.anglehead = LerpAngleFT(4, self.anglehead, Angle(0, 0, 0))
 	end
 
+	-- sideways aim
+	if self:GetSidewaysAim() then
+		self.anglehandR = LerpAngleFT(20, self.anglehandR, Angle(0, 0, -90) + wallcloseangle)
+	end
+
 	self.anglehandR = LerpAngleFT(8, self.anglehandR, Angle(0, 0, -15) + wallcloseangle)
 
 	-- recoil
@@ -676,5 +694,21 @@ function SWEP:Deploy()
 		self:SetFirstEquip(false)
 
 		self:StartCheckingMag()
+	end
+end
+
+function SWEP:ToggleSidewaysAim()
+	local ply = self:GetOwner()
+	if not IsValid(ply) then return end
+
+	local holdType = self:GetHoldType()
+	if holdType ~= "pistol" and holdType ~= "revolver" then return end
+
+	if not self:GetSidewaysAim() then
+		self:SetHoldType("pistol")
+		self:SetSidewaysAim(true)
+	else
+		self:SetHoldType(holdType)
+		self:SetSidewaysAim(false)
 	end
 end
