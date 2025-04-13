@@ -5,7 +5,6 @@ net.Receive("SyncHoodlumData", function(len)
     local data = net.ReadTable()
 
     lply.hoodlumData = data
-    PrintTable(lply:GetHoodlumData())
 end)
 
 -- temporarily putting it here

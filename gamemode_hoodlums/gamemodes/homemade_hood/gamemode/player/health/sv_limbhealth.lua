@@ -184,8 +184,9 @@ hook.Add("PostEntityTakeDamage", "hoodlum_limbdamage", function(ent, dmgInfo, to
     if IsValid(attacker) and attacker:IsPlayer() and not friendlyFire:GetBool() then
         local victimTeam = ent:GetTeam()
         local attackerTeam = attacker:GetTeam()
+        local attackerWeapon = attacker:GetActiveWeapon()
         
-        if victimTeam and attackerTeam and victimTeam == attackerTeam then
+        if victimTeam and attackerTeam and victimTeam == attackerTeam and attackerWeapon.ClassName != "weapon_pm9" then
             dmgInfo:SetDamage(0)
             return
         end

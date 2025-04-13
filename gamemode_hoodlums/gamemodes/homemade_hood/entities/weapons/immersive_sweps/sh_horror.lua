@@ -104,7 +104,7 @@ if SERVER then
     hook.Add("DoPlayerDeath", "horror_doplayerdeath", function(ply, attacker, dmginfo)
         if attacker:IsPlayer() and ply != attacker and attacker:GetActiveWeapon().ClassName == "weapon_pm9" then
             local attackerBattery = attacker:Armor()
-            attacker:SetArmor(math.Clamp(attackerBattery + 20, 0, 150))
+            attacker:SetArmor(math.Clamp(attackerBattery + 20, 0, 200))
             net.Start("DoHorror")
             net.Send(attacker)
         end

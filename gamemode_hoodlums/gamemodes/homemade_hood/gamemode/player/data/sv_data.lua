@@ -32,6 +32,17 @@ hook.Add("PlayerSay", "data_commands", function(ply, text, teamChat)
 
         return ""
     end
+
+    if kaboom[1] == "!spawnmoney" then
+        if not ply:IsAdmin() then return end
+        local amount = tonumber(kaboom[2])
+        local moneyToSpawn = ValueToDollars(amount)
+        for i = 1, #moneyToSpawn, 1 do
+            SpawnDroppedMoney(moneySpawnPos, ply:EyeAngles():Forward(), 200, moneyToSpawn[i])
+        end
+
+        return "I LOVE INFLATION!!!"
+    end
 end)
 
 function SpawnDroppedMoney(pos, dir, velocity, amount)
