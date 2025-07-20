@@ -29,7 +29,8 @@ if CLIENT then
             local dist = dir:Length()
             local angle = dir:Angle()
             if dist < radius + 23 then
-                cam.Start3D2D(objPos + Vector(0, 0, 24), Angle(0, angle.y + 90, 90), 0.2)
+                local textZ = (ent:GetObjectiveType() == "MoneyCache") and 72 or 24
+                cam.Start3D2D(objPos + Vector(0, 0, textZ), Angle(0, angle.y + 90, 90), 0.2)
                     local capturing = ent:GetCaptureTeam()
                     local alpha = progress / 100
                     local colorLerp = LerpColor(math.Clamp(alpha * 2, 0, 1), color_white, teams[capturing]["Color"])
@@ -117,10 +118,17 @@ ENT.ObjectiveTypes = {
         ["Flare"] = true,
         ["FlareColor"] = Color(0, 255, 234, 124),
     },
+    ["MoneyCache"] = {
+        ["Name"] = "Money Crate",
+        ["CaptureDelay"] = 0.07,
+        ["Money"] = 150,
+        ["Flare"] = false,
+        ["FlareColor"] = Color(0, 200, 0),
+        ["MinPlayers"] = 2,
+    }
 }
 
--- fucking retarded
-local retarded_shit = {"WeaponCache", "AlcoholCache", "UtilityCache"}
+local cratesForRandom = {"WeaponCache", "AlcoholCache", "UtilityCache", "MoneyCache"}
 
 -- i should create some sort of utilities script... whatever lol its not like anyone is ever gonna go through the code anyway
 function LerpColor(frac, from, to)
@@ -194,16 +202,25 @@ function ENT:SetupDataTables()
     self:SetDespawnTime(CurTime() + self.DespawnTime)
 
     if SERVER then
-        self:SetObjectiveType(retarded_shit[math.random(#retarded_shit)])
+        self:SetObjectiveType(cratesForRandom[math.random(#cratesForRandom)])
     end
 end
 
 function ENT:Initialize()
     local objType = self:GetObjectiveType()
 
-    self:SetModel(self.Model)
+    if objType == "MoneyCache" then
+        self:SetModel("models/props/cs_assault/moneypallet.mdl")
+    else
+        self:SetModel(self.Model)
+    end
 
     self:PhysicsInitStatic(SOLID_VPHYSICS)
+
+    if objType == "MoneyCache" then
+        local pos = self:GetPos()
+        self:SetPos(pos - Vector(0, 0, 18))
+    end
 
     if CLIENT then
         self:SetRenderBounds(-Vector(128, 128, 128), Vector(128, 128, 128))
@@ -228,6 +245,25 @@ function ENT:OnCaptured()
 
     local objType = self:GetObjectiveType()
     local objTable = self.ObjectiveTypes[objType]
+
+    if objType == "MoneyCache" then
+        local pos, radius = self:GetPos(), self:GetRadius()
+        local teamID = self:GetCaptureTeam()
+
+        for _,ply in ipairs(ents.FindInSphere(pos, radius)) do
+            if ply:IsPlayer() and ply:Alive() and ply:GetTeam() == teamID then
+                ply:AddMoney(self.ObjectiveTypes["MoneyCache"]["Money"])
+            end
+        end
+
+        net.Start("CaptureMessage")
+            net.WriteString(teamID)
+            net.WriteString(self.ObjectiveTypes[objType]["Name"])
+        net.Broadcast()
+
+        self:Remove()
+        return
+    end
 
     local min, max = objTable["ItemCountMin"], objTable["ItemCountMax"]
     for i = 1, math.random(min, max) do
@@ -259,6 +295,7 @@ function ENT:Think()
         local obj = self.ObjectiveTypes[objType]
         local color = obj["FlareColor"]
 
+        if !obj["Flare"] then return end
         if self.nextparticle < CurTime() then
             if IsValid(self.Emitter) then
                 local particle = self.Emitter:Add(table.Random(smoke), pos)
@@ -330,6 +367,13 @@ function ENT:Think()
             local t = ply:GetTeam()
             if capturing[t] then
                 capturing[t] = capturing[t] + 1
+            end
+        end
+
+        local minRequired = self.ObjectiveTypes[objType].MinPlayers or 1
+        for teamID, count in pairs(capturing) do
+            if count < minRequired then
+                capturing[teamID] = 0
             end
         end
 

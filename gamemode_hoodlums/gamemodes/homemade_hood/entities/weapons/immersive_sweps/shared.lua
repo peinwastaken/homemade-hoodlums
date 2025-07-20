@@ -462,10 +462,10 @@ function SWEP:PrimaryAttack()
 		end
 		
 		if SERVER then
-			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(0,0,255))
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 5000, 5, Color(0,0,255))
 		end
 		if CLIENT then
-			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 500, 5, Color(255,0,0))
+			debugoverlay.Line(bullet.Src, bullet.Src + bullet.Dir * 5000, 5, Color(255,0,0))
 		end
 
 		ply:FireBullets(bullet, true)

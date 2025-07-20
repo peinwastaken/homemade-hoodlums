@@ -1,5 +1,5 @@
 local objectiveDelay, nextObjective = 1, CurTime()
-local maxObjectives = CreateConVar("hoodlum_objectives_max", 3, FCVAR_NONE, "Hoodlums max objectives count. 0 to disable objectives.", 0, 100)
+local maxObjectives = CreateConVar("hoodlum_objectives_max", 5, FCVAR_NONE, "Hoodlums max objectives count. 0 to disable objectives.", 0, 100)
 
 function KILL_EVERY_OBJECTIVE_THERE_IS_ON_RELOAD_PLEASE_THANKS()
     for _,ent in ents.Iterator() do
