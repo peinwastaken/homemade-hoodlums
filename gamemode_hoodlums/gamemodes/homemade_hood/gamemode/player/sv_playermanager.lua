@@ -77,9 +77,9 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
             player_manager.SetPlayerClass(ply, "player_hoodlum")
         end
         
-        if navmesh.IsLoaded() && !pistolsOnly then
+        if navmesh.IsLoaded() and not pistolsOnly:GetBool() then
             player_manager.RunClass(ply, "OnRespawn")
-        elseif pistolsOnly then
+        elseif pistolsOnly:GetBool() then
             player_manager.RunClass(ply, "OnRespawn", pistolsItems)
         else
             player_manager.RunClass(ply, "OnRespawn", allItems)
