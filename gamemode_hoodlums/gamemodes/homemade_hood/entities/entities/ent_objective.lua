@@ -122,9 +122,9 @@ ENT.ObjectiveTypes = {
         ["Name"] = "Money Crate",
         ["CaptureDelay"] = 0.07,
         ["Money"] = 150,
-        ["Flare"] = false,
+        ["Flare"] = true,
         ["FlareColor"] = Color(0, 200, 0),
-        ["MinPlayers"] = 2,
+        ["MinPlayers"] =  math.Clamp(player.GetCount() * 0.25, 1, 4),
     }
 }
 
@@ -219,7 +219,7 @@ function ENT:Initialize()
 
     if objType == "MoneyCache" then
         local pos = self:GetPos()
-        self:SetPos(pos - Vector(0, 0, 18))
+        self:SetPos(pos - Vector(0, 0, 16))
     end
 
     if CLIENT then

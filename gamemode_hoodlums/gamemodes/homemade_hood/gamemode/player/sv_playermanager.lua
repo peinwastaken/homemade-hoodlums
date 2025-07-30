@@ -1,6 +1,7 @@
 local PLAYER = FindMetaTable("Player")
 local specialChance = CreateConVar("hoodlum_special_chance", 2, FCVAR_NONE, "Change special class spawn chance.", 0, 100)
 local friendlyFire = CreateConVar("hoodlum_friendlyfire", "1", FCVAR_ARCHIVE + FCVAR_NOTIFY, "Enable or disable friendly fire.", 0, 1)
+local pistolsOnly = CreateConVar("hoodlum_pistolsonly", 0, FCVAR_ARCHIVE + FCVAR_NOTIFY, "Players spawn with pistols.")
 
 function PLAYER:GetTeam()
     return player_manager.RunClass(self, "GetAlliance")
@@ -42,6 +43,21 @@ local allItems = {
     }
 }
 
+local pistolsItems = {
+    ["secondary"] = {
+        "weapon_m1911",
+        "weapon_glock",
+        "weapon_sawedoff",
+        "weapon_p320",
+        "weapon_vz61",
+        "weapon_tec9",
+        "weapon_deagle"
+    },
+    ["melee"] = {
+        "melee_bat"
+    }
+}
+
 local specialClasses = {"player_demoncompany"}
 hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
     local rand = math.Rand(0, 100)
@@ -61,8 +77,10 @@ hook.Add("PlayerRespawn", "hoodlum_giveclass", function(ply)
             player_manager.SetPlayerClass(ply, "player_hoodlum")
         end
         
-        if navmesh.IsLoaded() then
+        if navmesh.IsLoaded() && !pistolsOnly then
             player_manager.RunClass(ply, "OnRespawn")
+        elseif pistolsOnly then
+            player_manager.RunClass(ply, "OnRespawn", pistolsItems)
         else
             player_manager.RunClass(ply, "OnRespawn", allItems)
         end

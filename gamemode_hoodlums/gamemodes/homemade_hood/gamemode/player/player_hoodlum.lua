@@ -98,10 +98,15 @@ function PLAYER:OnRespawn(itemTbl)
     ply:SetAmmo(9999, "pistol")
 
     if itemTbl then
-        ply:Give(GetRandomItem(itemTbl["primary"])):SetRandomAttachments()
-        ply:Give(GetRandomItem(itemTbl["secondary"])):SetRandomAttachments()
+        if itemTbl["primary"] then
+            ply:Give(GetRandomItem(itemTbl["primary"])):SetRandomAttachments()
+        end
+        if itemTbl["secondary"] then
+            ply:Give(GetRandomItem(itemTbl["secondary"])):SetRandomAttachments()
+        end
+        if itemTbl["melee"] then
         ply:Give(GetRandomItem(itemTbl["melee"]))
-
+        end
         if itemTbl["utility"] then
             ply:Give(GetRandomItem(itemTbl["utility"]))
         end
